@@ -1,0 +1,428 @@
+/* -----------------  Global  ----------------- */
+:root {
+  // Global
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  // Mobile
+  touch-action: none;
+  -webkit-text-size-adjust: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 隐藏横向滚动条 */
+:root::-webkit-scrollbar {
+  height: 0;
+  background-color: transparent;
+}
+
+._root {
+  width: 100%;
+  min-width: 1280px;
+
+  >.ms-container {
+    height: calc(100vh - 64px);
+    transition: all 0.3s ease-in-out;
+
+    /* 滚动条遮挡 */
+    .ms-thumb {
+      overflow: hidden;
+    }
+
+    /* 跳转页面塌陷 */
+    main {
+      min-height: calc(100vh - 64px);
+    }
+  }
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins';
+}
+
+html {
+  background: #fff;
+}
+
+img {
+  display: block;
+  outline: none;
+}
+
+hr {
+  margin: 0;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::selection {
+  background: rgba(47, 50, 65, 0.5);
+  color: #316ed8;
+}
+
+/* -----------------  Global  ----------------- */
+
+/* NProgress */
+#nprogress {
+  .bar {
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .peg {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 5px rgba(255, 255, 255, 0.85);
+  }
+
+  .spinner-icon {
+    border-top-color: rgba(255, 255, 255, 0.85);
+    border-left-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-3 {
+  flex: 3;
+}
+
+.self-start {
+  align-self: flex-start;
+}
+
+.short-color {
+  color: #fd4772 !important;
+}
+
+.sub-active-color {
+  color: #d2a12b !important;
+}
+
+.sub-active-color-2 {
+  color: #d2a12b;
+}
+
+.main-color {
+  color: #fff;
+}
+
+.main-color-0-85 {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.sub-color {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.disabled-filter {
+  cursor: not-allowed;
+  filter: opacity(0.5);
+}
+
+.disabled-color {
+  filter: brightness(0.5);
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.p-18 {
+  padding: 18px;
+}
+
+.mt-72 {
+  margin-top: 72px;
+}
+
+.mt-64 {
+  margin-top: 64px;
+}
+
+.mb-48 {
+  margin-bottom: 48px;
+}
+
+.mt-48 {
+  margin-top: 48px;
+}
+
+.mt-32{
+  margin-top: 32px;
+}
+
+.mb-32{
+  margin-bottom: 32px;
+}
+
+.mt-24{
+  margin-top: 24px;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+.gap-2{
+  gap: 2px;
+}
+
+.gap-4 {
+  gap: 4px;
+}
+
+.gap-6 {
+  gap: 6px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-14 {
+  gap: 14px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.gap-24 {
+  gap: 24px;
+}
+
+.gap-28 {
+  gap: 28px;
+}
+
+.gap-32 {
+  gap: 32px;
+}
+
+.gap-36 {
+  gap: 36px;
+}
+
+.gap-40 {
+  gap: 40px;
+}
+
+.gap-48 {
+  gap: 48px;
+}
+
+.gap-70 {
+  gap: 70px;
+}
+
+.gap-80 {
+  gap: 80px;
+}
+
+.gap-90 {
+  gap: 90px;
+}
+
+.gap-95 {
+  gap: 95px;
+}
+
+.gap-110px {
+  gap: 110px;
+}
+
+.p-14{
+  padding: 14px;
+}
+
+.f-14 {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 120%;
+}
+
+.f-15 {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.f-16 {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 120%;
+}
+
+.f-20 {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 120%;
+}
+
+.f-24 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 120%;
+}
+
+.f-30 {
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 120%;
+}
+
+.f-38 {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 120%;
+}
+
+.fw-400 {
+  font-weight: 400;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-700 {
+  font-weight: 700;
+}
+
+.f-38 {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 120%;
+}
+
+.f-12 {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 120%;
+}
+
+.w-24 {
+  width: 24px;
+}
+
+.h-24 {
+  height: 24px;
+}
+
+.p-8-0 {
+  padding: 8px 0;
+}
+
+.underlined {
+  text-decoration: underline;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.particle-wallet-entry-container {
+  display: none;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.relative {
+  position: relative;
+}
+
+
+
+
+
+
+.st236 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #FFFFFF;
+}
+
+.st237 {
+  display: inline;
+  fill: none;
+}
+
+.st71 {
+  fill: #FFFFFF;
+}
+
+.st97 {
+  fill: #00DACC;
+}
+
+.st238 {
+  fill: none;
+}
+
+.success-color {
+  color: rgba(21, 183, 29, 1)
+}
+
+.danger-color {
+  color: rgba(235, 5, 5, 1);
+}
+
+
+.size-64{
+  width: 64px;
+  height: 64px;
+}
+
+.size-12{
+  width: 12px;
+  height: 12px;
+}

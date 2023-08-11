@@ -1,0 +1,90 @@
+.component-input {
+  position: relative;
+  padding: 0 16px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.85);
+  input {
+    width: 100%;
+    flex: 1;
+    height: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    font-weight: 500;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.85);
+    transition: all 0.3s ease-in-out;
+    &:focus {
+      outline: none;
+    }
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.25);
+    }
+  }
+  /* chrome autocomplete background color */
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    color: #ffffff;
+    transition: background-color 99999s 0s, color 99999s 0s;
+  }
+  /* input[data-autocompleted] {
+    background-color: transparent !important;
+  } */
+  /* chrome autocomplete background color */
+  label {
+    position: absolute;
+    inset: 0 0 0 0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+  }
+  // &:not(.danger, .disabled)input:focus + label {
+  //   border: 1px solid rgba(255, 255, 255, 0.85);
+  // }
+  &:not(.danger, .disabled, .solid):hover label,
+  input:focus + label {
+    border: 1px solid rgba(255, 255, 255, 0.85);
+  }
+  // .clear {
+  //   margin-right: 16px;
+  //   width: 24px;
+  //   height: 24px;
+  //   user-select: none;
+  //   transition: all 0.3s ease-in-out;
+  //   &:active {
+  //     opacity: 0.6;
+  //   }
+  // }
+  &.danger {
+    input {
+      color: #fd4772;
+    }
+    label,
+    input:focus + label {
+      border: 1px solid #fd4772;
+    }
+  }
+  &.solid {
+    input {
+      color: rgba(49, 49, 68, 1);
+    }
+    label,
+    input:focus + label {
+      border: 1px solid rgba(49, 49, 68, 1);
+    }
+  }
+  &.disabled {
+    user-select: none;
+    cursor: not-allowed;
+    input {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    label {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}

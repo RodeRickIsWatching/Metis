@@ -1,0 +1,291 @@
+.component-datepicker {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+  &.follow {
+    position: relative;
+  }
+  > .inside {
+    padding: 0 16px;
+    height: 30px;
+    .placeholder {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.25);
+      transition: all 0.3s ease-in-out;
+    }
+    .selection {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    img {
+      margin-left: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+  &:not(.danger, .disabled).visible {
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    .arrow {
+      fill: rgba(255, 255, 255, 0.85);
+      transform: rotateZ(-180deg);
+    }
+  }
+  &:not(.danger, .disabled):hover {
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    .inside {
+      cursor: pointer;
+    }
+  }
+  /* base */
+  &.danger {
+    color: #ff7878;
+    border: 1px solid #ff7878;
+    .arrow {
+      fill: #ff7878;
+    }
+  }
+  &.disabled {
+    // background: ${(props) => props.theme.disabledColorPrimary};
+    user-select: none;
+    cursor: not-allowed;
+    transition: all 0.3s ease-in-out;
+    .selection {
+      // color: ${(props) => props.theme.textColorFifth};
+    }
+  }
+}
+
+.component-datepicker-trigger {
+  position: absolute;
+  background: #24262c;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 999999;
+  li {
+    padding: 0 10px;
+    height: 38px;
+    line-height: 38px;
+    font-size: 14px;
+  }
+}
+
+.component-datepicker-date {
+  width: 292px;
+  font-size: 12px;
+  padding: 0 10px 10px 10px;
+  transition: all 0.3s ease-in-out;
+  .header {
+    height: 40px;
+    img {
+      width: 16px;
+      height: 16px;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+    span {
+      flex: 1;
+      font-weight: 700;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s ease-in-out;
+      text-align: center;
+    }
+  }
+  .week {
+    li {
+      width: 38px;
+      height: 28px;
+      line-height: 28px;
+      font-weight: 500;
+      font-size: 12px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+  .content {
+    .days {
+      margin: 3px;
+    }
+    .cell {
+      width: 38px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.25s ease-out;
+      position: relative;
+      box-sizing: border-box;
+      border-color: rgba(255, 255, 255, 0.85);
+      /* 选中的状态，最小日期和最大日期 */
+      &.cell__selected:not(.disabled) {
+        .cell-inner {
+          background-color: rgba(255, 255, 255, 0.85);
+          color: #141313;
+          transition: all 0.3s ease-in-out;
+        }
+        &.start:not(.end)::after {
+          content: '';
+          background-color: rgba(255, 255, 255, 0.25);
+          width: 50%;
+          height: 100%;
+          z-index: 0;
+          right: 0;
+          position: absolute;
+        }
+        &.end:not(.start)::after {
+          content: '';
+          background-color: rgba(255, 255, 255, 0.25);
+          width: 50%;
+          height: 100%;
+          z-index: 0;
+          left: 0;
+          position: absolute;
+        }
+      }
+      /** 在最大与最小日期内的日期 */
+      &.cell__inview:not(.disabled) {
+        background-color: rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease-in-out;
+      }
+      &.cell__hover:not(.disabled) {
+        &::before {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+          box-sizing: border-box;
+          position: absolute;
+          top: 0;
+          border-top: 1px dashed rgba(255, 255, 255, 0.85);
+          border-bottom: 1px dashed rgba(255, 255, 255, 0.85);
+        }
+        &.cell__hover--start {
+          &.cell__selected {
+            &::before {
+              display: none;
+            }
+            &::after {
+              left: 50%;
+              border-top: 1px dashed rgba(255, 255, 255, 0.85);
+              border-left: none;
+              border-bottom: 1px dashed rgba(255, 255, 255, 0.85);
+            }
+          }
+        }
+        &.cell__hover--start,
+        &.cell__hover-edge--start {
+          &::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 100%;
+            z-index: 0;
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: transparent;
+            border-left: 1px dashed rgba(255, 255, 255, 0.85);
+          }
+        }
+        &.cell__hover--end {
+          &.cell__selected {
+            &::before {
+              display: none;
+            }
+            &::after {
+              left: 0;
+              border-right: none;
+              border-top: 1px dashed rgba(255, 255, 255, 0.85);
+              border-bottom: 1px dashed rgba(255, 255, 255, 0.85);
+            }
+          }
+        }
+        &.cell__hover--end,
+        &.cell__hover-edge--end {
+          &::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 100%;
+            z-index: 0;
+            box-sizing: border-box;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            background-color: transparent;
+            border-right: 1px dashed rgba(255, 255, 255, 0.85);
+          }
+        }
+        &.cell__hover--both {
+          &::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: transparent;
+            border-left: 1px dashed rgba(255, 255, 255, 0.85);
+            border-right: 1px dashed rgba(255, 255, 255, 0.85);
+          }
+        }
+      }
+      &.cell__noSelect:not(.disabled) {
+        background: #efefef;
+        transition: all 0.3s ease-in-out;
+        color: rgba(255, 255, 255, 0.3);
+        cursor: not-allowed;
+      }
+      &:not(.disabled):not(.cell__hover) {
+        color: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease-in-out;
+      }
+      &:not(.disabled):not(.cell__selected):not(.cell__inview) {
+        color: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease-in-out;
+        .cell-inner:hover {
+          color: #141313;
+          background: #efefef;
+        }
+      }
+      &:not(.disabled).cell__inview {
+        .cell-inner:hover {
+          color: #141313;
+          background: #efefef;
+        }
+      }
+      .cell-inner {
+        position: relative;
+        z-index: 2;
+        min-width: 28px;
+        line-height: 28px;
+        height: 28px;
+        display: inline-block;
+        transition: all 0.3s ease-in-out;
+        border-radius: 2px;
+      }
+    }
+    .disabled {
+      color: rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease-in-out;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.component-datepicker-range {
+}

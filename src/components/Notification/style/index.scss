@@ -1,0 +1,45 @@
+.component-notification {
+  // margin: 18px 20px 0 20px;
+  position: fixed;
+  top: 64px;
+  right: 24px;
+  width: 400px;
+  padding: 20px;
+  background: rgba(36, 38, 44, 1);
+  border-radius: 8px;
+  box-shadow: 0 8px 8px 0 rgba(22, 22, 22, 0.3);
+  .title {
+    img:first-child {
+      margin-right: 8px;
+      width: 24px;
+      height: 24px;
+    }
+    h4 {
+      flex: 1;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 100%;
+      color: #ffffff;
+    }
+    .close {
+      width: 18px;
+      height: 18px;
+      user-select: none;
+      cursor: pointer;
+    }
+  }
+  .description {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 150%;
+    margin-inline-start: 36px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+#global-bedrock {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 0;
+  z-index: 999999;
+}

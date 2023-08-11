@@ -1,0 +1,41 @@
+.component-message {
+  margin: 18px auto 0 auto;
+  padding: 12px 16px;
+  width: max-content;
+  max-width: 60vw;
+  background: #24262c;
+  border-radius: 6px;
+  img,
+  svg {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+  }
+  span {
+    font-size: 14px;
+    line-height: 22px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  // .success {
+  //   color: #79d900;
+  // }
+  // .warning {
+  //   color: #fed702;
+  // }
+  // .info {
+  //   color: #177ddc;
+  // }
+  // .error {
+  //   color: #ff007a;
+  // }
+  // .loading {
+  //   color: #dddddd;
+  // }
+}
+
+#global-bedrock {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 0;
+  z-index: 999999;
+}

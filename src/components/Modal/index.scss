@@ -1,0 +1,94 @@
+.component-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999998;
+  backdrop-filter: blur(12px);
+
+  >.inside {
+    margin: 0 auto;
+    width: max-content;
+    max-height: 80vh;
+    background: #fff;
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+
+    overflow: hidden;
+    color: #000;
+  }
+
+  .header {
+    padding: 0 16px 0 24px;
+    height: 56px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    .title {
+      font-weight: 700;
+
+
+      font-size: 16px;
+      font-family: Poppins-Bold, Poppins;
+      font-weight: bold;
+      color: #313146;
+      line-height: 25px;
+    }
+
+    .close {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+
+
+
+  .middle-header {
+    display: flex;
+    justify-content: center;
+    position: relative;
+
+    .close {
+      position: absolute;
+      right: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .content {
+    flex: 1;
+  }
+
+  .footer {
+    gap: 8px;
+    padding: 24px;
+
+    button {
+      flex: 1;
+      height: 40px;
+    }
+
+    span {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .solid {
+      border: 1px solid #efefef;
+      border-radius: 6px;
+    }
+  }
+}

@@ -1,0 +1,42 @@
+.component-pagination {
+  gap: 8px;
+  margin-top: 16px;
+  li {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    user-select: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+    justify-content: center !important;
+    border: 1px solid rgba(239, 239, 239, 1);
+    border-radius: 6px;
+    svg {
+      fill: rgba(177, 178, 203, 1);
+      transition: all 0.3s ease-in;
+    }
+    &.selected {
+      background: rgba(0, 218, 203, 1);
+    }
+    &:not(.disabled, .omit):hover {
+      background: rgba(0, 218, 203, 1);
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+  .item {
+    font-size: 14px;
+    color: rgba(177, 178, 203, 1);
+    transition: all 0.3s ease-in;
+  }
+  .selected {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(0, 218, 203, 1);
+  }
+  .disabled {
+    cursor: not-allowed;
+    svg {
+      fill: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

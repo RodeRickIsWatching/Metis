@@ -1,0 +1,56 @@
+.component-switch {
+  display: flex;
+  /* 清除默认样式 */
+  input {
+    display: none;
+    opacity: 0;
+  }
+  /* global */
+  label {
+    padding: 3px 4px;
+    width: 44px;
+    height: 22px;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    &::after {
+      content: '';
+      display: block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(239, 239, 239, 1);
+      outline: 1px solid transparent;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+  &:not(.checked) {
+    label {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+  &:not(.checked, .disabled):hover {
+    label::after {
+      outline: 1px solid rgba(41, 193, 139, 1);
+    }
+  }
+  /* base */
+  &.checked {
+    label {
+      background: rgba(41, 193, 139, 1);
+      &::after {
+        transform: translateX(125%);
+      }
+    }
+  }
+  &.disabled {
+    cursor: not-allowed;
+    label {
+      background: rgba(0, 0, 0, 0.7);
+      cursor: not-allowed;
+      &::after {
+        background: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+}

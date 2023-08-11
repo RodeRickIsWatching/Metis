@@ -1,0 +1,118 @@
+.component-slider {
+  position: relative;
+  margin: 26px 8px 42px 8px;
+  touch-action: none;
+  // &:hover {
+  //   .tooltip {
+  //     display: block;
+  //   }
+  // }
+  .rail {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    .track {
+      position: relative;
+      width: 100%;
+      height: inherit;
+      background: linear-gradient(90deg, #29c18b 1.32%, #fd4772 100%);
+      border-radius: 8px;
+      z-index: 3;
+    }
+    // &.track-anime {
+    //   transition: all 0.3s ease-in-out;
+    // }
+  }
+  .handle {
+    position: absolute;
+    top: -3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #adacac;
+    border: 3px solid #e8e7e7;
+    touch-action: pan-x;
+    transform: translateX(-50%);
+    user-select: none;
+    cursor: grab;
+    transition: border-color 0.3s ease-in-out, outline 0.3s ease-in-out;
+    z-index: 4;
+    &:active + .tooltip {
+      display: block;
+    }
+  }
+  .dragging {
+    outline: 2px solid #adacac;
+  }
+  .dragging ~ .tooltip {
+    display: block;
+  }
+  .mark {
+    position: relative;
+    top: -9px;
+    z-index: 2;
+    li {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+  }
+  .mark-dot {
+    margin: 0 auto;
+    width: 4px;
+    height: 10px;
+    background: #7e7d7d;
+    border-radius: 4px;
+    pointer-events: none;
+    transition: all 0.3s ease-in-out;
+    // &.active {
+    //   border: 2px solid #fed702;
+    // }
+    // &.default {
+    //   border: 2px solid #2f2f2f;
+    // }
+  }
+  .mark-value {
+    margin-top: 6px;
+    font-size: 10px;
+    line-height: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .tooltip {
+    display: none;
+    position: absolute;
+    top: -30px;
+    // left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 22px;
+    background: #24262c;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+    z-index: 10;
+  }
+  // .disabled {
+  //   background-color: #e9e9e9;
+  //   .track {
+  //     background-color: #ccc;
+  //   }
+  //   .handle,
+  //   .dot {
+  //     background-color: #ffffff;
+  //     border-color: #ccc;
+  //     box-shadow: none;
+  //     cursor: not-allowed;
+  //   }
+  //   .mark-text,
+  //   .dot {
+  //     user-select: none;
+  //   }
+  // }
+}

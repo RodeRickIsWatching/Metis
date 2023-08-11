@@ -1,0 +1,82 @@
+.component-tabs {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  &::-webkit-scrollbar {
+    height: 0;
+    background-color: transparent;
+  }
+  &.primary {
+    border-top: 1px solid transparent;
+    &.underlined {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    ul {
+      gap: 16px;
+    }
+    li {
+      width: max-content;
+      height: 46px;
+      white-space: nowrap;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 46px;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        color: #efefef;
+      }
+    }
+    .active {
+      color: #efefef;
+    }
+    .default {
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .bar {
+      position: absolute;
+      bottom: 0;
+      height: 2px;
+      background: #efefef;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+  &.second {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    height: 40px;
+    overflow: hidden;
+    li {
+      flex: 1;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+      line-height: 40px;
+      color: #ffffff;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      z-index: 1;
+      &:not(.active):hover {
+        filter: brightness(0.6);
+      }
+    }
+    .active {
+      color: #141313;
+    }
+    .default {
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .bar {
+      position: absolute;
+      top: 0;
+      height: 40px;
+      background: #efefef;
+      box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s ease-in-out;
+    }
+  }
+}

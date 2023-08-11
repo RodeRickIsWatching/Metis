@@ -1,0 +1,40 @@
+.component-tooltip {
+  position: fixed;
+  z-index: 999999;
+  .tooltip {
+    position: relative;
+    .content {
+      padding: 12px;
+      // max-width: 300px;
+      background: #24262c;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 16px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+  }
+  .tooltip-top {
+    padding-bottom: 16px;
+    filter: drop-shadow(0px 6px 16px rgba(0, 0, 0, 0.08));
+    .arrow {
+      bottom: 8px;
+      border-width: 8px 9px 0 9px;
+      border-color: #24262c transparent transparent transparent;
+    }
+  }
+  .tooltip-bottom {
+    padding-top: 16px;
+    filter: drop-shadow(0px -6px 16px rgba(0, 0, 0, 0.08));
+    .arrow {
+      top: 8px;
+      border-width: 0 9px 8px 9px;
+      border-color: transparent transparent #24262c transparent;
+    }
+  }
+}
