@@ -21,26 +21,27 @@ const CopyAddress = ({
   addr,
   className,
   reverse,
+  hide = true
 }: {
   addr?: string;
   className?: any;
   reverse?: boolean;
+  hide?: boolean;
 }) => {
   const { address } = useAuth(true);
 
   return (
     <Container
-      className="flex flex-row items-center gap-8"
+      className="flex flex-row items-center gap-8 pointer"
       style={{
         flexDirection: reverse ? "row-reverse" : "row",
       }}
     >
       <span
-        className={classNames("copy-content", {
-          className,
-        })}
+       className={`copy-content ${className}`}
       >
-        {filterHideText(addr || (address as string), 6, 4)}
+        
+        {hide ? filterHideText(addr || (address as string), 6, 4) : addr}
       </span>
 
       <img src={getImageUrl("@/assets/images/_global/ic_copy.svg")} />

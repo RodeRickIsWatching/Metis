@@ -5,7 +5,7 @@ import useLock from "@/hooks/useLock";
 import useSequencerInfo from "@/hooks/useSequencerInfo";
 import useUpdate from "@/hooks/useUpdate";
 import { catchError, getImageUrl } from "@/utils/tools";
-import { useBoolean } from "ahooks";
+import { useBoolean, useMount } from "ahooks";
 import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 
@@ -82,11 +82,14 @@ const ClaimModal = ({
 
   const [claimLoading, { setTrue, setFalse }] = useBoolean(false);
 
+  const [defaultInputed, setDefaultInputed] = useState(false)
+
   useEffect(() => {
-    if (address && !claimAmount) {
+    if (address && !claimAmount && !defaultInputed) {
+      setDefaultInputed(true)
       setClaimAmount(address);
     }
-  }, [address, claimAmount]);
+  }, [address, claimAmount, defaultInputed]);
 
   const handleClaim = async () => {
     try {
@@ -130,7 +133,7 @@ const ClaimModal = ({
             // defaultValue={address}
             onChange={setClaimAmount}
             value={claimAmount}
-            max={sequencerInfo?.rewardReadable}
+            // max={sequencerInfo?.rewardReadable}
             solid
             className="flex-1"
             suffix={

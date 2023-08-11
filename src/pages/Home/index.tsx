@@ -5,6 +5,7 @@ import { getImageUrl } from "@/utils/tools";
 import { Button, Tooltip } from "@/components";
 import Faq from "react-faq-component";
 import { useNavigate } from "react-router-dom";
+import useUpdate from "@/hooks/useUpdate";
 
 const ColoredLabel = styled.div<{ color?: string }>`
   width: 226px;
@@ -666,6 +667,8 @@ export function Component() {
     navigate('/sequencers')
   }
 
+  const { sequencerTotalInfo } = useUpdate()
+
   return (
     <Container className="pages-landing flex flex-col ">
       <div className="top-banner">
@@ -680,7 +683,7 @@ export function Component() {
 
           <div className="flex flex-row items-center gap-48">
             <div className="opacity-card flex flex-col items-center gap-12">
-              <span className="f-28">125.12K </span>
+              <span className="f-28">{sequencerTotalInfo?.currentSequencerSetTotalLockReadable || '-'} </span>
 
               <div className="flex items-center gap-8">
                 <span className="f-16">Total METIS locked</span>

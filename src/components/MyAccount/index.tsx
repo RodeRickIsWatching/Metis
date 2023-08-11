@@ -166,7 +166,7 @@ const MyAccount = ({
 
             <div className="flex flex-row items-cneter gap-20">
               {/* copy */}
-              <CopyAddress addr="Copy Address" className={"f-12"} reverse/>
+              <CopyAddress hide={false} addr="Copy Address" className={"f-12"} reverse/>
 
               {/* Etherscan */}
               <div className="copy flex flex-row items-center gap-6 pointer">
