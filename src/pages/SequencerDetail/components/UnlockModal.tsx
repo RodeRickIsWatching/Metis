@@ -1,4 +1,4 @@
-import { Button, Input, Modal } from "@/components";
+import { Button, Input, Modal, message } from "@/components";
 import CopyAddress from "@/components/CopyAddress";
 import Loading from "@/components/_global/Loading";
 import useBalance from "@/hooks/useBalance";
@@ -82,7 +82,7 @@ const UnlockModal = ({
   const { balance } = useBalance();
 
   const validUnlock = useMemo(
-    () => !!sequencerInfo?.unlockClaimTime,
+    () => !!(+sequencerInfo?.unlockClaimTime),
     [sequencerInfo?.unlockClaimTime]
   );
 
@@ -119,9 +119,10 @@ const UnlockModal = ({
         withdrawRewardToL2: false,
       });
       setFalse();
+      message.success("Success")
     } catch (e) {
       console.log(e);
-      catchError(e);
+      message.error(catchError(e))
     }
   };
 

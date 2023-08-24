@@ -105,6 +105,8 @@ const useLock = () => {
         signer
       );
 
+      console.log('sequencerId: ', sequencerId, "withdrawRewardToL2: ", withdrawRewardToL2)
+
       const tx = await contract?.unlock(sequencerId, withdrawRewardToL2);
       const result = await tx?.wait();
       return result

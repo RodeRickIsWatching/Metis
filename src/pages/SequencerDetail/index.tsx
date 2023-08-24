@@ -14,6 +14,8 @@ import ClaimModal from "./components/ClaimModal";
 import useSequencerInfo from "@/hooks/useSequencerInfo";
 import { ethers } from "ethers";
 import useUpdate from "@/hooks/useUpdate";
+import Loading from "@/components/_global/Loading";
+import { useCountDown, useMount } from "ahooks";
 
 const testMode = true;
 
@@ -415,8 +417,6 @@ export function Component() {
   const txTotal = React.useMemo(() => txCol.length, []);
   const txPageSize = 1;
 
-  const ifInUnlockProgress = React.useMemo(() => true, []);
-
   const [increaseVisible, setIncreaseVisible] = React.useState(false);
   const [detailsVisible, setDetailsVisible] = React.useState(false);
   const [unlockVisible, setUnlockVisible] = React.useState(false);
@@ -425,10 +425,34 @@ export function Component() {
 
   const { sequencerId } = useUpdate();
 
-  const { run, sequencerInfo } = useSequencerInfo();
-  React.useEffect(() => {
+  const { run, cancel, data: sequencerInfo } = useSequencerInfo();
+  console.log("sequencerInfo", sequencerInfo);
+
+  const ifInUnlockProgress = sequencerInfo?.ifInUnlockProgress;
+
+  const unlockTo = React.useMemo(
+    () =>
+      dayjs
+        .unix(sequencerInfo?.unlockClaimTime || 0)
+        .format("YYYY-MM-DD HH:mm:ss"),
+    [sequencerInfo?.unlockClaimTime]
+  );
+
+  const [countdown, formattedRes] = useCountDown({
+    targetDate: unlockTo,
+  });
+
+  const { days } = formattedRes;
+
+  useMount(() => {
+    if (!id) return;
+    cancel();
+    console.log("id", id);
     run({ sequencerId: id });
-  }, [id]);
+    return () => {
+      cancel();
+    };
+  });
 
   const lockedup = React.useMemo(
     () =>
@@ -449,15 +473,25 @@ export function Component() {
         <div
           className="status-label f-14-bold flex items-center justify-center gap-8 mb-16"
           style={{
-            background: "rgba(229, 251, 249, 1)",
-            color: "rgba(0, 210, 193, 1)",
+            background: sequencerInfo?.ifActive
+              ? "rgba(229, 251, 249, 1)"
+              : "rgba(210, 212, 227, 1)",
+            color: sequencerInfo?.ifActive
+              ? "rgba(0, 210, 193, 1)"
+              : "rgba(49, 49, 70, 1)",
           }}
         >
-          <img
-            style={{ width: "20px", height: "20px" }}
-            src={getImageUrl("@/assets/images/_global/ic_Etherscan.svg")}
-          />
-          <span>Health</span>
+          {!sequencerInfo ? (
+            <Loading />
+          ) : (
+            <>
+              <img
+                style={{ width: "20px", height: "20px" }}
+                src={getImageUrl("@/assets/images/_global/ic_Etherscan.svg")}
+              />
+              <span>{sequencerInfo?.ifActive ? "Health" : "Exiting"}</span>
+            </>
+          )}
         </div>
         <div className="mb-12 f-14">Sequencer description</div>
         <div className="mb-12 f-14">www.Sequencer.org</div>
@@ -534,7 +568,7 @@ export function Component() {
                 <div className="flex flex-col gap-2">
                   <span className="f-14-bold">Unlocking in Progress...</span>
                   <span className="f-12">
-                    *Remaining time to unlock for 12 days
+                    *Remaining time to unlock for {days} days
                   </span>
                 </div>
               </div>

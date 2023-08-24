@@ -1,4 +1,4 @@
-import { Button, Input, Modal } from "@/components";
+import { Button, Input, Modal, message } from "@/components";
 import CopyAddress from "@/components/CopyAddress";
 import Loading from "@/components/_global/Loading";
 import useLock from "@/hooks/useLock";
@@ -90,7 +90,7 @@ const WithdrawModal = ({
   const [withdrawLoading, { setTrue, setFalse }] = useBoolean(false);
 
   const handleWithdraw = async () => {
-    if(!!countdown) return;
+    if (!!countdown) return;
     try {
       setTrue();
       await unlockClaim({
@@ -99,11 +99,9 @@ const WithdrawModal = ({
       });
       setFalse();
     } catch (e) {
-      console.log('e', e)
-      catchError(e);
+      message.error(catchError(e));
     }
   };
-  console.log("sequencerInfo", sequencerInfo);
 
   return (
     <Container
@@ -120,13 +118,13 @@ const WithdrawModal = ({
           style={{ padding: "40px" }}
         >
           <span className="f-14-bold">{lockedup} metis</span>
-          {sequencerInfo?.unlockClaimTime && (
+          {+sequencerInfo?.unlockClaimTime ? (
             <span className="">Unlock Until: {unlockTo}</span>
-          )}
+          ) : null}
         </div>
         <div className="flex flex-row items-center gap-20">
           <Button
-            disabled={!!countdown}
+            disabled={!!countdown || !+sequencerInfo?.unlockClaimTime || !+lockedup}
             style={{ padding: "14px 50px" }}
             type="metis"
             className="flex-1"

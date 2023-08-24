@@ -480,7 +480,7 @@ export function Component() {
 
   const [stakeAmount, setStakeAmount] = React.useState("");
 
-  const { lockFor, relock, withdrawRewards, unlock, unlockClaim } = useLock();
+  const { lockFor } = useLock();
 
   const { allowance, approve } = useAllowance();
   const [

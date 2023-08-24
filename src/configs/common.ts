@@ -38,4 +38,4 @@ export const depositToken = { address: VITE_APP_METIS_TOKEN, abi: erc20ABI };
 
 export const basicChainId = isProd ? mainnet.id : goerli.id
 
-export const pubKey = '0xceb8126fbf7b1e0ff1da5546316fd7f9d1e9d09c8cabef3e8a5502a9f024c151fa376b2949beed2482686e09263d13ef8d2192aad9d8f4e24b0776be5b5faa81'
+export const pubKey = '0xaa507c6f682049403a8408d761b60a6444c3a5c2dc54fd589bc5dc331f42065115e7517f8481472a14fdba79e586a18fb488cb36c6475a26b2f6f430b88d09b1'

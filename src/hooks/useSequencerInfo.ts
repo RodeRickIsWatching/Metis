@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { recoilSequencerInfo } from "@/models";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { useEffect, useState } from "react";
 
 const useSequencerInfo = () => {
   const { connector } = useAuth(true);
@@ -14,6 +15,7 @@ const useSequencerInfo = () => {
   const intervalUpdate = async (
     props: any = {
       sequencerId: undefined,
+      self: false,
     }
   ) => {
     const {
@@ -70,15 +72,37 @@ const useSequencerInfo = () => {
     const reward = result?.sequencerReward.toString();
     const rewardReadable = ethers.utils.formatEther(reward || "0").toString();
 
-    setSequencerInfo({
+    console.log("unlockClaimTime", unlockClaimTime);
+
+    const ifActive =
+      BigNumber(status).eq(1) &&
+      BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
+    const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
+
+    const finalRes = {
       ...result,
       status,
       unlockClaimTime,
       reward,
       rewardReadable,
-    });
-    return result;
+      ifActive,
+      ifInUnlockProgress,
+    };
+
+    if (self) {
+      setSequencerInfo(finalRes);
+    }
+
+    console.log('finalRes', finalRes)
+
+    return finalRes;
   };
+
+  useEffect(() => {
+    if (sequencerInfo) {
+      console.log("sequencerInfo", sequencerInfo);
+    }
+  }, [sequencerInfo]);
 
   const props = useRequest(intervalUpdate, {
     manual: true,

@@ -20,7 +20,7 @@ function BasicLayout() {
   }, [address]);
 
   React.useEffect(() => {
-    sequencerInfoRun({ sequencerId: sequencerId });
+    sequencerInfoRun({ sequencerId: sequencerId, self: true });
   }, [sequencerId]);
 
   return (

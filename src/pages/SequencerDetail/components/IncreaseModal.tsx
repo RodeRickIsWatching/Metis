@@ -115,16 +115,24 @@ const IncreaseModal = ({
       }
 
       setApproveLoadingTrue();
-      await relock({
+
+      console.log("---relock---", {
         // address: address as Address,
         amount: ethers.utils.parseEther(relockAmount || "0").toString(),
         // pubKey: pubKey as string,
         lockRewards: sequencerInfo?.reward,
         sequencerId,
       });
+      await relock({
+        // address: address as Address,
+        amount: ethers.utils.parseEther(relockAmount || "0").toString(),
+        // pubKey: pubKey as string,
+        lockRewards: false,
+        sequencerId,
+      });
       setApproveLoadingFalse();
     } catch (e) {
-      console.log(e)
+      console.log(e);
       catchError(e);
     }
   };
@@ -157,6 +165,7 @@ const IncreaseModal = ({
             }
           />
           <Button
+            disabled={+sequencerInfo?.unlockClaimTime}
             onClick={handleRelock}
             style={{ padding: "14px 50px" }}
             type="metis"

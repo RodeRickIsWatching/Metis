@@ -82,11 +82,11 @@ const ClaimModal = ({
 
   const [claimLoading, { setTrue, setFalse }] = useBoolean(false);
 
-  const [defaultInputed, setDefaultInputed] = useState(false)
+  const [defaultInputed, setDefaultInputed] = useState(false);
 
   useEffect(() => {
     if (address && !claimAmount && !defaultInputed) {
-      setDefaultInputed(true)
+      setDefaultInputed(true);
       setClaimAmount(address);
     }
   }, [address, claimAmount, defaultInputed]);
@@ -99,7 +99,7 @@ const ClaimModal = ({
         withdrawToL2: false,
       });
       setFalse();
-      message.success("Success")
+      message.success("Success");
     } catch (e) {
       catchError(e);
     }
@@ -152,6 +152,7 @@ const ClaimModal = ({
           Andromeda Network.
         </div>
         <Button
+          disabled={sequencerInfo?.reward}
           style={{ padding: "14px 50px" }}
           type="metis"
           onClick={handleClaim}
