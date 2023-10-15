@@ -63,7 +63,9 @@ const useSequencerInfo = () => {
       //   }
 
       //   console.log("temo", temp);
-      result[p[index].functionName] = i?._isBigNumber ? i.toString() : i;
+
+      const j = i?.result || 0
+      result[p[index].functionName] = j?.toString();
     });
 
     const status = result?.sequencers?.status;

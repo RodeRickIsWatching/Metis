@@ -2,27 +2,34 @@ import { MAX_ALLOWANCE, depositToken, lockContract } from "@/configs/common";
 import { recoilAllowance } from "@/models";
 import { useRecoilState } from "recoil";
 import useAuth from "./useAuth";
-import { Address } from "wagmi";
-import { ethers } from "ethers";
 import { catchError } from "@/utils/tools";
+import { calTxData, sendTx, txAwait } from "@/utils/tx";
 
 const useAllowance = () => {
   const { connector, address } = useAuth(true);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
   const approve = async () => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        depositToken?.address as Address,
-        depositToken?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: depositToken.abi,
+        functionName: "approve",
+        args: [lockContract?.address, MAX_ALLOWANCE],
+      });
 
-      const tx = await contract?.approve(lockContract?.address, MAX_ALLOWANCE);
-      const result = await tx?.wait();
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
 
-      return result
+      const hash = await sendTx({
+        walletClient: signer,
+        to: depositToken.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
       catchError(e);
     }

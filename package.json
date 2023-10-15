@@ -53,7 +53,8 @@
     "recharts": "^2.7.2",
     "recoil": "^0.7.7",
     "styled-components": "^6.0.3",
-    "wagmi": "^0.12.13"
+    "viem": "^1.16.5",
+    "wagmi": "^1.4.3"
   },
   "devDependencies": {
     "@applint/spec": "^1.2.3",

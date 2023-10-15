@@ -1,13 +1,12 @@
-import { InjectedConnector } from "@wagmi/core";
 import { publicProvider } from "@wagmi/core/providers/public";
-import {
-  WagmiConfig,
-  configureChains,
-  createClient,
-  goerli,
-  mainnet,
-} from "wagmi";
+import { InjectedConnector } from '@wagmi/core';
+import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi';
+import { createPublicClient, http } from 'viem';
+
+
+
 import { isProd } from "./common";
+import { goerli } from "viem/chains";
 
 export const chainId = isProd ? [mainnet] : [goerli];
 
@@ -23,18 +22,28 @@ export const injectedConnector = new InjectedConnector({
   // },
 });
 
-const { provider, webSocketProvider } = configureChains(
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
   [...chainId],
   [publicProvider()]
 );
 
-const client = createClient({
-  autoConnect: false,
-  // connectors: [magicAuthConnector, particleConnector as any, injectedConnector, web3AuthConnector],
+const config = createConfig({
+  autoConnect: true,
   connectors: [injectedConnector],
-  provider,
+  publicClient,
   // provider: getDefaultProvider(),
-  webSocketProvider,
+  webSocketPublicClient,
 });
 
-export { client, WagmiConfig as WagmiProvider };
+// const transport = webSocket(wssUrl, {
+//   timeout: 60_000,
+// });
+
+export const txPublicClient = createPublicClient({
+  chain: chainId?.[0],
+  // transport,
+  transport: http(),
+});
+
+export { config, WagmiConfig as WagmiProvider, publicClient };

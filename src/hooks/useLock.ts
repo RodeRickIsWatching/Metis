@@ -1,8 +1,7 @@
-import { ethers } from "ethers";
 import useAuth from "./useAuth";
-import { Address } from "wagmi";
 import { lockContract } from "@/configs/common";
 import { catchError } from "@/utils/tools";
+import { calTxData, sendTx, txAwait } from "@/utils/tx";
 
 const useLock = () => {
   const { connector, address } = useAuth(true);
@@ -17,21 +16,28 @@ const useLock = () => {
     pubKey: string;
   }) => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        lockContract?.address as Address,
-        lockContract?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: lockContract.abi,
+        functionName: "lockFor",
+        args: [address, amount, pubKey],
+      });
 
-      console.log("---lockFor---", address, amount, pubKey);
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
 
-      const tx = await contract?.lockFor(address, amount, pubKey);
-      const result = await tx?.wait();
-      return result;
+      const hash = await sendTx({
+        walletClient: signer,
+        to: lockContract.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
-      throw e
+      throw e;
       console.log(e);
       catchError(e);
     }
@@ -47,19 +53,28 @@ const useLock = () => {
     lockRewards: boolean;
   }) => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        lockContract?.address as Address,
-        lockContract?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: lockContract.abi,
+        functionName: "relock",
+        args: [sequencerId, amount, lockRewards],
+      });
 
-      const tx = await contract?.relock(sequencerId, amount, lockRewards);
-      const result = await tx?.wait();
-      return result
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
+
+      const hash = await sendTx({
+        walletClient: signer,
+        to: lockContract.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
-      throw e
+      throw e;
       catchError(e);
     }
   };
@@ -72,19 +87,28 @@ const useLock = () => {
     withdrawToL2: boolean;
   }) => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        lockContract?.address as Address,
-        lockContract?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: lockContract.abi,
+        functionName: "withdrawRewards",
+        args: [sequencerId, withdrawToL2],
+      });
 
-      const tx = await contract?.withdrawRewards(sequencerId, withdrawToL2);
-      const result = await tx?.wait();
-      return result
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
+
+      const hash = await sendTx({
+        walletClient: signer,
+        to: lockContract.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
-      throw e
+      throw e;
       catchError(e);
     }
   };
@@ -97,21 +121,28 @@ const useLock = () => {
     withdrawRewardToL2: boolean;
   }) => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        lockContract?.address as Address,
-        lockContract?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: lockContract.abi,
+        functionName: "unlock",
+        args: [sequencerId, withdrawRewardToL2],
+      });
 
-      console.log('sequencerId: ', sequencerId, "withdrawRewardToL2: ", withdrawRewardToL2)
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
 
-      const tx = await contract?.unlock(sequencerId, withdrawRewardToL2);
-      const result = await tx?.wait();
-      return result
+      const hash = await sendTx({
+        walletClient: signer,
+        to: lockContract.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
-      throw e
+      throw e;
       catchError(e);
     }
   };
@@ -124,19 +155,28 @@ const useLock = () => {
     withdrawRewardToL2: boolean;
   }) => {
     try {
-      const signer = await connector?.getSigner();
-      // erc20
-      const contract = new ethers.Contract(
-        lockContract?.address as Address,
-        lockContract?.abi,
-        signer
-      );
+      const signer = await connector?.getWalletClient();
+      const txData = calTxData({
+        abi: lockContract.abi,
+        functionName: "unlockClaim",
+        args: [sequencerId, withdrawRewardToL2],
+      });
 
-      const tx = await contract?.unlockClaim(sequencerId, withdrawRewardToL2);
-      const result = await tx?.wait();
-      return result;
+      if (!signer) {
+        throw new Error("Invalid Signer");
+      }
+
+      const hash = await sendTx({
+        walletClient: signer,
+        to: lockContract.address,
+        value: "0x0",
+        data: txData,
+      });
+      const tx = await txAwait(hash);
+
+      return tx;
     } catch (e) {
-      throw e
+      throw e;
       catchError(e);
     }
   };

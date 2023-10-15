@@ -106,8 +106,9 @@ const useUpdate = () => {
     });
 
     const result: any = {};
+
     res.forEach((i: any, index) => {
-      result[p[index].functionName] = i?._isBigNumber ? i.toString() : i;
+      result[p[index].functionName] = (i?.result || 0)?.toString();
     });
 
     if (result?.getSequencerId) {

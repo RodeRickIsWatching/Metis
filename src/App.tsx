@@ -1,7 +1,7 @@
 // import * as React from 'react';
 import Router from '@/routes';
 import { RecoilRoot } from 'recoil';
-import { client, WagmiProvider } from '@/configs/wallet';
+import { config, WagmiProvider } from '@/configs/wallet';
 // import { GlobalScrollbar } from 'mac-scrollbar';
 // import 'mac-scrollbar/dist/mac-scrollbar.css';
 import '@/assets/styles/index.scss';
@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="_root">
       <RecoilRoot>
-        <WagmiProvider client={client}>
+        <WagmiProvider config={config}>
           <Router />
         </WagmiProvider>
       </RecoilRoot>

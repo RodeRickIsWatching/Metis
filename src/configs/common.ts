@@ -1,6 +1,7 @@
 import { getImageUrl } from "@/utils/tools";
 import LOCK_ABI from "@/configs/abi/lock.json";
-import { erc20ABI, goerli, mainnet } from "wagmi";
+import { erc20ABI, mainnet } from "wagmi";
+import { goerli } from "viem/chains";
 
 export const MAX_ALLOWANCE =
   "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
