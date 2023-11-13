@@ -1,42 +1,37 @@
-import useAuth from "./useAuth";
-import { lockContract } from "@/configs/common";
-import { catchError } from "@/utils/tools";
-import { calTxData, sendTx, txAwait } from "@/utils/tx";
+import { message } from '@/components';
+import useAuth from './useAuth';
+import { lockContract } from '@/configs/common';
+import { catchError } from '@/utils/tools';
+import { calTxData, sendTx, txAwait } from '@/utils/tx';
 
 const useLock = () => {
   const { connector, address } = useAuth(true);
 
-  const lockFor = async ({
-    address,
-    amount,
-    pubKey,
-  }: {
-    address: string;
-    amount: string;
-    pubKey: string;
-  }) => {
+  const lockFor = async ({ address, amount, pubKey }: { address: string; amount: string; pubKey: string }) => {
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
-        functionName: "lockFor",
+        functionName: 'lockFor',
         args: [address, amount, pubKey],
       });
 
       if (!signer) {
-        throw new Error("Invalid Signer");
+        throw new Error('Invalid Signer');
       }
 
       const hash = await sendTx({
         walletClient: signer,
         to: lockContract.address,
-        value: "0x0",
+        value: '0x0',
         data: txData,
       });
       const tx = await txAwait(hash);
+      message.success('Success')
 
       return tx;
     } catch (e) {
+      message.error('Fail')
       throw e;
       console.log(e);
       catchError(e);
@@ -56,92 +51,86 @@ const useLock = () => {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
-        functionName: "relock",
+        functionName: 'relock',
         args: [sequencerId, amount, lockRewards],
       });
 
       if (!signer) {
-        throw new Error("Invalid Signer");
+        throw new Error('Invalid Signer');
       }
 
       const hash = await sendTx({
         walletClient: signer,
         to: lockContract.address,
-        value: "0x0",
+        value: '0x0',
         data: txData,
       });
       const tx = await txAwait(hash);
+      message.success('Success')
 
       return tx;
     } catch (e) {
+      message.error('Fail')
       throw e;
       catchError(e);
     }
   };
 
-  const withdrawRewards = async ({
-    sequencerId,
-    withdrawToL2,
-  }: {
-    sequencerId: string;
-    withdrawToL2: boolean;
-  }) => {
+  const withdrawRewards = async ({ sequencerId, withdrawToL2 }: { sequencerId: string; withdrawToL2: boolean }) => {
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
-        functionName: "withdrawRewards",
+        functionName: 'withdrawRewards',
         args: [sequencerId, withdrawToL2],
       });
 
       if (!signer) {
-        throw new Error("Invalid Signer");
+        throw new Error('Invalid Signer');
       }
 
       const hash = await sendTx({
         walletClient: signer,
         to: lockContract.address,
-        value: "0x0",
+        value: '0x0',
         data: txData,
       });
       const tx = await txAwait(hash);
+      message.success('Success')
 
       return tx;
     } catch (e) {
+      message.error('Fail')
       throw e;
       catchError(e);
     }
   };
 
-  const unlock = async ({
-    sequencerId,
-    withdrawRewardToL2,
-  }: {
-    sequencerId: string;
-    withdrawRewardToL2: boolean;
-  }) => {
+  const unlock = async ({ sequencerId, withdrawRewardToL2 }: { sequencerId: string; withdrawRewardToL2: boolean }) => {
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
-        functionName: "unlock",
+        functionName: 'unlock',
         args: [sequencerId, withdrawRewardToL2],
       });
 
       if (!signer) {
-        throw new Error("Invalid Signer");
+        throw new Error('Invalid Signer');
       }
 
       const hash = await sendTx({
         walletClient: signer,
         to: lockContract.address,
-        value: "0x0",
+        value: '0x0',
         data: txData,
       });
       const tx = await txAwait(hash);
+      message.success('Success')
 
       return tx;
     } catch (e) {
+      message.error('Fail')
       throw e;
       catchError(e);
     }
@@ -158,24 +147,26 @@ const useLock = () => {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
-        functionName: "unlockClaim",
+        functionName: 'unlockClaim',
         args: [sequencerId, withdrawRewardToL2],
       });
 
       if (!signer) {
-        throw new Error("Invalid Signer");
+        throw new Error('Invalid Signer');
       }
 
       const hash = await sendTx({
         walletClient: signer,
         to: lockContract.address,
-        value: "0x0",
+        value: '0x0',
         data: txData,
       });
       const tx = await txAwait(hash);
+      message.success('Success')
 
       return tx;
     } catch (e) {
+      message.error('Fail')
       throw e;
       catchError(e);
     }
