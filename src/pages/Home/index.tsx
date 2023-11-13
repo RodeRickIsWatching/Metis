@@ -554,7 +554,7 @@ export function Component() {
             </div>
           </div> */}
         </div>
-        <div className="mb-35 h-1 w-full bg-color-CDCDCD" />
+        <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
         <div className="flex flex-row items-center gap-20">
           {sequencerCards?.map((i, index) => (
             <SequencerItemContainer

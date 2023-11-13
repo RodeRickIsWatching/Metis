@@ -21,6 +21,7 @@ import BigNumber from 'bignumber.js';
 import useAuth from '@/hooks/useAuth';
 import useAllowance from '@/hooks/useAllowance';
 import useLock from '@/hooks/useLock';
+import { isDev } from '@/configs/common';
 
 const testMode = true;
 
@@ -493,7 +494,7 @@ export function Component() {
             <div className="flex flex-row items-center justify-between">
               <div className="fz-28 fw-500 ">Mining Overview</div>
               {
-                ifSelf ? <div className="flex flex-row items-center gap-8">
+                isDev ? <div className="flex flex-row items-center gap-8">
                   <Button
                     type="solid"
                     onClick={() => {

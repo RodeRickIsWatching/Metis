@@ -15,7 +15,7 @@ const SequencerItemContainer = ({ onClick, avatar, title, totalLockUp, uptime, s
     <SequencerStatusContainer
       onClick={onClick}
       style={{ boxShadow: '0px 10px 30px 0px rgba(0, 0, 0, 0.10)' }}
-      className="radius-30 w-340 pt-37 pl-30 pr-30 pb-20 flex flex-col gap-42 items-center"
+      className="pointer radius-30 w-340 pt-37 pl-30 pr-30 pb-20 flex flex-col gap-42 items-center"
     >
       <div className="flex flex-col gap-5">
         <div className={'avatar s-90 radiusp-50'}>

@@ -15,7 +15,7 @@ import useLock from '@/hooks/useLock';
 import useAuth from '@/hooks/useAuth';
 import { Address, useSignMessage } from 'wagmi';
 import { hashMessage, recoverPublicKey } from 'viem';
-import { defaultPubKeyList } from '@/configs/common';
+import { defaultPubKeyList, isDev } from '@/configs/common';
 
 
 const Container = styled.section`
@@ -427,7 +427,7 @@ export function Component() {
                       solidLight
                       className="flex-3  fz-22 fw-400 color-000"
                       suffix={
-                        <Button onClick={() => setAccount(address)}>Addr</Button>
+                        isDev ? <Button onClick={() => setAccount(address)}>Addr</Button> : null
                       }
                     />
                   </div>
@@ -443,7 +443,7 @@ export function Component() {
                       onChange={setPubKey}
                       solidLight
                       className="flex-3  fz-22 fw-400 color-000"
-                      suffix={<Button onClick={handleSignAndRecover}>Sign Test</Button>}
+                      suffix={isDev ? <Button onClick={handleSignAndRecover}>Sign Test</Button> : null}
                     />
                   </div>
                 </div>

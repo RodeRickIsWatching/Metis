@@ -16,6 +16,7 @@ import { ethers } from "ethers";
 import useUpdate from "@/hooks/useUpdate";
 import Loading from "@/components/_global/Loading";
 import { useCountDown, useMount } from "ahooks";
+import { isDev } from "@/configs/common";
 
 const testMode = true;
 
@@ -516,7 +517,7 @@ export function Component() {
         <div className="sc1 w-full">
           <div className="flex flex-row items-center justify-between  mb-24">
             <div className="f-20-bold">Mining Overview</div>
-            {testMode && ifSelf ? (
+            {isDev ? (
               <div className="flex flex-row items-center gap-8">
                 <Button
                   type="solid"
@@ -559,23 +560,7 @@ export function Component() {
                   <div style={{ padding: "10px 16px" }}>Withdraw</div>
                 </Button>
               </div>
-            ) : ifInUnlockProgress ? (
-              <div className="unlock-in-progress flex flex-row items-center gap-12">
-                <img
-                  src={getImageUrl("@/assets/images/_global/ic_Etherscan.svg")}
-                />
-                <div className="flex flex-col gap-2">
-                  <span className="f-14-bold">Unlocking in Progress...</span>
-                  <span className="f-12">
-                    *Remaining time to unlock for {days} days
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <Button type="solid">
-                <div style={{ padding: "10px 16px" }}>Unlock</div>
-              </Button>
-            )}
+            ) : null}
           </div>
 
           <div className="basic-card flex flex-row ptb-28 w-full">
