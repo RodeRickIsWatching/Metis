@@ -492,40 +492,42 @@ export function Component() {
           <div className="w-full basic-card gap-21 flex flex-col pb-38">
             <div className="flex flex-row items-center justify-between">
               <div className="fz-28 fw-500 ">Mining Overview</div>
-              <div className="flex flex-row items-center gap-8">
-                <Button
-                  type="solid"
-                  onClick={() => {
-                    setIncreaseVisible(true);
-                  }}
-                >
-                  <div style={{ padding: '10px 16px' }}>Increase</div>
-                </Button>
-                <Button
-                  type="solid"
-                  onClick={() => {
-                    setUnlockVisible(true);
-                  }}
-                >
-                  <div style={{ padding: '10px 16px' }}>Unlock</div>
-                </Button>
-                <Button
-                  type="solid"
-                  onClick={() => {
-                    setClaimVisible(true);
-                  }}
-                >
-                  <div style={{ padding: '10px 16px' }}>Claim</div>
-                </Button>
-                <Button
-                  type="solid"
-                  onClick={() => {
-                    setWithdrawVisible(true);
-                  }}
-                >
-                  <div style={{ padding: '10px 16px' }}>Withdraw</div>
-                </Button>
-              </div>
+              {
+                ifSelf ? <div className="flex flex-row items-center gap-8">
+                  <Button
+                    type="solid"
+                    onClick={() => {
+                      setIncreaseVisible(true);
+                    }}
+                  >
+                    <div style={{ padding: '10px 16px' }}>Increase</div>
+                  </Button>
+                  <Button
+                    type="solid"
+                    onClick={() => {
+                      setUnlockVisible(true);
+                    }}
+                  >
+                    <div style={{ padding: '10px 16px' }}>Unlock</div>
+                  </Button>
+                  <Button
+                    type="solid"
+                    onClick={() => {
+                      setClaimVisible(true);
+                    }}
+                  >
+                    <div style={{ padding: '10px 16px' }}>Claim</div>
+                  </Button>
+                  <Button
+                    type="solid"
+                    onClick={() => {
+                      setWithdrawVisible(true);
+                    }}
+                  >
+                    <div style={{ padding: '10px 16px' }}>Withdraw</div>
+                  </Button>
+                </div> : null
+              }
             </div>
 
             <div className="h-1 bg-color-DFDFDF" />
