@@ -56,13 +56,13 @@ const WalletModal = () => {
         {
           address ? <NetworkSelect /> : null
         }
-        <div className="flex flex-row items-center bg-color-000 radius-40 pl-6 pr-25 h-full z-1">
+        <div className={`flex flex-row items-center bg-color-000 radius-40 pl-6 ${address ? 'pr-25' : 'pr-6'} h-full z-1`}>
           <Button onClick={showAccount}>
             <div className="flex flex-row items-center gap-9">
               {
-                address ? <img className="radiusp-50 s-38" src={generateAvatar(address || '', 200)} />: null
+                address ? <img className="radiusp-50 s-38" src={generateAvatar(address || '', 200)} /> : null
               }
-              
+
               <div className="fz-18 fw-500 color-fff">
                 {isConnected
                   ? filterHideText(address as string, 8, 2)
