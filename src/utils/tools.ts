@@ -192,7 +192,7 @@ export const uuidv4 = () => {
  * @param address
  * @param target
  */
-export const jumpLink = (address: string, target: '_self' | '_blank' = '_self') => {
+export const jumpLink = (address: string, target: '_self' | '_blank' = '_blank') => {
   window.open(address, target);
 };
 

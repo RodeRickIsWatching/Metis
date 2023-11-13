@@ -1,359 +1,20 @@
-import * as React from "react";
-import "./index.scss";
-import { styled } from "styled-components";
-import { getImageUrl } from "@/utils/tools";
-import { Button, Input, Select, Tooltip } from "@/components";
-import { useNavigate } from "react-router-dom";
-import useUpdate from "@/hooks/useUpdate";
-
-const ColoredLabel = styled.div<{ color?: string }>`
-  width: 226px;
-  height: 71px;
-  background: ${({ color }) => color || "#4369f7"};
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
-  font-family: Poppins-Bold, Poppins;
-  font-weight: bold;
-  line-height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const sequencer = {
-  title: "Join us as a sequencer",
-  subTitle: "We can Make a More Secure,Decentralized,Effcient Ecosystem",
-  children: [
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Security@2x.png"),
-      content: "Security and Trust",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Decentralization@2x.png"),
-      content: "Decentralization and Fairness",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Incentive@2x.png"),
-      content: "Incentive Alignment",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Dynamic@2x.png"),
-      content: "Dynamic Selection and Rotatiom",
-    },
-
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Network@2x.png"),
-      content: "Network Participation and Governance",
-    },
-  ],
-};
-
-const section2 = {
-  title: "And You Can Get",
-  children: [
-    {
-      title: "Mining Rewards",
-      content: `Sequencer nodes can earn Metis tokens as mining rewards for
-      participating in block production and processing transactions
-      on the network.`,
-      img: getImageUrl("@/assets/images/_global/ic_MiningRewaeds.svg"),
-    },
-    {
-      title: "Network Influence",
-      content: `By participating in the consensus process as a sequencer node,
-      you play an essential role in maintaining the network's security
-      and stability.`,
-      img: getImageUrl("@/assets/images/_global/ic_NetworkInfluence.svg"),
-    },
-    {
-      title: "Early Adoption Advantage",
-      content: `By participating in the initial stages of the sequencer pool,
-      node operators can gain valuable experience and knowledge
-      about the L2 ecosystem.`,
-      img: getImageUrl("@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"),
-    },
-    {
-      title: "Community Recognition",
-      content: `This involvement can lead to increased recognition within the
-      community, opening up potential collaboration and
-      partnership opportunities.`,
-      img: getImageUrl("@/assets/images/_global/ic_CommunityRecognition.svg"),
-    },
-  ],
-};
-
-const section3 = [
-  {
-    type: "L2 Transactions",
-    color: "rgba(67, 105, 247, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "...",
-        imgClassName: "w-56",
-        containerClassName: "flex-1",
-      },
-    ],
-    nextBtns: [
-      {
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-    ],
-  },
-  {
-    type: "L2 geth Layer",
-    color: "rgba(24, 160, 196, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 1",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 2",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 3",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 4",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "...",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-      },
-    ],
-    nextBtns: [
-      {
-        content: "Submit L2 ovmed txs",
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-      {
-        content: "Fetch epoch and producer set",
-        src: getImageUrl("@/assets/images/_global/icc_up.svg"),
-      },
-    ],
-  },
-  {
-    type: "Pos Layer",
-    color: "rgba(145, 96, 232, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 1",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 2",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 3",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 4",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "...",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-      },
-    ],
-    nextBtns: [
-      {
-        content: "Submit L2 ovmed txs",
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-      {
-        content: "Fetch epoch and producer set",
-        src: getImageUrl("@/assets/images/_global/icc_up.svg"),
-      },
-    ],
-  },
-  {
-    type: "L1 Ethereum",
-    color: "rgba(197, 49, 242, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "CTC",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "SCC",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "Mining Contract",
-        subContent: "Lock Metis to become a Sequencer",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-        needBorder: true,
-        borderClassName: "sc3-box",
-      },
-    ],
-  },
-];
-
-const section4 = [
-  {
-    index: "1",
-    content: "Submit an Application",
-  },
-  {
-    index: "2",
-    content: "Initial Review",
-  },
-  {
-    index: "3",
-    content: "Community Voting",
-  },
-  {
-    index: "4",
-    content: "Final Selection and Onboarding",
-  },
-];
-
-const section5 = {
-  rows: [
-    {
-      title: "Q1",
-      content: "A1",
-    },
-    {
-      title: "Q2",
-      content: "A2",
-    },
-    {
-      title: "Q3",
-      content: "A4",
-    },
-  ],
-};
+import * as React from 'react';
+import './index.scss';
+import { styled } from 'styled-components';
+import { getImageUrl } from '@/utils/tools';
+import { Button, Input, Select, Tooltip } from '@/components';
+import { useNavigate } from 'react-router-dom';
+import useUpdate from '@/hooks/useUpdate';
+import SequencerItemContainer from '@/components/SequencerItemContainer';
+import { defaultPubKeyList } from '@/configs/common';
 
 const Container = styled.section`
-  .gap-260 {
-    gap: 260px;
-  }
-  .gap-58 {
-    gap: 58px;
-  }
-  .gap-48 {
-    gap: 48px;
-  }
-  .gap-55 {
-    gap: 55px;
-  }
-
-  .gap-32 {
-    gap: 32px;
-  }
-
-  .gap-64 {
-    gap: 64px;
-  }
-
   .half-w {
     width: 50%;
   }
 
   .p-0-72 {
     padding: 0px 72px;
-  }
-
-  .w-40 {
-    width: 40px;
-  }
-  .w-56 {
-    width: 56px;
-  }
-  .w-62 {
-    width: 62px;
-  }
-  .w-72 {
-    width: 72px;
-  }
-  .w-46 {
-    width: 46px;
-  }
-  .w-137 {
-    width: 137px;
-  }
-  .w-155 {
-    width: 155px;
   }
 
   .f-12-sc3 {
@@ -372,12 +33,8 @@ const Container = styled.section`
     line-height: 25px;
   }
 
-  .mb-24 {
-    margin-bottom: 24px;
-  }
-
   .top-banner {
-    padding: 64px 0 48px;
+    padding: 0px 0 48px;
 
     .f-28 {
       font-size: 28px;
@@ -393,17 +50,6 @@ const Container = styled.section`
       font-weight: 400;
       color: #313146;
       line-height: 22px;
-    }
-
-    .f-16-bold {
-      font-size: 16px;
-      font-family: Poppins-SemiBold, Poppins;
-      font-weight: 600;
-      line-height: 25px;
-    }
-
-    .p-18-26 {
-      padding: 18px 26px;
     }
 
     .top-content {
@@ -438,178 +84,237 @@ const Container = styled.section`
           line-height: 30px;
         }
       }
-
-      .opacity-card {
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.5) 0%,
-          rgba(242, 250, 255, 0.3) 100%
-        );
-        box-shadow: inset 0px 0px 30px 0px #ffffff;
-        border-radius: 16px;
-        backdrop-filter: blur(10px);
-        padding: 32px;
-      }
     }
 
-    position: relative;
-    background: url(${getImageUrl("@/assets/images/_global/img-2@2x.png")}),
-      linear-gradient(
-        270deg,
-        #00d2c122 0%,
-        rgba(0, 210, 193, 0) 50%,
-        #00d2c122 100%
-      );
-    background-repeat: no-repeat;
+    background: url(${getImageUrl(
+  '@/assets/images/_global/home_top_banner.png',
+)});
     /* aspect-ratio: 1440 / 560; */
     width: 100vw;
     background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
+
+    padding-bottom: 220px;
+    position: relative;
+    .info-card-container {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      .opacity-card {
+        box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        padding: 23px;
+        gap: 4px;
+      }
+    }
   }
 
-  .f-20-bold {
-    font-size: 20px;
-    font-family: Poppins-ExtraBold, Poppins;
-    font-weight: 800;
-    color: #313146;
-    line-height: 30px;
-  }
+  .main-section {
+    padding-top: 64px;
+    padding-bottom: 64px;
+    &.main-section-2 {
+      background: url(${getImageUrl(
+  '@/assets/images/_global/main_section_2.png',
+)}),
+        lightgray 50% / cover no-repeat;
+      background-size: cover;
+      /* filter: blur(100px); */
+    }
+    &.main-section-4 {
+      background: linear-gradient(95deg, #aa30ff 5.57%, #00498c 96.09%);
+    }
 
-  .sc1 {
-    max-width: 1200px;
-    margin: 54px auto;
-    .f-14-bold {
+    &.dark {
+      background: rgba(246, 249, 253, 1);
+    }
+
+    .f-40 {
+      font-size: 40px;
+      font-family: Poppins;
+      font-weight: 900;
+      color: #313146;
+      line-height: 60px;
+    }
+
+    .f-16 {
+      font-size: 16px;
+      font-family: Poppins;
+      font-weight: 400;
+      color: #313146;
+      line-height: 25px;
+    }
+
+    .f-14 {
       font-size: 14px;
-      font-family: Poppins-SemiBold, Poppins;
-      font-weight: 600;
+      font-family: Poppins;
+      font-weight: 900;
       color: #313146;
       line-height: 21px;
     }
 
-    .f-18-bold {
-      font-size: 18px;
+    .f-20 {
+      font-size: 20px;
       font-family: Poppins-Bold, Poppins;
       font-weight: bold;
       color: #313146;
-      line-height: 27px;
+      line-height: 30px;
     }
-    .f-14 {
-      font-size: 14px;
-      font-family: Poppins-Regular, Poppins;
-      font-weight: 400;
+
+    .mw-150 {
+      max-width: 150px;
+    }
+
+    .align-center {
+      text-align: center;
+    }
+
+    .section2-item {
+      width: calc(50% - 32px);
+      padding: 22px 42px;
+      &:nth-of-type(odd) {
+        justify-content: flex-end;
+      }
+    }
+
+    .mw-436 {
+      max-width: 436px;
+    }
+  }
+
+  .sc3 {
+    width: 100vw;
+    max-width: 1200px;
+    margin: auto;
+    .overall-container {
+      height: 200px;
+      background: rgba(241, 243, 249, 0.5);
+      border-radius: 8px;
+      border: 1px solid #edeff7;
+      &:last-of-type {
+        height: 280px;
+      }
+    }
+    .colored-label {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      transform: translate(0, -50%);
+    }
+    .sc3-box {
+      background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 100%);
+      border-radius: 32px;
+      width: 240px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .sc4 {
+    .progress-bar {
+      position: relative;
+      width: 1000px;
+      margin: auto;
+    }
+    .bar {
+      top: calc(50% + 10px);
+    }
+    .index {
+      width: 42px;
+      height: 42px;
+      min-height: 42px;
+      background: #ffffff;
+      border: 4px solid #e8f1fb;
+      border-radius: 50%;
+
+      font-size: 16px;
+      font-family: Poppins-Bold, Poppins;
+      font-weight: bold;
       color: #313146;
-      line-height: 21px;
+      line-height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .ptb-28 {
-      padding: 28px 0;
+    .c {
+      height: 90px;
+      &.c-0 {
+        align-items: flex-start;
+        span {
+          transform: translate(-50%, 0);
+        }
+      }
+      &.c-1 {
+        flex: 2;
+      }
+      &.c-2 {
+        flex: 2;
+      }
+      &:last-of-type {
+        align-items: flex-end;
+        span {
+          transform: translate(50%, 0);
+        }
+      }
     }
-
-    .mb-24 {
-      margin-bottom: 24px;
-    }
-
-    .basic-card {
-      & > div:not(:last-of-type) {
-        border-right: 1px solid #efefef;
+    .submit {
+      margin: auto;
+      width: 224px;
+      height: 58px;
+      background: #00d2c1;
+      border-radius: 29px;
+      span {
+        font-size: 16px;
+        font-family: Poppins-SemiBold, Poppins;
+        font-weight: 600;
+        color: #313146;
+        line-height: 25px;
       }
     }
   }
 
-  .sc2 {
-    max-width: 1200px;
-    margin: 54px auto;
-
-    .search-container {
-      .component-select {
-        /* width: 200px; */
-        height: 56px;
-        border-radius: 28px;
-        border: 1px solid #313144;
-        padding: 18px 28px;
-        color: rgba(49, 49, 70, 1);
-      }
-      .component-input {
-        width: 200px;
-        height: 56px;
-        border-radius: 28px;
-        border: 1px solid #313144;
-        padding: 18px 28px;
-        overflow: hidden;
-
-        input {
-          font-size: 14px;
-          font-family: Poppins-Regular, Poppins;
-          font-weight: 400;
-          color: #333347;
-          line-height: 21px;
-        }
-      }
-    }
-    .sequencer-cards {
-      display: flex;
-      align-items: center;
-      /* justify-content: center; */
-      gap: 21px;
-      .sequencer-card {
-        position: relative;
-        width: 386px;
-        height: 288px;
-        background: #ffffff;
-        box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.05);
-        border-radius: 24px;
-        padding: 32px;
-
+  .sc5 {
+    .faq-row-wrapper {
+      width: 610px;
+      margin: auto;
+      background: transparent;
+      .faq-body {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 40px;
+        gap: 4px;
+      }
+      .faq-row {
+        position: relative;
+        .icon-wrapper {
+          top: 50%;
+          transform: translate(0, -50%);
+        }
+        border-radius: 16px;
+        border: none;
+        background-color: #fff;
+        padding: 0 40px;
 
-        .warning {
-          z-index: 2;
-          width: 100%;
-          padding: 8px 0;
+        .row-title,
+        .row-content-text {
+          height: 80px;
+        }
+        .row-content-text {
           display: flex;
           align-items: center;
-          justify-content: center;
-          background: rgba(183, 27, 19, 0.1);
-          border-radius: 0px 0px 24px 24px;
-          position: absolute;
-          bottom: 0;
-          span {
-            color: rgba(183, 27, 19, 1);
-          }
         }
 
-        .f-14 {
-          font-size: 14px;
-          font-family: Poppins-Regular, Poppins;
+        .row-title-text,
+        .row-content-text {
+          font-size: 26px;
           font-weight: 400;
-          color: #333347;
-          line-height: 21px;
-        }
-
-        .f-14-bold {
-          font-size: 14px;
-          font-family: Poppins-SemiBold, Poppins;
-          font-weight: 600;
-          color: #333347;
-          line-height: 21px;
-        }
-
-        .f-16-bold {
-          font-size: 16px;
-          font-family: Poppins-SemiBold, Poppins;
-          font-weight: 600;
-          color: #333347;
-          line-height: 25px;
-        }
-
-        .avatar {
-          width: 72px;
-          height: 72px;
-          background: #d0baf5;
-          border-radius: 50%;
+          font-family: Raleway;
+          color: #000;
         }
       }
     }
@@ -619,7 +324,7 @@ const Container = styled.section`
 export function Component() {
   const navigate = useNavigate();
   const jumpLink = () => {
-    navigate("/becomeSequencer");
+    navigate('/becomeSequencer');
   };
 
   const jumpSequencer = (id: string) => {
@@ -629,14 +334,14 @@ export function Component() {
   const option = React.useMemo(() => {
     return [
       {
-        name: "Newest",
-        value: "0",
-        label: "Newest",
+        name: 'Newest',
+        value: '0',
+        label: 'Newest',
       },
       {
-        name: "Health",
-        value: "1",
-        label: "Health",
+        name: 'Health',
+        value: '1',
+        label: 'Health',
       },
     ];
   }, []);
@@ -647,181 +352,112 @@ export function Component() {
     setCurOption(ele?.value);
   };
   const sequencerCards = React.useMemo(() => {
-    return [
+    return defaultPubKeyList.filter(i => i.active).map(i => (
       {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "HEALTH",
-        color: "rgba(0, 218, 203, 1)",
-        totalLockUp: "20,000 metis",
-        id: 1,
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "Grace Period 1",
-        color: "rgba(194, 119, 20, 1)",
-        totalLockUp: "20,000 metis",
-        id: 2,
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "Final Notice",
-        color: "rgba(183, 27, 19, 1)",
-        totalLockUp: "20,000 metis",
-        offline: "19",
-        id: 3,
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "HEALTH",
-        color: "rgba(0, 218, 203, 1)",
-        totalLockUp: "20,000 metis",
-        id: 4,
-      },
-    ];
+        name: '1',
+        avatar: '1',
+        status: 'HEALTH',
+        color: 'rgba(0, 218, 203, 1)',
+        totalLockUp: '20,000 metis',
+        id: i.address,
+        ...i,
+      }
+    ));
   }, []);
 
-
-  const {sequencerTotalInfo} = useUpdate()
-  console.log('sequencerTotalInfo', sequencerTotalInfo)
+  const { sequencerTotalInfo } = useUpdate();
+  console.log('sequencerTotalInfo', sequencerTotalInfo);
 
   return (
     <Container className="pages-landing flex flex-col ">
       <div className="top-banner">
-        {/* <img src={getImageUrl()}/> */}
-        <div className="top-content flex flex-col gap-58 ">
+        <div className="top-content flex flex-col gap-58 mt-100">
           <div className="gap-48 flex flex-col">
             <div className="gap-16 flex flex-col">
-              <h1>Become a Metis Sequencer and Mining Rewards</h1>
-              <h2>Become a Metis Sequencer and Mining Rewards</h2>
+              <div className="flex flex-col">
+                <span className="fz-100 fw-700 raleway color-fff">Metis</span>
+                <br />
+                <span className="fz-72 fw-700 raleway color-fff">
+                  Sequencer Mining
+                </span>
+              </div>
+              <div className="lh-120 maxw-500 fz-20 fw-500 raleway color-fff">
+                Secure the Metis network and earn staking rewards. An exclusive
+                opportunity for qualified operators.
+              </div>
             </div>
-            <div className="flex flex-row items-center gap-16">
-              <Button onClick={jumpLink} type="dark">
-                <div className="p-18-26 f-16-bold">Become a Sequencer</div>
+            <div className="flex flex-row items-center gap-12">
+              <Button onClick={jumpLink} type="dark" className="radius-50">
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
+                  Become a Sequencer
+                </div>
               </Button>
-              <Button onClick={jumpLink} type="light">
-                <div className="p-18-26 f-16-bold">Bridge Now</div>
+              <Button onClick={jumpLink} type="light" className="radius-50">
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
+                  Read Docs
+                </div>
               </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center gap-8 info-card-container w-1150">
+          <div className="opacity-card flex flex-col items-center flex-1">
+            <span className="fz-18 fw-700 inter">
+              {sequencerTotalInfo?.currentSequencerSetTotalLockReadable || '-'}
+            </span>
+
+            <div className="flex items-center gap-8">
+              <span className="fz-14 fw-400 inter">Total METIS locked</span>
+            </div>
+          </div>
+          <div className="opacity-card flex flex-col items-center flex-1">
+            <span className="fz-18 fw-700 inter">-%</span>
+            <div className="flex items-center gap-8">
+              <span className="fz-14 fw-400 inter">Expected APR</span>
+            </div>
+          </div>
+          <div className="opacity-card flex flex-col items-center flex-1">
+            <span className="fz-18 fw-700 inter">-%</span>
+            <div className="flex items-center gap-8">
+              <span className="fz-14 fw-400 inter">
+                Current number of Sequencers
+              </span>
+            </div>
+          </div>
+          <div className="opacity-card flex flex-col items-center flex-1">
+            <span className="fz-18 fw-700 inter">-%</span>
+            <div className="flex items-center gap-8">
+              <span className="fz-14 fw-400 inter">
+                Total rewards distributed
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="sc1  w-full">
-        <div className="f-20-bold mb-24">Network Overview</div>
-        <div className="basic-card flex flex-row ptb-28 w-full">
-          {/* tvl */}
-          <div className="flex-1 flex flex-col items-center gap-20 ">
-            <div className="flex flex-row items-center gap-6">
-              <div className="f-14-bold">TVL</div>
-              <Tooltip title={<span>Tooltip</span>}>
-                <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-              </Tooltip>
-            </div>
-            <div className="f-18-bold">{sequencerTotalInfo?.currentSequencerSetTotalLockReadable || '-'} Metis</div>
-            <div className="f-14">${'-'}</div>
-          </div>
-
-          {/* TOTAL SEQUENCERS */}
-          <div className="flex-1 flex flex-col items-center gap-20">
-            <div className="flex flex-row items-center gap-6">
-              <div className="f-14-bold">TOTAL SEQUENCERS</div>
-              <Tooltip title={<span>Tooltip</span>}>
-                <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-              </Tooltip>
-            </div>
-            <div className="f-18-bold">{sequencerTotalInfo?.currentSequencerSetSize || '-'}</div>
-          </div>
-
-          {/* TOTAL REWARDS DISTRIBUTED */}
-          <div className="flex-1 flex flex-col items-center gap-20">
-            <div className="flex flex-row items-center gap-6">
-              <div className="f-14-bold">TOTAL REWARDS DISTRIBUTED</div>
-              <Tooltip title={<span>Tooltip</span>}>
-                <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-              </Tooltip>
-            </div>
-            <div className="f-18-bold">{'-'} Metis</div>
-            <div className="f-14">${'-'}</div>
-          </div>
-
-          {/* ANDROMEDA BLOCK HEIGHT */}
-          <div className="flex-1 flex flex-col items-center gap-20">
-            <div className="flex flex-row items-center gap-6">
-              <div className="f-14-bold">ANDROMEDA BLOCK HEIGHT</div>
-              <Tooltip title={<span>Tooltip</span>}>
-                <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-              </Tooltip>
-            </div>
-            <div className="f-18-bold">{'-'} Metis</div>
-            <div className="f-14">${'-'}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="sc2 w-full">
+      <div className="main-section maxw-1140 m-auto flex flex-col pt-90 pb-153 wp-100">
         <div className="flex flex-row items-center justify-between">
-          <div className="f-20-bold mb-24">Sequencer</div>
-          <div className="flex flex-row gap-24 search-container">
-            <Input
-              suffix={
-                <img
-                  style={{ width: "21px", height: "21px" }}
-                  src={getImageUrl("@/assets/images/_global/ic_SEARCH.svg")}
-                />
-              }
-            />
-            <Select
-              type="light"
-              options={option}
-              placement="right"
-              value={curOption}
-              allowClear={false}
-              onChange={(ele) => {
-                onChange?.(ele);
-              }}
-            />
-          </div>
+          <div className="fz-36 fw-700 color-000">Sequencers</div>
+          {/* <div>
+            <Input />
+            <div>
+              <span>Sort By</span>
+            </div>
+            <div>
+              <span>Health Status</span>
+            </div>
+          </div> */}
         </div>
-        <div className="sequencer-cards flex flex-row ptb-28 flex-wrap ">
+        <div className="mb-35 h-1 w-full bg-color-CDCDCD" />
+        <div className="flex flex-row items-center gap-20 flex-wrap">
           {sequencerCards.map((i, index) => (
-            <div
-              className="sequencer-card pointer"
-              key={index}
+            <SequencerItemContainer
               onClick={() => {
                 jumpSequencer(i.id);
               }}
-            >
-              <div className="flex flex-col gap-12 items-center">
-                <div className="avatar" />
-                <div className="f-16-bold">{i.name}</div>
-              </div>
-
-              <div className="flex flex-col gap-16 items-center w-full">
-                <div className="flex flex-row items-center justify-between w-full">
-                  <span className="f-14">HEALTH STATUS</span>
-                  <span className="f-14-bold" style={{ color: i.color }}>
-                    {i.status}
-                  </span>
-                </div>
-
-                <div className="flex flex-row items-center justify-between w-full">
-                  <span className="f-14">Total lock-up</span>
-                  <span className="f-14-bold">{i.totalLockUp}</span>
-                </div>
-              </div>
-
-              {i.offline ? (
-                <div className="warning">
-                  <span className="f-14">
-                    Offline Since {i.offline} Checkpoints
-                  </span>
-                </div>
-              ) : null}
-            </div>
+              key={index}
+            />
           ))}
         </div>
       </div>
@@ -829,4 +465,4 @@ export function Component() {
   );
 }
 
-Component.displayName = "Sequencer";
+Component.displayName = 'Sequencer';

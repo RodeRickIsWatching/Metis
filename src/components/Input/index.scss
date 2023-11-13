@@ -44,7 +44,7 @@
   // &:not(.danger, .disabled)input:focus + label {
   //   border: 1px solid rgba(255, 255, 255, 0.85);
   // }
-  &:not(.danger, .disabled, .solid):hover label,
+  &:not(.danger, .disabled, .solid, .solidLight):hover label,
   input:focus + label {
     border: 1px solid rgba(255, 255, 255, 0.85);
   }
@@ -74,6 +74,19 @@
     label,
     input:focus + label {
       border: 1px solid rgba(49, 49, 68, 1);
+    }
+  }
+  &.solidLight{
+    label{
+      background-color: #fff;
+      z-index: -1;
+    }
+    input {
+      color: #000;
+    }
+    label,
+    input:focus + label {
+      border: 1px solid #fff;
     }
   }
   &.disabled {

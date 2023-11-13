@@ -8,7 +8,7 @@ import { createPublicClient, http } from 'viem';
 import { isProd } from "./common";
 import { goerli } from "viem/chains";
 
-export const chainId = isProd ? [mainnet] : [goerli];
+export const chainId = isProd ? [mainnet, goerli] : [goerli, mainnet];
 
 export const injectedConnector = new InjectedConnector({
   chains: [...chainId],

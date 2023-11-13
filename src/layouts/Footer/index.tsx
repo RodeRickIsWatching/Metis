@@ -17,31 +17,30 @@ const links = [
     link: "",
   },
   {
+    content: "Carrers",
+    link: "",
+  },
+  {
     content: "Search",
-    link: "",
-  },
-  {
-    content: "Mediakit",
-    link: "",
-  },
-  {
-    content: "Ecosystem",
-    link: "",
-  },
-  {
-    content: "Community",
     link: "",
   },
   {
     content: "Subscribe",
     link: "",
   },
+];
+
+const link2 = [
   {
-    content: "Careers",
+    content: "Community",
     link: "",
   },
   {
     content: "Company",
+    link: "",
+  },
+  {
+    content: "Ecosystem",
     link: "",
   },
   {
@@ -52,44 +51,43 @@ const links = [
     content: "Contact",
     link: "",
   },
-  {
-    content: "Posta job",
-    link: "",
-  },
-];
+]
 
 const medias = [
   {
     content: <IconTwitter />,
+    img: getImageUrl('@/assets/images/_media/twi.svg'),
     link: "",
   },
   {
     content: <IconTelegram />,
+    img: getImageUrl('@/assets/images/_media/telegram.svg'),
     link: "",
   },
   {
     content: <IconMedium />,
+    img: getImageUrl('@/assets/images/_media/medium.svg'),
     link: "",
   },
   {
     content: <IconDiscord />,
+    img: getImageUrl('@/assets/images/_media/discord.svg'),
     link: "",
   },
   {
     content: <IconGithub />,
+    img: getImageUrl('@/assets/images/_media/github.svg'),
     link: "",
   },
   {
     content: <IconYoutube />,
+    img: getImageUrl('@/assets/images/_media/you.svg'),
     link: "",
   },
 ];
 
 const Container = styled.div`
-  padding: 80px 72px 156px;
-  justify-content: center;
-
-  display: flex;
+  padding: 52px 200px 156px;
   gap: 80px;
 
   .l {
@@ -101,7 +99,7 @@ const Container = styled.div`
   .links {
     div {
       cursor: pointer;
-      width: calc(25% - 26px);
+      /* width: calc(25% - 26px); */
       font-size: 16px;
       font-family: Poppins-Regular, Poppins;
       font-weight: 400;
@@ -109,8 +107,8 @@ const Container = styled.div`
       line-height: 25px;
     }
     display: flex;
-    flex-wrap: wrap;
-    gap: 26px;
+    /* flex-wrap: wrap; */
+    /* gap: 26px; */
   }
 
   .r {
@@ -128,18 +126,31 @@ const Container = styled.div`
 
 const Footer = () => {
   return (
-    <Container>
-      <div className="l">
-        <img src={getImageUrl("@/assets/images/_global/metis-logo.svg")} />
+    <Container className="bg-color-000 flex flex-row justify-between">
+      <div className="l flex flex-col gap-45">
+        <img src={getImageUrl("@/assets/images/_global/metis_logo_light.svg")} />
+
+        <div className="links flex flex-row items-center gap-120 justify-between">
+        <div className="flex flex-col gap-12">
+          {links.map((i, index) => (
+            <div className="fz-14 fw-400 color-fff pointer" key={index}>{i.content}</div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-12">
+          {
+            link2.map((i, index) => (
+              <div className="fz-14 fw-400 color-fff pointer" key={index}>{i.content}</div>
+            ))
+          }
+        </div>
       </div>
-      <div className="links">
-        {links.map((i, index) => (
-          <div key={index}>{i.content}</div>
-        ))}
       </div>
+      
       <div className="r">
         {medias.map((i, index) => (
-          <div key={index}>{i.content}</div>
+          <div key={index} className="pointer">
+            <img className="s-50" src={i.img} />
+          </div>
         ))}
       </div>
     </Container>

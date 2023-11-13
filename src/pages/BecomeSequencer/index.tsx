@@ -11,333 +11,17 @@ import useAllowance from "@/hooks/useAllowance";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useBoolean } from "ahooks";
-import Loading from "@/components/_global/Loading";
 import useLock from "@/hooks/useLock";
 import useAuth from "@/hooks/useAuth";
 import { Address, useSignMessage } from "wagmi";
-import { pubKey } from "@/configs/common";
+import { hashMessage, recoverPublicKey } from "viem";
+import { defaultPubKeyList } from "@/configs/common";
 
-const ColoredLabel = styled.div<{ color?: string }>`
-  width: 226px;
-  height: 71px;
-  background: ${({ color }) => color || "#4369f7"};
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
-  font-family: Poppins-Bold, Poppins;
-  font-weight: bold;
-  line-height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const sequencer = {
-  title: "Join us as a sequencer",
-  subTitle: "We can Make a More Secure,Decentralized,Effcient Ecosystem",
-  children: [
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Security@2x.png"),
-      content: "Security and Trust",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Decentralization@2x.png"),
-      content: "Decentralization and Fairness",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Incentive@2x.png"),
-      content: "Incentive Alignment",
-    },
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Dynamic@2x.png"),
-      content: "Dynamic Selection and Rotatiom",
-    },
-
-    {
-      img: getImageUrl("@/assets/images/_global/ic_Network@2x.png"),
-      content: "Network Participation and Governance",
-    },
-  ],
-};
-
-const section2 = {
-  title: "And You Can Get",
-  children: [
-    {
-      title: "Mining Rewards",
-      content: `Sequencer nodes can earn Metis tokens as mining rewards for
-      participating in block production and processing transactions
-      on the network.`,
-      img: getImageUrl("@/assets/images/_global/ic_MiningRewaeds.svg"),
-    },
-    {
-      title: "Network Influence",
-      content: `By participating in the consensus process as a sequencer node,
-      you play an essential role in maintaining the network's security
-      and stability.`,
-      img: getImageUrl("@/assets/images/_global/ic_NetworkInfluence.svg"),
-    },
-    {
-      title: "Early Adoption Advantage",
-      content: `By participating in the initial stages of the sequencer pool,
-      node operators can gain valuable experience and knowledge
-      about the L2 ecosystem.`,
-      img: getImageUrl("@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"),
-    },
-    {
-      title: "Community Recognition",
-      content: `This involvement can lead to increased recognition within the
-      community, opening up potential collaboration and
-      partnership opportunities.`,
-      img: getImageUrl("@/assets/images/_global/ic_CommunityRecognition.svg"),
-    },
-  ],
-};
-
-const section3 = [
-  {
-    type: "L2 Transactions",
-    color: "rgba(67, 105, 247, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "TX",
-        imgClassName: "w-56",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/tx@2x.png"),
-        content: "...",
-        imgClassName: "w-56",
-        containerClassName: "flex-1",
-      },
-    ],
-    nextBtns: [
-      {
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-    ],
-  },
-  {
-    type: "L2 geth Layer",
-    color: "rgba(24, 160, 196, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 1",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 2",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 3",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Producer 4",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "...",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-      },
-    ],
-    nextBtns: [
-      {
-        content: "Submit L2 ovmed txs",
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-      {
-        content: "Fetch epoch and producer set",
-        src: getImageUrl("@/assets/images/_global/icc_up.svg"),
-      },
-    ],
-  },
-  {
-    type: "Pos Layer",
-    color: "rgba(145, 96, 232, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 1",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 2",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 3",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl(
-          "@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg"
-        ),
-        imgClassName: "w-46",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "Sequencer 4",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/layer@2x.png"),
-        content: "...",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-      },
-    ],
-    nextBtns: [
-      {
-        content: "Submit L2 ovmed txs",
-        src: getImageUrl("@/assets/images/_global/icc_down.svg"),
-      },
-      {
-        content: "Fetch epoch and producer set",
-        src: getImageUrl("@/assets/images/_global/icc_up.svg"),
-      },
-    ],
-  },
-  {
-    type: "L1 Ethereum",
-    color: "rgba(197, 49, 242, 1)",
-    children: [
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "CTC",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "SCC",
-        imgClassName: "w-62",
-      },
-      {
-        src: getImageUrl("@/assets/images/_global/contract@2x.png"),
-        content: "Mining Contract",
-        subContent: "Lock Metis to become a Sequencer",
-        imgClassName: "w-62",
-        containerClassName: "flex-2",
-        needBorder: true,
-        borderClassName: "sc3-box",
-      },
-    ],
-  },
-];
-
-const section4 = [
-  {
-    index: "1",
-    content: "Submit an Application",
-  },
-  {
-    index: "2",
-    content: "Initial Review",
-  },
-  {
-    index: "3",
-    content: "Community Voting",
-  },
-  {
-    index: "4",
-    content: "Final Selection and Onboarding",
-  },
-];
-
-const section5 = {
-  rows: [
-    {
-      title: "Q1",
-      content: "A1",
-    },
-    {
-      title: "Q2",
-      content: "A2",
-    },
-    {
-      title: "Q3",
-      content: "A4",
-    },
-  ],
-};
 
 const Container = styled.section`
-  margin-top: 56px;
-
-  .gap-260 {
-    gap: 260px;
-  }
-  .gap-58 {
-    gap: 58px;
-  }
-  .gap-48 {
-    gap: 48px;
-  }
-  .gap-55 {
-    gap: 55px;
-  }
-
-  .gap-32 {
-    gap: 32px;
-  }
-
-  .gap-64 {
-    gap: 64px;
-  }
+  background: url(${getImageUrl("@/assets/images/_global/sub_section_bg.png")})
+    no-repeat;
+  background-size: cover;
 
   .half-w {
     width: 50%;
@@ -345,31 +29,6 @@ const Container = styled.section`
 
   .p-0-72 {
     padding: 0px 72px;
-  }
-
-  .w-40 {
-    width: 40px;
-  }
-  .w-56 {
-    width: 56px;
-  }
-  .w-62 {
-    width: 62px;
-  }
-  .w-72 {
-    width: 72px;
-  }
-  .w-46 {
-    width: 46px;
-  }
-  .w-137 {
-    width: 137px;
-  }
-  .w-155 {
-    width: 155px;
-  }
-  .mt-32 {
-    margin-top: 32px;
   }
 
   .f-12 {
@@ -450,35 +109,47 @@ const Container = styled.section`
   }
 
   .cards-container {
+    border-radius: 30px;
+    border: 2px solid var(--line-glass, rgba(255, 255, 255, 0.1));
+    background: var(
+      --gradient-glass,
+      linear-gradient(
+        91deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(0, 0, 0, 0.15) 100%
+      )
+    );
+    /* glass */
+    backdrop-filter: blur(30px);
     .card {
-      padding: 30px 32px;
-      display: flex;
-      align-items: center;
-      gap: 25px;
-
-      width: 480px;
-      height: 148px;
-      background: #ffffff;
-      box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.05);
-      border-radius: 24px;
     }
   }
 `;
 
-const message = 'test'
+const message = "test";
 
 export function Component() {
-  const { signMessageAsync } = useSignMessage({
-    message: message,
-  });
+  const [name, setName] = React.useState<undefined | string>()
+  const [website, setWebsite] = React.useState<undefined | string>()
+  const [account, setAccount] = React.useState<undefined | string>()
+  const [pubKey, setPubKey] = React.useState<undefined | string>()
+  const [desc, setDesc] = React.useState<undefined | string>()
+  
+  const [stakeAmount, setStakeAmount] = React.useState("");
+  const [apr, setApr] = React.useState<undefined | string>()
+
+  const handleChangeApr = (v: string)=>{
+    setApr(v)
+  }
+  const handleLockupChange = (v: string)=>{
+    setStakeAmount(v)
+  }
 
   const navigate = useNavigate();
 
   const { address, connector } = useAuth(true);
 
   const { balance } = useBalance();
-
-  const [stakeAmount, setStakeAmount] = React.useState("");
 
   const { lockFor } = useLock();
 
@@ -518,14 +189,18 @@ export function Component() {
       // const pubKey = ethers.utils.recoverPublicKey(ethers.utils.toUtf8Bytes(message), signature);
 
       // console.log('pubKey', pubKey)
-      await lockFor({
+      const p = {
         address: address as Address,
         amount: ethers.utils.parseEther(stakeAmount || "0").toString(),
-        pubKey: pubKey as string,
-      });
+        pubKey: (pubKey) as string,
+      }
+      console.log('p', p, allowance, needApprove)
+      await lockFor(p);
       setApproveLoadingFalse();
+
+      handleIndex("4")
     } catch (e) {
-      console.log(e)
+      console.log(e);
       catchError(e);
       setApproveLoadingFalse();
     }
@@ -534,60 +209,6 @@ export function Component() {
   const jumpLink = () => {
     navigate("/sequencers");
   };
-
-  const option = React.useMemo(() => {
-    return [
-      {
-        name: "Newest",
-        value: "0",
-        label: "Newest",
-      },
-      {
-        name: "Health",
-        value: "1",
-        label: "Health",
-      },
-    ];
-  }, []);
-
-  const [curOption, setCurOption] = React.useState(option?.[0]?.value);
-
-  const onChange = (ele: any) => {
-    setCurOption(ele?.value);
-  };
-  const sequencerCards = React.useMemo(() => {
-    return [
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "HEALTH",
-        color: "rgba(0, 218, 203, 1)",
-        totalLockUp: "20,000 metis",
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "Grace Period 1",
-        color: "rgba(194, 119, 20, 1)",
-        totalLockUp: "20,000 metis",
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "Final Notice",
-        color: "rgba(183, 27, 19, 1)",
-        totalLockUp: "20,000 metis",
-        offline: "19",
-      },
-      {
-        name: "Sequencer Name",
-        avatar: "",
-        status: "HEALTH",
-        color: "rgba(0, 218, 203, 1)",
-        totalLockUp: "20,000 metis",
-      },
-    ];
-  }, []);
 
   const col = [
     {
@@ -614,142 +235,258 @@ export function Component() {
     setActiveIndex(index);
   };
 
+  // const [testPubKey, setTestPubKey] = React.useState<undefined | string>()
+  const handleSignAndRecover = async () => {
+
+    const t = defaultPubKeyList.find(i=>i.address.toLowerCase() === address?.toLowerCase())
+
+    setPubKey(t?.pubKey)
+    // setPubKey(undefined)
+    // const message = 'hello world'
+    // const signer = await connector?.getWalletClient();
+    // const signature = await signer?.signMessage({
+    //   account: address,
+    //   message: message,
+    // })
+    // if (!signature) return;
+    // const publicKey = await recoverPublicKey({
+    //   hash: hashMessage(message),
+    //   signature
+    // })
+
+    // console.log('publicKey', publicKey)
+    // setPubKey(publicKey)
+  }
+
+  const validStep2 = React.useMemo(()=> name&&website&&account&&(pubKey), [
+    name,website,account,pubKey
+  ])
+
   const step = React.useMemo(() => {
     switch (activeIndex) {
       case "1":
         return (
-          <div className="flex flex-col">
-            <span className="f-20-bold mb-8">Sequencer</span>
-            <span className="f-14 mb-48">
-              You can setup your Sequencer using any of the options from belows:
-            </span>
-            <div className="flex flex-row items-center gap-40 cards-container">
-              <div className="card">
-                <img
-                  style={{ width: "88px", height: "88px" }}
-                  src={getImageUrl("@/assets/images/_global/ic_Package.svg")}
-                />
-                <div className="flex flex-col gap-8">
-                  <span className="f-16-bold">Package</span>
-                  <span className="f-14">Set up Sequencer via package</span>
-                </div>
+          <div className="flex flex-col gap-32">
+            <div className="flex flex-col gap-20">
+              <div
+                className="radius-30 flex flex-col gap-10 p-50"
+                style={{
+                  background:
+                    "var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))",
+                  border: "1px solid rgba(255, 255, 255, 0.10)",
+                  backdropFilter: "blur(30px)",
+                  overflow: "hidden",
+                }}
+              >
+                <span className="fz-36 fw-700 color-fff raleway">Package</span>
+                <span className="fz-26 fw-500 color-fff raleway">
+                  Set up Sequencer via package
+                </span>
               </div>
-              <div className="card">
-                <img
-                  style={{ width: "88px", height: "88px" }}
-                  src={getImageUrl("@/assets/images/_global/ic_Binaries.svg")}
-                />
-                <div className="flex flex-col gap-8">
-                  <span className="f-16-bold">Binaries</span>
-                  <span className="f-14">
-                    Build from source to setup your Sequencer.
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-32 f-14" style={{ textAlign: "center" }}>
-              If you have any question, please check our{" "}
-              <a className="link-color" href="">
-                developer documentation
-              </a>{" "}
-              or contact us through the{" "}
-              <a className="link-color" href="">
-                Telegram
-              </a>{" "}
-              or{" "}
-              <a className="link-color" href="">
-                Discord channel
-              </a>
-            </div>
 
-            <div className="mt-72 flex flex-row items-center justify-center">
-              <Button type="metis" onClick={() => handleIndex("2")}>
-                <div style={{ width: "240px" }} className="p-18 f-14-bold">
-                  Continue
-                </div>
-              </Button>
+              <div
+                className="radius-30 flex flex-col gap-10 p-50"
+                style={{
+                  background:
+                    "var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))",
+                  border: "1px solid rgba(255, 255, 255, 0.10)",
+                  backdropFilter: "blur(30px)",
+                  overflow: "hidden",
+                }}
+              >
+                <span className="fz-36 fw-700 color-fff raleway">Binaries</span>
+                <span className="fz-26 fw-500 color-fff raleway">
+                  Build from source to set up your Sequencer
+                </span>
+              </div>
+
+              <div className="flex flex-row items-center justify-center">
+                <Button
+                  type="metis"
+                  onClick={() => handleIndex("2")}
+                  className="w-full radius-30 h-80"
+                >
+                  <div className="fz-26 fw-700 raleway color-fff">CONTINUE</div>
+                </Button>
+              </div>
+            </div>
+            <div className="fz-18 fw-500 color-fff raleway">
+              You have questions? Make sure to read our{" "}
+              <a
+                className="fz-18 fw-700 color-fff underlined"
+                href=""
+                target="_blank"
+              >
+                Dev Docs
+              </a>
+              <br />
+              or contact us through{" "}
+              <a
+                className="fz-18 fw-700 color-fff underlined"
+                href=""
+                target="_blank"
+              >
+                Telegram Discord
+              </a>
+              .
             </div>
           </div>
         );
 
       case "2":
         return (
-          <div className="flex flex-col">
-            <span className="f-20-bold mb-8">Sequencer details</span>
-            <span className="f-14 mb-48">
-              Please describe the basic information of your Sequencer
-            </span>
-            <div className="flex flex-row items-center gap-40 cards-container">
-              <div
-                className="card flex-wrap"
-                style={{ width: "1000px", height: "312px", gap: "56px" }}
-              >
-                {/* avatar */}
-                <div
-                  className="flex-1 flex flex-row items-center gap-80"
-                  style={{ minWidth: "calc(50% - 56px)" }}
-                >
-                  <div className="f-14 flex-2 no-wrap">Logo</div>
-                  <div className="flex flex-row items-center justify-between gap-70">
-                    <div className="avatar" />
-                    <Button type="metis-solid">
-                      <div style={{ padding: "14px 27px" }}>Upload</div>
-                    </Button>
+          <div className="flex flex-col gap-32">
+            <div className="p-50 flex flex-col items-center gap-24 cards-container">
+              {/* avatar */}
+              <div className="flex-1 flex flex-col items-center gap-4 pointer">
+                <div className="s-120">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="120"
+                    height="120"
+                    viewBox="0 0 120 120"
+                    fill="none"
+                  >
+                    <g clipPath="url(#clip0_361_2511)">
+                      <rect width="120" height="120" rx="60" fill="#1B4A82" />
+                      <path
+                        d="M42.3713 106.636C39.7004 112.266 37.0111 118.22 34.3767 124.515C34.4064 125.243 35.0664 127.039 37.4686 128.4C39.481 123.723 43.6155 114.245 46.3962 108.489C75.978 114.928 93.9612 98.7042 98.6262 93.7579C98.7678 93.6042 98.8681 93.418 98.9176 93.2163C98.9672 93.0147 98.9646 92.8041 98.91 92.6037C98.8554 92.4033 98.7506 92.2196 98.6052 92.0693C98.4598 91.919 98.2783 91.807 98.0775 91.7434C83.0396 86.7791 63.6475 90.5563 50.3659 100.431C54.5919 92.0852 59.3484 83.3797 64.544 74.7642C95.3515 78.9191 111.67 60.9326 115.768 55.5366C115.888 55.3729 115.965 55.1825 115.991 54.9825C116.018 54.7825 115.995 54.5791 115.922 54.3904C115.85 54.2017 115.731 54.0334 115.576 53.9008C115.422 53.7681 115.236 53.6751 115.036 53.6301C100.767 50.2306 83.6068 54.6553 71.3496 64.0622C74.8987 58.6843 78.6123 53.4322 82.4724 48.4499C92.7175 43.9953 101.583 36.9581 108.172 28.051C114.761 19.1439 118.84 8.68314 119.994 -2.27202C120.015 -2.4742 119.984 -2.67832 119.903 -2.86544C119.822 -3.05255 119.695 -3.21657 119.532 -3.34221C119.37 -3.46786 119.178 -3.55107 118.974 -3.58409C118.77 -3.61711 118.561 -3.59886 118.366 -3.53106C111.103 -1.03094 83.4421 10.7682 77.9538 46.7412C75.9048 49.4212 72.7764 53.702 68.9346 59.4936C74.24 37.9098 65.6782 22.7292 62.5133 18.1247C62.4035 17.9499 62.2501 17.8056 62.0676 17.7056C61.8851 17.6055 61.6796 17.553 61.4707 17.553C61.2617 17.553 61.0562 17.6055 60.8737 17.7056C60.6912 17.8056 60.5376 17.9499 60.4277 18.1247C55.4572 26.3595 52.8601 35.7691 52.9149 45.3447C52.9697 54.9202 55.6743 64.3006 60.7388 72.4799C56.5312 79.4586 51.921 87.6245 47.201 96.9235C48.9024 71.6165 35.1086 57.641 30.6082 53.7559C30.454 53.6243 30.2688 53.5326 30.0694 53.4893C29.87 53.4459 29.6627 53.4521 29.4664 53.5075C29.2701 53.5629 29.0911 53.6657 28.9454 53.8064C28.7998 53.9472 28.692 54.1215 28.6323 54.3135C26.5651 60.7886 20.9304 85.0525 42.3713 106.636Z"
+                        fill="#20589B"
+                      />
+                      <path
+                        d="M60 78L60 60"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M54 64.8L59.2929 59.5072C59.6834 59.1166 60.3166 59.1166 60.7071 59.5072L66 64.8"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M70.9284 70.8C73.2751 70.8009 75.5385 69.9405 77.2796 68.3856C79.0207 66.8307 80.1155 64.6923 80.3516 62.385C80.5876 60.0776 79.9482 57.7659 78.5572 55.8981C77.2964 54.2051 75.4996 52.9861 73.4619 52.4278C73.0776 52.3225 72.7731 52.0231 72.6701 51.6382C71.9608 48.9893 70.4175 46.6248 68.2551 44.8919C65.9204 43.021 63.006 42 60.0003 42C56.9945 42 54.0801 43.021 51.7455 44.8919C49.5831 46.6248 48.0398 48.9893 47.3305 51.6381C47.2274 52.023 46.9228 52.3225 46.5385 52.4277C44.5007 52.9858 42.7036 54.2046 41.4425 55.8976C40.0513 57.7653 39.4116 60.0772 39.6476 62.3847C39.8836 64.6921 40.9784 66.8308 42.7196 68.3857C44.4608 69.9406 46.7244 70.801 49.0713 70.8H49.7998"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_361_2511">
+                        <rect width="120" height="120" rx="60" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+                <span className="fz-14 fw-400 color-fff inter">
+                  Upload your logo
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-25 minw-620">
+                <div className="flex flex-row gap-20">
+                  {/* name */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">Name</div>
+                    <Input
+                      value={name}
+                      onChange={setName}
+                      solidLight
+                      className="flex-3  fz-22 fw-400 color-000"
+                    />
+                  </div>
+
+                  {/* website */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">Website</div>
+                    <Input
+                      value={website}
+                      onChange={setWebsite}
+                      solidLight
+                      className="flex-3  fz-22 fw-400 color-000"
+                    />
                   </div>
                 </div>
 
-                {/* name */}
-                <div
-                  className="flex-1 flex flex-row items-center gap-80"
-                  style={{ minWidth: "calc(50% - 56px)" }}
-                >
-                  <div className="f-14 flex-2 no-wrap">Name</div>
-                  <Input solid className="flex-3" />
+                <div className="flex flex-row gap-20">
+                  {/* address */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">Address</div>
+                    <Input
+                      value={account}
+                      onChange={setAccount}
+                      solidLight
+                      className="flex-3  fz-22 fw-400 color-000"
+                      suffix={
+                        <Button onClick={()=>setAccount(address)}>Addr</Button>
+                      }
+                    />
+                  </div>
+
+                  {/* publicKey */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">Public Key</div>
+                    <Input
+                      value={pubKey}
+                      onChange={setPubKey}
+                      solidLight
+                      className="flex-3  fz-22 fw-400 color-000"
+                      suffix={<Button onClick={handleSignAndRecover}>Sign Test</Button>}
+                    />
+                  </div>
                 </div>
 
-                {/* website */}
-                <div
-                  className="flex-1 flex flex-row items-center gap-80"
-                  style={{ minWidth: "calc(50% - 56px)" }}
-                >
-                  <div className="f-14 flex-2 no-wrap">Website</div>
-                  <Input solid className="flex-3" />
-                </div>
 
-                {/* addr */}
-                <div
-                  className="flex-1 flex flex-row items-center gap-80"
-                  style={{ minWidth: "calc(50% - 56px)" }}
-                >
-                  <div className="f-14 flex-2 no-wrap">Signer's Address</div>
-                  <Input solid className="flex-3" />
-                </div>
+
 
                 {/* desc */}
                 <div
-                  className="flex-1 flex flex-row items-center gap-80"
+                  className="flex-1 flex flex-col gap-6"
                   style={{ minWidth: "calc(50% - 56px)" }}
                 >
-                  <div className="f-14 flex-2 no-wrap">Description</div>
-                  <Input solid className="flex-3" />
-                </div>
-
-                {/* public key */}
-                <div
-                  className="flex-1 flex flex-row items-center gap-80"
-                  style={{ minWidth: "calc(50% - 56px)" }}
-                >
-                  <div className="f-14 flex-2 no-wrap">Signer's Public Key</div>
-                  <Input solid className="flex-3" />
+                  <div className="fz-14 fw-400 color-fff inter">
+                    Description
+                  </div>
+                  <Input
+                    value={desc}
+                    onChange={setDesc}
+                    solidLight
+                    className="flex-3  fz-22 fw-400 color-000"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="mt-64 flex flex-row items-center justify-center">
-              <Button type="metis" onClick={() => handleIndex("3")}>
-                <div style={{ width: "240px" }} className="p-18 f-14-bold">
-                  Continue
-                </div>
+            <div className="flex flex-row items-center justify-center gap-10">
+              <Button
+                type="solid"
+                onClick={() => handleIndex("1")}
+                className="w-full radius-30 h-80"
+                style={{ border: "2px solid #FFF" }}
+              >
+                <div className="fz-26 fw-700 raleway color-fff">BACK</div>
+              </Button>
+
+              <Button
+                disabled={!validStep2}
+                type="metis"
+                onClick={() => handleIndex("3")}
+                className="w-full radius-30 h-80"
+              >
+                <div className="fz-26 fw-700 raleway color-fff">CONTINUE</div>
               </Button>
             </div>
           </div>
@@ -757,61 +494,103 @@ export function Component() {
 
       case "3":
         return (
-          <div className="flex flex-col">
-            <span className="f-20-bold mb-8">Add to Lockup</span>
-            <span className="f-14 mb-48">
-              You need at least 20,000 METIS to become a Sequencer
-            </span>
-            <div className="flex flex-row items-center gap-40 cards-container">
-              <div
-                className="card flex-wrap flex-col items-start"
-                style={{ width: "560px", height: "285px", gap: "24px" }}
-              >
-                <div className="f-16 w-full" style={{ textAlign: "left" }}>
-                  Stake
-                </div>
-                <div className="flex flex-row items-center gap-20 w-full">
-                  <Input
-                    className="flex-1"
-                    solid
-                    value={stakeAmount}
-                    onChange={setStakeAmount}
-                    max={balance?.readable || "0"}
-                    suffix={
-                      <div className="f-12" style={{ color: "#000" }}>
-                        METIS
-                      </div>
-                    }
-                  />
-                  <Button type="metis" onClick={handleLockup}>
-                    <div style={{ padding: "14px 34px" }}>
-                      {approveLoading ? (
-                        <Loading />
-                      ) : (
-                        <span>{needApprove ? "Approve" : "Lockup"}</span>
-                      )}
-                    </div>
-                  </Button>
-                </div>
-                <div className="flex flex-col gap-16 w-full">
-                  <div className="flex flex-row items-center justify-between w-full">
-                    <div className="f-14">Your Wallet Address</div>
-                    <CopyAddress className={"f-14"} />
+          <div className="flex flex-col gap-32">
+            <div className="pt-66 pb-16 pl-38 pr-38 flex flex-col items-center gap-73 cards-container">
+              <div className="flex flex-col gap-25 minw-620">
+                <div className="flex flex-row gap-20">
+                  {/* name */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">Lockup</div>
+                    <Input
+                      max={BigNumber(balance?.readable).toString()}
+                      value={stakeAmount}
+                      onChange={handleLockupChange}
+                      solidLight
+                      className="flex-3 fz-22 fw-400 color-000"
+                      suffix={
+                        <img
+                          className="s-22"
+                          src={getImageUrl("@/assets/images/token/metis.svg")}
+                        />
+                      }
+                    />
                   </div>
 
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="f-14">Your Blance</div>
-                    <div className="f-14">{balance?.readable} MEITS</div>
+                  {/* website */}
+                  <div
+                    className="flex-1 flex flex-col gap-6"
+                    style={{ minWidth: "calc(50% - 56px)" }}
+                  >
+                    <div className="fz-14 fw-400 color-fff inter">
+                      Expected APR
+                    </div>
+                    <Input
+                      value={apr}
+                      onChange={handleChangeApr}
+                      solidLight
+                      className="flex-3 fz-22 fw-400 color-000"
+                      suffix={
+                        <img
+                          className="s-22"
+                          src={getImageUrl("@/assets/images/token/metis.svg")}
+                        />
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* desc */}
+                <div className="flex flex-col gap-10">
+                  <div className="flex flex-row items-center gap-19">
+                    <div className="w-158 fz-14 fw-400 inter color-fff">
+                      Your Balance
+                    </div>
+                    <div className="w-155 nowrap align-left fz-14 fw-700 inter color-fff">
+                      {balance?.readable} METIS
+                    </div>
+                  </div>
+                  <div className="flex flex-row items-center gap-19">
+                    <div className="w-158 fz-14 fw-400 inter color-fff">
+                      Wallet Address
+                    </div>
+                    <CopyAddress
+                      className="align-right fz-14 fw-700 inter color-fff"
+                      reverse
+                      addr={address}
+                    />
                   </div>
                 </div>
               </div>
+
+              <div className="fz-18 fw-400 inter color-fff self-start">
+                In order to become a Sequencer you need to lock up min. 20,000
+                METIS.
+                <br />
+                The more you lock up the higher reward you can receive.
+              </div>
             </div>
 
-            <div className="mt-64 flex flex-row items-center justify-center">
-              <Button type="metis" onClick={() => handleIndex("4")}>
-                <div style={{ width: "240px" }} className="p-18 f-14-bold">
-                  Continue
-                </div>
+            <div className="flex flex-row items-center justify-center gap-10">
+              <Button
+                type="solid"
+                onClick={() => handleIndex("2")}
+                className="w-full radius-30 h-80"
+                style={{ border: "2px solid #FFF" }}
+              >
+                <div className="fz-26 fw-700 raleway color-fff">BACK</div>
+              </Button>
+
+              <Button
+                loading={approveLoading}
+                disabled={!stakeAmount || BigNumber(stakeAmount).lt(20000) }
+                type="metis"
+                onClick={handleLockup}
+                className="w-full radius-30 h-80"
+              >
+                <div className="fz-26 fw-700 raleway color-fff">{ needApprove ? 'APPROVE' : 'CONTINUE'}</div>
               </Button>
             </div>
           </div>
@@ -819,42 +598,41 @@ export function Component() {
 
       case "4":
         return (
-          <div className="flex flex-col items-center gap-48">
-            <div className="flex flex-col items-center gap-12">
-              <div className="flex flex-col items-center">
-                <img
-                  style={{ width: "180px", height: "180px" }}
-                  src={getImageUrl(
-                    "@/assets/images/_global/ic_limits_of_authority.svg"
-                  )}
-                />
-                <span className="f-20-bold">Congratulations！</span>
+          <div className="flex flex-col gap-32">
+            <div className="pt-70 pb-34 pl-124 pr-124 flex flex-col items-center gap-26 cards-container">
+              <img className="s-180" src={getImageUrl('@/assets/images/token/metis-dark.svg')} />
+              <div className="color-fff flex flex-col gap-6 justify-center">
+                <span className="fz-46 fw-700 raleway align-center">Congraturations!</span>
+                <span className="fz-26 fw-700 raleway align-center">Your Sequencer has been set up successfully.</span>
               </div>
-              <span className="f-14">
-                Your Sequencer has been setup successfully.
-              </span>
             </div>
-            <Button type="metis">
-              <div style={{ padding: "18px 44px" }} className="f-14-bold">
-                Check my Sequencer
-              </div>
-            </Button>
+
+            <div className="flex flex-row items-center justify-center gap-10">
+              <Button type="metis" onClick={() => { 
+                navigate('/sequencers')
+              }} className="w-full radius-30 h-80">
+                <div className="fz-26 fw-700 raleway color-fff">
+                  CHECK MY SEQUENCER
+                </div>
+              </Button>
+            </div>
           </div>
         );
     }
-  }, [
-    activeIndex,
-    stakeAmount,
-    approveLoading,
-    balance?.readable,
-    needApprove,
-  ]);
+  }, [needApprove, allowance, apr,handleChangeApr, handleLockup, stakeAmount, handleLockupChange, validStep2, balance?.readable, name, website, account, pubKey, desc, address, activeIndex]);
 
   return (
-    <Container className="pages-landing flex flex-col gap-48 items-center">
-      <div className="f-28-bold">Become a Sequencer</div>
-      <Progress activeIndex={activeIndex} col={col} />
-      <div className="mt-32">{step}</div>
+    <Container className="pages-landing flex flex-col gap-48 items-center pt-156 pb-206">
+      <div className="maxw-1440 m-auto">
+        <div className="flex flex-col gap-2">
+          <span className="fz-26 fw-700 color-fff raleway">Set Up</span>
+          <span className="fz-56 fw-700 color-fff raleway">
+            Set Up a Sequencer
+          </span>
+        </div>
+        <Progress needIndex={false} activeIndex={activeIndex} col={col} />
+        <div className="mt-42">{step}</div>
+      </div>
     </Container>
   );
 }

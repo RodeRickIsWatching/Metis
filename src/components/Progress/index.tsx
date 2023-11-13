@@ -5,25 +5,26 @@ import { styled } from "styled-components";
 const Bar = styled.div<{ activePercent?: string; activeIndex?: string; }>`
   width: 100%;
   position: absolute;
-  top: 10px;
+  /* top: calc(50% - 10px); */
   left: 50%;
-  transform: translate(-50%, 0);
-  height: 24px;
+  transform: translate(-50%, -50%);
+  height: 2px;
   background: #e8f1fb;
   border-radius: 26px;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
   &::after {
     content: "";
+    position: absolute;
     transition: all linear .2s;
     display: inline-block;
     border-radius: 26px;
     width: ${({ activePercent, activeIndex }) =>
-      BigNumber(activePercent || 0).gt(0)
-        ? `calc(${activePercent || 0}% + ${BigNumber(activeIndex || 0).minus(1)
-            .multipliedBy(84)
-            .toString()}px)`
-        : "0"};
+    BigNumber(activePercent || 0).gt(0)
+      ? `calc(${activePercent || 0}% + ${BigNumber(activeIndex || 0).minus(1)
+        .multipliedBy(84)
+        .toString()}px)`
+      : "0"};
     height: 100%;
     background: rgba(0, 210, 193, 1);
   }
@@ -99,7 +100,48 @@ const Container = styled.div`
   }
 `;
 
-const Progress = ({ col, activeIndex }: { col: any; activeIndex: string }) => {
+const IconRoundGray = ({ className }: { className?: any }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} width="84" height="84" viewBox="0 0 84 84" fill="none">
+    <circle cx="42" cy="42" r="21" fill="white" fillOpacity="0.2" />
+    <circle cx="42" cy="42" r="16" fill="white" fillOpacity="0.2" />
+    <g filter="url(#filter0_d_361_2492)">
+      <circle cx="42" cy="42" r="12" fill="white" />
+    </g>
+    <defs>
+      <filter id="filter0_d_361_2492" x="0" y="0" width="84" height="84" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+        <feOffset />
+        <feGaussianBlur stdDeviation="15" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_361_2492" />
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_361_2492" result="shape" />
+      </filter>
+    </defs>
+  </svg>
+
+
+);
+
+const IconRoundBlue = ({ className }: { className?: any }) => (
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    width="28"
+    height="28"
+    viewBox="0 0 28 28"
+    fill="none"
+  >
+    <circle cx="14" cy="14" r="10" fill="#00D2FF" />
+    <circle cx="14" cy="14" r="14" fill="#00D2FF" fillOpacity="0.25" />
+  </svg>
+);
+
+
+
+
+const Progress = ({ needIndex = true, col, activeIndex }: {needIndex?: boolean,  col: any; activeIndex: string }) => {
   const activePercent = useMemo(() => {
     const len = col?.length;
     const activeLen = BigNumber(activeIndex).minus(1).gt(0)
@@ -114,22 +156,74 @@ const Progress = ({ col, activeIndex }: { col: any; activeIndex: string }) => {
     <Container>
       <div className="progress-bar flex flex-row items-center">
         <Bar
-          className="bar"
+        style={{
+          top: needIndex ? 'calc(50% + 10px)' : 'calc(50% - 10px)'
+        }}
+          className={`bar z-1`}
           activeIndex={activeIndex}
           activePercent={activePercent}
         />
         {col.map((i, index) => (
           <div
             key={i.index}
-            className={`c flex-1 flex flex-col items-center gap-16 c-${index} ${
-              BigNumber(activeIndex).gte(i?.index) ? "active-index" : ""
-            }`}
+            className={`flex flex-col items-center ${index === 0 || index === col.length - 1
+              ? "flex-1"
+              : "flex-2"
+              }`}
           >
-            <div className="index">{i.index}</div>
-            <span>{i.content}</span>
+            {
+              needIndex ? ( <div
+                className={`fz-40 fw-400 inter color-fff align-center ${index === 0
+                  ? "self-start translateXr--50 whiteSpace-nowrap"
+                  : index === col.length - 1
+                    ? "self-end translateXr-50 whiteSpace-nowrap"
+                    : ""
+                  }`}
+              >
+                {i.index}
+              </div>) : null
+            }
+           
+            <div className="h-78 w-full flex flex-col justify-center">
+              <div className="position-relative progress-line w-full">
+                {index === (+activeIndex-1) ? (
+                  <IconRoundGray
+                    className={`position-absolute topr-50 translateCenter ${index === 0
+                      ? "left-0"
+                      : index === col.length - 1
+                        ? "leftr-100"
+                        : "leftr-50"
+                      }`}
+                  />
+                ) : (
+                  <IconRoundBlue
+                    className={`position-absolute topr-50 translateCenter ${index === 0
+                      ? "left-0"
+                      : index === col.length - 1
+                        ? "leftr-100"
+                        : "leftr-50"
+                      }`}
+                  />
+                )}
+              </div>
+            </div>
+
+           <div className="h-20 w-full position-relative">
+           <span
+              className={`position-absolute fz-18 fw-400 inter color-fff whiteSpace-nowrap ${index === 0
+                ? "self-start translateXr--50 align-left"
+                : index === col.length - 1
+                  ? "self-end align-center leftr-100 translateXr--50"
+                  : "align-center leftr-50 translateXr--50"
+                }`}
+            >
+              {i.content}
+            </span>
+           </div>
           </div>
         ))}
       </div>
+
     </Container>
   );
 };

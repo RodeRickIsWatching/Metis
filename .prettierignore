@@ -1,0 +1,8 @@
+# Directory
+dist/
+dist-ssr/
+
+# Files
+**/*-min.js
+**/*.min.js
+yarn.lock

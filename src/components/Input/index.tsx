@@ -42,6 +42,7 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   solid?: boolean;
+  solidLight?: boolean;
   max?: string;
   decimal?: number;
   onChange?: (...args: any[]) => any;
@@ -58,6 +59,7 @@ const Input: React.FC<InputProps> = React.forwardRef((props: InputProps, ref: Re
     danger = false,
     disabled = false,
     solid = false,
+    solidLight=false,
     prefix,
     suffix,
     // clear = false,
@@ -82,7 +84,8 @@ const Input: React.FC<InputProps> = React.forwardRef((props: InputProps, ref: Re
   const classes = classNames(className, 'component-input flex flex-row items-center justify-between', {
     danger,
     disabled,
-    solid
+    solid,
+    solidLight
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

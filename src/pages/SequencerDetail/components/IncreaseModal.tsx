@@ -1,20 +1,18 @@
-import { Button, Input, Modal } from "@/components";
-import CopyAddress from "@/components/CopyAddress";
-import Loading from "@/components/_global/Loading";
-import { pubKey } from "@/configs/common";
-import useAllowance from "@/hooks/useAllowance";
-import useAuth from "@/hooks/useAuth";
-import useBalance from "@/hooks/useBalance";
-import useLock from "@/hooks/useLock";
-import useSequencerInfo from "@/hooks/useSequencerInfo";
-import useUpdate from "@/hooks/useUpdate";
-import { catchError } from "@/utils/tools";
-import { useBoolean } from "ahooks";
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import React, { useState } from "react";
-import { styled } from "styled-components";
-import { Address } from "wagmi";
+import { Button, Input, Modal } from '@/components';
+import CopyAddress from '@/components/CopyAddress';
+import Loading from '@/components/_global/Loading';
+import useAllowance from '@/hooks/useAllowance';
+import useAuth from '@/hooks/useAuth';
+import useBalance from '@/hooks/useBalance';
+import useLock from '@/hooks/useLock';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
+import useUpdate from '@/hooks/useUpdate';
+import { catchError } from '@/utils/tools';
+import { useBoolean } from 'ahooks';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
+import React, { useState } from 'react';
+import { styled } from 'styled-components';
 
 const Container = styled(Modal)`
   .f-12 {
@@ -60,15 +58,7 @@ const Container = styled(Modal)`
   }
 `;
 
-const IncreaseModal = ({
-  visible,
-  onOk,
-  onClose,
-}: {
-  visible: boolean;
-  onOk?: any;
-  onClose?: any;
-}) => {
+const IncreaseModal = ({ visible, onOk, onClose }: { visible: boolean; onOk?: any; onClose?: any }) => {
   const { sequencerInfo } = useSequencerInfo();
 
   const { address } = useAuth(true);
@@ -77,28 +67,21 @@ const IncreaseModal = ({
 
   const { balance } = useBalance();
 
-  const [relockAmount, setRelockAmount] = useState("");
+  const [relockAmount, setRelockAmount] = useState('');
 
   const lockedup = React.useMemo(
-    () =>
-      ethers.utils.formatEther(sequencerInfo?.sequencerLock || "0").toString(),
-    [sequencerInfo?.sequencerLock]
+    () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
+    [sequencerInfo?.sequencerLock],
   );
 
   const { relock, lockFor } = useLock();
 
   const { allowance, approve } = useAllowance();
-  const [
-    approveLoading,
-    { setTrue: setApproveLoadingTrue, setFalse: setApproveLoadingFalse },
-  ] = useBoolean(false);
+  const [approveLoading, { setTrue: setApproveLoadingTrue, setFalse: setApproveLoadingFalse }] = useBoolean(false);
 
   const needApprove = React.useMemo(
-    () =>
-      BigNumber(allowance || "0").lte(
-        ethers.utils.parseEther(relockAmount || "0").toString()
-      ),
-    [allowance, relockAmount]
+    () => BigNumber(allowance || '0').lte(ethers.utils.parseEther(relockAmount || '0').toString()),
+    [allowance, relockAmount],
   );
 
   const handleApprove = async () => {
@@ -116,16 +99,16 @@ const IncreaseModal = ({
 
       setApproveLoadingTrue();
 
-      console.log("---relock---", {
+      console.log('---relock---', {
         // address: address as Address,
-        amount: ethers.utils.parseEther(relockAmount || "0").toString(),
+        amount: ethers.utils.parseEther(relockAmount || '0').toString(),
         // pubKey: pubKey as string,
         lockRewards: sequencerInfo?.reward,
         sequencerId,
       });
       await relock({
         // address: address as Address,
-        amount: ethers.utils.parseEther(relockAmount || "0").toString(),
+        amount: ethers.utils.parseEther(relockAmount || '0').toString(),
         // pubKey: pubKey as string,
         lockRewards: false,
         sequencerId,
@@ -138,14 +121,7 @@ const IncreaseModal = ({
   };
 
   return (
-    <Container
-      visible={visible}
-      onCancel={onClose}
-      onClose={onClose}
-      onOk={onOk}
-      title="Increase"
-      middleHeader
-    >
+    <Container visible={visible} onCancel={onClose} onClose={onClose} onOk={onOk} title="Increase" middleHeader>
       <div className="c flex flex-col gap-24">
         <div className="flex flex-col p-24 gap-12 items-center bg-dark radius-8">
           <span className="f-14">Locked up Amount</span>
@@ -167,22 +143,16 @@ const IncreaseModal = ({
           <Button
             disabled={+sequencerInfo?.unlockClaimTime}
             onClick={handleRelock}
-            style={{ padding: "14px 50px" }}
+            style={{ padding: '14px 50px' }}
             type="metis"
           >
-            {approveLoading ? (
-              <Loading />
-            ) : needApprove ? (
-              <span>Approve</span>
-            ) : (
-              <span>Add</span>
-            )}
+            {approveLoading ? <Loading /> : needApprove ? <span>Approve</span> : <span>Add</span>}
           </Button>
         </div>
         <div className="flex flex-col gap-16">
           <div className="flex flex-row items-center justify-between">
             <span className="f-14">Your Wallet Address</span>
-            <CopyAddress className={"f-14"} />
+            <CopyAddress className={'f-14'} />
           </div>
 
           <div className="flex flex-row items-center justify-between">

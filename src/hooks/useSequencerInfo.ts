@@ -1,12 +1,12 @@
-import { lockContract, basicChainId } from "@/configs/common";
-import { useRequest } from "ahooks";
-import useAuth from "./useAuth";
-import { multicall } from "@wagmi/core";
-import { useRecoilState } from "recoil";
-import { recoilSequencerInfo } from "@/models";
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { useEffect, useState } from "react";
+import { lockContract, basicChainId } from '@/configs/common';
+import { useRequest } from 'ahooks';
+import useAuth from './useAuth';
+import { multicall } from '@wagmi/core';
+import { useRecoilState } from 'recoil';
+import { recoilSequencerInfo } from '@/models';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
+import { useEffect, useState } from 'react';
 
 const useSequencerInfo = () => {
   const { connector } = useAuth(true);
@@ -14,41 +14,47 @@ const useSequencerInfo = () => {
 
   const intervalUpdate = async (
     props: any = {
+      sequencerIds: undefined,
       sequencerId: undefined,
       self: false,
-    }
+    },
   ) => {
     const {
       sequencerId,
+      sequencerIds,
     }: {
       sequencerId?: string;
+      sequencerIds?: string[];
     } = props;
 
-    if (!sequencerId) return;
-
-    let p: any[] = [
-      {
-        ...lockContract,
-        chainId: basicChainId,
-        functionName: "sequencerReward",
-        args: [sequencerId],
-      },
-      {
-        ...lockContract,
-        chainId: basicChainId,
-        functionName: "sequencerLock",
-        args: [sequencerId],
-      },
-      {
-        ...lockContract,
-        chainId: basicChainId,
-        functionName: "sequencers",
-        args: [sequencerId],
-      },
-    ];
+    if (!sequencerId && !sequencerIds?.length) return;
+    const s = sequencerIds || [sequencerId];
+    const multiP: any[] = s.reduce((prev: any, next: any) => {
+      const n = [
+        {
+          ...lockContract,
+          chainId: basicChainId,
+          functionName: 'sequencerReward',
+          args: [next],
+        },
+        {
+          ...lockContract,
+          chainId: basicChainId,
+          functionName: 'sequencerLock',
+          args: [next],
+        },
+        {
+          ...lockContract,
+          chainId: basicChainId,
+          functionName: 'sequencers',
+          args: [next],
+        },
+      ];
+      return [...prev, ...n];
+    }, []);
 
     const res = await multicall({
-      contracts: p,
+      contracts: multiP,
     });
 
     const result: any = {};
@@ -64,21 +70,18 @@ const useSequencerInfo = () => {
 
       //   console.log("temo", temp);
 
-      const j = i?.result || 0
-      result[p[index].functionName] = j?.toString();
+      const j = i?.result || 0;
+      result[multiP[index].functionName] = j?.toString();
     });
+
 
     const status = result?.sequencers?.status;
     const unlockClaimTime = result?.sequencers?.unlockClaimTime?.toString();
     // const reward = BigNumber(result?.sequencers?.reward || '0').minus(1)?.toString();
     const reward = result?.sequencerReward.toString();
-    const rewardReadable = ethers.utils.formatEther(reward || "0").toString();
+    const rewardReadable = ethers.utils.formatEther(reward || '0').toString();
 
-    console.log("unlockClaimTime", unlockClaimTime);
-
-    const ifActive =
-      BigNumber(status).eq(1) &&
-      BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
+    const ifActive = BigNumber(status).eq(1) && BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
     const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
 
     const finalRes = {
@@ -95,14 +98,14 @@ const useSequencerInfo = () => {
       setSequencerInfo(finalRes);
     }
 
-    console.log('finalRes', finalRes)
+    console.log('finalRes', finalRes);
 
     return finalRes;
   };
 
   useEffect(() => {
     if (sequencerInfo) {
-      console.log("sequencerInfo", sequencerInfo);
+      // console.log("sequencerInfo", sequencerInfo);
     }
   }, [sequencerInfo]);
 

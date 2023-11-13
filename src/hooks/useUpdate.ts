@@ -1,17 +1,12 @@
-import { multicall } from "@wagmi/core";
-import useAuth from "./useAuth";
-import { basicChainId, depositToken, lockContract } from "@/configs/common";
-import { useRequest } from "ahooks";
-import { useRecoilState } from "recoil";
-import {
-  recoilAllowance,
-  recoilBalance,
-  recoilSequencerId,
-  recoilSequencerTotalInfo,
-} from "@/models";
-import { ethers } from "ethers";
+import { multicall } from '@wagmi/core';
+import useAuth from './useAuth';
+import { basicChainId, depositToken, lockContract } from '@/configs/common';
+import { useRequest } from 'ahooks';
+import { useRecoilState } from 'recoil';
+import { recoilAllowance, recoilBalance, recoilSequencerId, recoilSequencerTotalInfo } from '@/models';
+import { ethers } from 'ethers';
 
-const mockId = "3";
+const mockId = '3';
 
 const useUpdate = () => {
   const { connector } = useAuth(true);
@@ -20,15 +15,13 @@ const useUpdate = () => {
   const [balance, setBalance] = useRecoilState(recoilBalance);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
 
-  const [sequencerTotalInfo, setSequencerTotalInfo] = useRecoilState(
-    recoilSequencerTotalInfo
-  );
+  const [sequencerTotalInfo, setSequencerTotalInfo] = useRecoilState(recoilSequencerTotalInfo);
 
   const intervalUpdate = async (
     props: any = {
       address: undefined,
       sequencerId: undefined,
-    }
+    },
   ) => {
     const {
       address,
@@ -42,13 +35,13 @@ const useUpdate = () => {
       {
         ...lockContract,
         chainId: basicChainId,
-        functionName: "currentSequencerSetSize",
+        functionName: 'currentSequencerSetSize',
         args: [],
       },
       {
         ...lockContract,
         chainId: basicChainId,
-        functionName: "currentSequencerSetTotalLock",
+        functionName: 'currentSequencerSetTotalLock',
         args: [],
       },
     ];
@@ -59,19 +52,19 @@ const useUpdate = () => {
         {
           ...lockContract,
           chainId: basicChainId,
-          functionName: "sequencerReward",
+          functionName: 'sequencerReward',
           args: [sequencerId],
         },
         {
           ...lockContract,
           chainId: basicChainId,
-          functionName: "sequencerLock",
+          functionName: 'sequencerLock',
           args: [sequencerId],
         },
         {
           ...lockContract,
           chainId: basicChainId,
-          functionName: "sequencers",
+          functionName: 'sequencers',
           args: [sequencerId],
         },
       ];
@@ -83,19 +76,19 @@ const useUpdate = () => {
         {
           ...lockContract,
           chainId: basicChainId,
-          functionName: "getSequencerId",
+          functionName: 'getSequencerId',
           args: [address],
         },
         {
           ...depositToken,
           chainId: basicChainId,
-          functionName: "balanceOf",
+          functionName: 'balanceOf',
           args: [address],
         },
         {
           ...depositToken,
           chainId: basicChainId,
-          functionName: "allowance",
+          functionName: 'allowance',
           args: [address, lockContract.address],
         },
       ];

@@ -1,16 +1,14 @@
 // https://wagmi.sh/react/hooks/useSwitchNetwork
-import { useEffect } from 'react';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
+import useAuth from './useAuth';
 
 const useChainWatcher = () => {
   const { chain } = useNetwork();
+  
+  const { chains, error, isLoading, pendingChainId, switchNetworkAsync, isIdle, status } = useSwitchNetwork();
 
-  const { chains, error, isLoading, pendingChainId, switchNetwork, isIdle, status } = useSwitchNetwork();
-
-  const setupNetwork = () => {
-    if (chain?.unsupported) {
-      switchNetwork?.(chains[0]?.id);
-    }
+  const setupNetwork = (forceId?: number) => {
+    return switchNetworkAsync?.(forceId || chains[0]?.id);
   };
 
   const currentStatus = chain?.unsupported;

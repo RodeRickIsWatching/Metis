@@ -1,74 +1,36 @@
-import * as React from "react";
-import "./index.scss";
-import { styled } from "styled-components";
-import { filterHideText, getImageUrl } from "@/utils/tools";
-import { Button, Pagination, Tooltip } from "@/components";
-import { useNavigate, useParams } from "react-router-dom";
-import dayjs from "dayjs";
-import CopyAddress from "@/components/CopyAddress";
-import IncreaseModal from "./components/IncreaseModal";
-import UnlockModal from "./components/UnlockModal";
-import DetailModal from "./components/DetailModal";
-import WithdrawModal from "./components/WithdrawModal";
-import ClaimModal from "./components/ClaimModal";
-import useSequencerInfo from "@/hooks/useSequencerInfo";
-import { ethers } from "ethers";
-import useUpdate from "@/hooks/useUpdate";
-import Loading from "@/components/_global/Loading";
-import { useCountDown, useMount } from "ahooks";
+/* eslint-disable max-len */
+import * as React from 'react';
+import './index.scss';
+import { styled } from 'styled-components';
+import { catchError, filterHideText, getImageUrl, jumpLink } from '@/utils/tools';
+import { Button, Input, Pagination, Tooltip } from '@/components';
+import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
+import CopyAddress from '@/components/CopyAddress';
+import IncreaseModal from './components/IncreaseModal';
+import UnlockModal from './components/UnlockModal';
+import DetailModal from './components/DetailModal';
+import WithdrawModal from './components/WithdrawModal';
+import ClaimModal from './components/ClaimModal';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
+import { ethers } from 'ethers';
+import useUpdate from '@/hooks/useUpdate';
+import { useBoolean, useCountDown, useRequest } from 'ahooks';
+import fetchUserTx from '@/graphql/tx';
+import BigNumber from 'bignumber.js';
+import useAuth from '@/hooks/useAuth';
+import useAllowance from '@/hooks/useAllowance';
+import useLock from '@/hooks/useLock';
 
 const testMode = true;
 
 const Container = styled.section`
-  .gap-260 {
-    gap: 260px;
-  }
-  .gap-58 {
-    gap: 58px;
-  }
-  .gap-48 {
-    gap: 48px;
-  }
-  .gap-55 {
-    gap: 55px;
-  }
-
-  .gap-32 {
-    gap: 32px;
-  }
-
-  .gap-64 {
-    gap: 64px;
-  }
-
   .half-w {
     width: 50%;
   }
 
   .p-0-72 {
     padding: 0px 72px;
-  }
-
-  .w-40 {
-    width: 40px;
-  }
-  .w-56 {
-    width: 56px;
-  }
-  .w-62 {
-    width: 62px;
-  }
-  .w-72 {
-    width: 72px;
-  }
-  .w-46 {
-    width: 46px;
-  }
-  .w-137 {
-    width: 137px;
-  }
-  .w-155 {
-    width: 155px;
   }
 
   .f-24-bold {
@@ -125,29 +87,36 @@ const Container = styled.section`
 
   position: relative;
 
+  .basic-card {
+    padding: 22px;
+    border-radius: 20px;
+    background: #fff;
+  }
+
+  background: #f5f5f5;
   .banner {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
-    background: url(${getImageUrl("@/assets/images/_global/img_3@2x.png")})
-      no-repeat;
+
+    background: url(${getImageUrl('@/assets/images/_global/home_top_banner.png')}), lightgray 50% / cover no-repeat;
+    /* filter: blur(75px); */
+
     background-size: cover;
-    aspect-ratio: 1439 / 443;
-    z-index: -1;
-    max-height: 400px;
+    aspect-ratio: 1920 / 410;
+    z-index: 0;
   }
 
   .content {
-    padding-top: 20px;
-    padding-bottom: 98px;
+    max-width: 1440px;
+    margin: auto;
   }
 
   .avatar {
-    width: 120px;
-    height: 120px;
-    background: #d0baf5;
+    background: url(${getImageUrl('@/assets/images/sequencer/avatar.svg')}) no-repeat;
+    background-size: contain;
     border-radius: 50%;
   }
 
@@ -159,25 +128,12 @@ const Container = styled.section`
   }
 
   .status-overview {
-    border-radius: 24px;
     display: inline-flex;
-    width: fit-content;
-    box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    margin: 0 auto 48px;
     .overview-item {
-      /* &:first-of-type{
-        border-top-left-radius: 24px;
-        border-bottom-left-radius: 24px;
-      }
-      &:last-of-type{
-        border-top-right-radius: 24px;
-        border-bottom-right-radius: 24px;
-      } */
-      width: 330px;
-      height: 120px;
-      background: #ffffff;
-      padding: 30px 0;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 45, 133, 0.2);
+      background: rgba(0, 45, 133, 0.2);
     }
   }
 
@@ -258,13 +214,12 @@ const Container = styled.section`
   }
 
   .sc2 {
-    width: 990px;
     margin-left: auto;
     margin-right: auto;
     .block-container {
       width: 990px;
-      height: 392px;
-      border: 1px solid #efefef;
+      min-height: 392px;
+      display: block;
     }
 
     table {
@@ -274,6 +229,7 @@ const Container = styled.section`
       }
       th,
       td {
+        text-align: left;
         vertical-align: middle;
         font-size: 14px;
         font-family: Poppins-Regular, Poppins;
@@ -285,13 +241,12 @@ const Container = styled.section`
   }
 
   .sc3 {
-    width: 990px;
     margin-left: auto;
     margin-right: auto;
     .block-container {
       width: 990px;
-      height: 392px;
-      border: 1px solid #efefef;
+      min-height: 392px;
+      display: block;
     }
 
     table {
@@ -301,6 +256,7 @@ const Container = styled.section`
       }
       th,
       td {
+        text-align: left;
         vertical-align: middle;
         font-size: 14px;
         font-family: Poppins-Regular, Poppins;
@@ -314,49 +270,95 @@ const Container = styled.section`
 
 export function Component() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const { address } = useAuth(true);
+
+  const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
+
+  const { run, cancel, data: sequencerInfo } = useSequencerInfo();
+
+  // const { sequencerId } = useUpdate();
+  const {
+    run: fetchUserTxRun,
+    loading: fetchUserTxLoading,
+    data: fetchUserTxData,
+  }: any = useRequest(fetchUserTx, { manual: true });
+
+  React.useEffect(() => {
+    if (id) {
+      fetchUserTxRun(id);
+    }
+  }, [id]);
+
+  const txCol = React.useMemo(() => {
+    return fetchUserTxData?.combinedData;
+  }, [fetchUserTxData?.combinedData]);
+
+  const curUserActiveSequencerIds = React.useMemo(
+    () =>
+      fetchUserTxData?.origin?.lockedParams?.length
+        ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))
+        : undefined,
+    [fetchUserTxData?.origin?.lockedParams],
+  );
+
+  const lockedup = React.useMemo(
+    () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
+    [sequencerInfo?.sequencerLock],
+  );
+
+  const ifSelf = React.useMemo(() => id?.toLowerCase() === address?.toLowerCase(), [address, id]);
+
+  React.useEffect(() => {
+    if (!curUserActiveSequencerIds) return;
+    cancel();
+    run({ sequencerIds: curUserActiveSequencerIds, self: ifSelf });
+    return () => {
+      cancel();
+    };
+  }, [cancel, curUserActiveSequencerIds, ifSelf, run]);
 
   const blocksCol = React.useMemo(() => {
+    return []
     return [
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: true,
-        rewards: "0.2",
-        symbol: "METIS",
+        rewards: '0.2',
+        symbol: 'METIS',
         timestamp: 1691313480,
       },
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: false,
-        rewards: "-",
+        rewards: '-',
         timestamp: 1691313480,
       },
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: true,
-        rewards: "0.2",
-        symbol: "METIS",
+        rewards: '0.2',
+        symbol: 'METIS',
         timestamp: 1691313480,
       },
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: true,
-        rewards: "0.2",
-        symbol: "METIS",
+        rewards: '0.2',
+        symbol: 'METIS',
         timestamp: 1691313480,
       },
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: true,
-        rewards: "0.2",
-        symbol: "METIS",
+        rewards: '0.2',
+        symbol: 'METIS',
         timestamp: 1691313480,
       },
       {
-        lastSignedBlock: "#45,643",
+        lastSignedBlock: '#45,643',
         status: true,
-        rewards: "0.2",
-        symbol: "METIS",
+        rewards: '0.2',
+        symbol: 'METIS',
         timestamp: 1691313480,
       },
     ];
@@ -366,56 +368,56 @@ export function Component() {
   const blocksTotal = React.useMemo(() => blocksCol.length, []);
   const blocksPageSize = 1;
 
-  // tx-history
-  const txCol = React.useMemo(() => {
-    return [
-      {
-        tx: "0x1a08c0736f2a8f064ce84dc0dc9559e80641ee34101cf02c34ad138874c7f0c5",
-        address: "531dxxx223ffss",
-        type: "Unlock",
-        amount: "21,212",
-        symbol: "METIS",
-        timestamp: 1691313480,
-      },
-      {
-        tx: "0x1a08c0736f2a8f064ce84dc0dc9559e80641ee34101cf02c34ad138874c7f0c5",
-        address: "531dxxx223ffss",
-        type: "Claim",
-        amount: "21,212",
-        symbol: "METIS",
-        timestamp: 1691313480,
-      },
-
-      {
-        tx: "0x1a08c0736f2a8f064ce84dc0dc9559e80641ee34101cf02c34ad138874c7f0c5",
-        address: "531dxxx223ffss",
-        type: "Increase",
-        amount: "21,212",
-        symbol: "METIS",
-        timestamp: 1691313480,
-      },
-      {
-        tx: "0x1a08c0736f2a8f064ce84dc0dc9559e80641ee34101cf02c34ad138874c7f0c5",
-        address: "531dxxx223ffss",
-        type: "Unlock",
-        amount: "21,212",
-        symbol: "METIS",
-        timestamp: 1691313480,
-      },
-      {
-        tx: "0x1a08c0736f2a8f064ce84dc0dc9559e80641ee34101cf02c34ad138874c7f0c5",
-        address: "531dxxx223ffss",
-        type: "Unlock",
-        amount: "21,212",
-        symbol: "METIS",
-        timestamp: 1691313480,
-      },
-    ];
-  }, []);
-
   const [txCurrentPage, setTxCurrentPage] = React.useState(1);
-  const txTotal = React.useMemo(() => txCol.length, []);
+  const txTotal = React.useMemo(() => txCol?.length || 0, [txCol?.length]);
   const txPageSize = 1;
+
+  const { sequencerId } = useUpdate();
+  const { relock } = useLock();
+
+  const { allowance, approve } = useAllowance();
+  const [approveLoading, { setTrue: setApproveLoadingTrue, setFalse: setApproveLoadingFalse }] = useBoolean(false);
+
+  const needApprove = React.useMemo(
+    () => BigNumber(allowance || '0').lte(ethers.utils.parseEther(relockAmount || '0').toString()),
+    [allowance, relockAmount],
+  );
+
+  const handleApprove = async () => {
+    const res = await approve();
+  };
+
+  const handleRelock = async () => {
+    try {
+      if (!allowance || needApprove) {
+        setApproveLoadingTrue();
+        await handleApprove();
+        setApproveLoadingFalse();
+        return;
+      }
+
+      setApproveLoadingTrue();
+
+      console.log('---relock---', {
+        // address: address as Address,
+        amount: ethers.utils.parseEther(relockAmount || '0').toString(),
+        // pubKey: pubKey as string,
+        lockRewards: sequencerInfo?.reward,
+        sequencerId,
+      });
+      await relock({
+        // address: address as Address,
+        amount: ethers.utils.parseEther(relockAmount || '0').toString(),
+        // pubKey: pubKey as string,
+        lockRewards: false,
+        sequencerId,
+      });
+      setApproveLoadingFalse();
+    } catch (e) {
+      console.log(e);
+      catchError(e);
+    }
+  };
 
   const [increaseVisible, setIncreaseVisible] = React.useState(false);
   const [detailsVisible, setDetailsVisible] = React.useState(false);
@@ -423,19 +425,11 @@ export function Component() {
   const [claimVisible, setClaimVisible] = React.useState(false);
   const [withdrawVisible, setWithdrawVisible] = React.useState(false);
 
-  const { sequencerId } = useUpdate();
-
-  const { run, cancel, data: sequencerInfo } = useSequencerInfo();
-  console.log("sequencerInfo", sequencerInfo);
-
   const ifInUnlockProgress = sequencerInfo?.ifInUnlockProgress;
 
   const unlockTo = React.useMemo(
-    () =>
-      dayjs
-        .unix(sequencerInfo?.unlockClaimTime || 0)
-        .format("YYYY-MM-DD HH:mm:ss"),
-    [sequencerInfo?.unlockClaimTime]
+    () => dayjs.unix(sequencerInfo?.unlockClaimTime || 0).format('YYYY-MM-DD HH:mm:ss'),
+    [sequencerInfo?.unlockClaimTime],
   );
 
   const [countdown, formattedRes] = useCountDown({
@@ -444,80 +438,60 @@ export function Component() {
 
   const { days } = formattedRes;
 
-  useMount(() => {
-    if (!id) return;
-    cancel();
-    console.log("id", id);
-    run({ sequencerId: id });
-    return () => {
-      cancel();
-    };
-  });
-
-  const lockedup = React.useMemo(
-    () =>
-      ethers.utils.formatEther(sequencerInfo?.sequencerLock || "0").toString(),
-    [sequencerInfo?.sequencerLock]
+  const unclaimed = React.useMemo(
+    () => sequencerInfo?.sequencerInfo?.rewardReadable || '0',
+    [sequencerInfo?.sequencerInfo?.rewardReadable],
   );
-
-  const ifSelf = React.useMemo(() => {
-    return sequencerId?.toString() === id?.toString();
-  }, [sequencerId, id]);
 
   return (
     <Container className="pages-landing flex flex-col ">
-      <div className="banner" />
-      <div className="content flex flex-col items-center mb-16">
-        <div className="avatar mb-24" />
-        <div className="f-24-bold mb-16">Become a Sequencer</div>
-        <div
-          className="status-label f-14-bold flex items-center justify-center gap-8 mb-16"
-          style={{
-            background: sequencerInfo?.ifActive
-              ? "rgba(229, 251, 249, 1)"
-              : "rgba(210, 212, 227, 1)",
-            color: sequencerInfo?.ifActive
-              ? "rgba(0, 210, 193, 1)"
-              : "rgba(49, 49, 70, 1)",
-          }}
-        >
-          {!sequencerInfo ? (
-            <Loading />
-          ) : (
-            <>
-              <img
-                style={{ width: "20px", height: "20px" }}
-                src={getImageUrl("@/assets/images/_global/ic_Etherscan.svg")}
-              />
-              <span>{sequencerInfo?.ifActive ? "Health" : "Exiting"}</span>
-            </>
-          )}
-        </div>
-        <div className="mb-12 f-14">Sequencer description</div>
-        <div className="mb-12 f-14">www.Sequencer.org</div>
-
-        <div className="status-overview flex flex-row justify-center">
-          <div className="overview-item flex flex-col items-center justify-center gap-10">
-            <CopyAddress className={"f-18-bold"} />
-
-            <div className="f-14">Owner</div>
-          </div>
-          <div className="overview-item flex flex-col items-center justify-center gap-10">
-            <CopyAddress className={"f-18-bold"} />
-            <div className="f-14">Signer</div>
-          </div>
-          <div className="overview-item flex flex-col items-center justify-center gap-10">
-            <div className="flex items-center gap-8">
-              <span className="f-18-bold">100%</span>
+      <div className="banner h-410" />
+      <div className="position-relative z-1 content flex flex-col items-center ">
+        <div className="pt-55 pb-20 gap-70 flex flex-col w-full">
+          <div className="flex flex-row gap-32 items-center">
+            <div className="avatar mb-24 s-150" />
+            <div className="flex flex-col gap-12 color-fff">
+              <div className="flex flex-col gap-4">
+                <div className="fz-36 fw-500 ">Sequencer 1</div>
+                <div className="fz-16 fw-400 inter maxw-470">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua eiusmod tempor.
+                </div>
+              </div>
+              <div>
+                <span className="fz-18 fw-400 ">@sequencer1</span>
+              </div>
             </div>
-            <div className="f-14">Blocks Signed</div>
+          </div>
+
+          <div className="status-overview flex flex-row justify-center gap-10 color-fff">
+            <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
+              <div className="fz-26 fw-500 color-fff">Owner</div>
+              <CopyAddress className={'flex-1 fz-16 fw-400 inter color-fff'} />
+            </div>
+            <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
+              <div className="fz-26 fw-500 color-fff">Signer</div>
+              <CopyAddress className={'flex-1 fz-16 fw-400 inter color-fff'} />
+            </div>
+            <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
+              <div className="fz-26 fw-500 color-fff">Blocks Signed</div>
+              <div className="flex flex-col gap-4">
+                <div className="fz-12 fw-700 color-fff inter align-right">100%</div>
+                <div
+                  className="progress w-full h-2 radius-50"
+                  style={{
+                    background: 'linear-gradient(90deg, #00D2FF 0%, #FFF 100%)',
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="sc1 w-full">
-          <div className="flex flex-row items-center justify-between  mb-24">
-            <div className="f-20-bold">Mining Overview</div>
-            {testMode && ifSelf ? (
+        <div className="pt-60 pb-146 flex flex-col gap-20 w-1060">
+          <div className="w-full basic-card gap-21 flex flex-col pb-38">
+            <div className="flex flex-row items-center justify-between">
+              <div className="fz-28 fw-500 ">Mining Overview</div>
               <div className="flex flex-row items-center gap-8">
                 <Button
                   type="solid"
@@ -525,15 +499,7 @@ export function Component() {
                     setIncreaseVisible(true);
                   }}
                 >
-                  <div style={{ padding: "10px 16px" }}>Increase</div>
-                </Button>
-                <Button
-                  type="solid"
-                  onClick={() => {
-                    setDetailsVisible(true);
-                  }}
-                >
-                  <div style={{ padding: "10px 16px" }}>Details</div>
+                  <div style={{ padding: '10px 16px' }}>Increase</div>
                 </Button>
                 <Button
                   type="solid"
@@ -541,7 +507,7 @@ export function Component() {
                     setUnlockVisible(true);
                   }}
                 >
-                  <div style={{ padding: "10px 16px" }}>Unlock</div>
+                  <div style={{ padding: '10px 16px' }}>Unlock</div>
                 </Button>
                 <Button
                   type="solid"
@@ -549,7 +515,7 @@ export function Component() {
                     setClaimVisible(true);
                   }}
                 >
-                  <div style={{ padding: "10px 16px" }}>Claim</div>
+                  <div style={{ padding: '10px 16px' }}>Claim</div>
                 </Button>
                 <Button
                   type="solid"
@@ -557,185 +523,246 @@ export function Component() {
                     setWithdrawVisible(true);
                   }}
                 >
-                  <div style={{ padding: "10px 16px" }}>Withdraw</div>
+                  <div style={{ padding: '10px 16px' }}>Withdraw</div>
                 </Button>
               </div>
-            ) : ifInUnlockProgress ? (
-              <div className="unlock-in-progress flex flex-row items-center gap-12">
-                <img
-                  src={getImageUrl("@/assets/images/_global/ic_Etherscan.svg")}
-                />
-                <div className="flex flex-col gap-2">
-                  <span className="f-14-bold">Unlocking in Progress...</span>
-                  <span className="f-12">
-                    *Remaining time to unlock for {days} days
-                  </span>
+            </div>
+
+            <div className="h-1 bg-color-DFDFDF" />
+
+            <div className="flex flex-row items-center gap-20">
+              {/* Locked UP */}
+              <div className="flex-1 flex flex-col gap-12">
+                <div className="flex flex-row items-center gap-6">
+                  <div className="color-848484 fz-20 fw-500">Locked UP</div>
+                  <Tooltip title={<span>Tooltip</span>}>
+                    <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
+                  </Tooltip>
                 </div>
-              </div>
-            ) : (
-              <Button type="solid">
-                <div style={{ padding: "10px 16px" }}>Unlock</div>
-              </Button>
-            )}
-          </div>
-
-          <div className="basic-card flex flex-row ptb-28 w-full">
-            {/* Locked UP */}
-            <div className="flex-1 flex flex-col items-center gap-20 ">
-              <div className="flex flex-row items-center gap-6">
-                <div className="f-14-bold">Locked UP</div>
-                <Tooltip title={<span>Tooltip</span>}>
-                  <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-                </Tooltip>
-              </div>
-              <div className="f-18-bold">{lockedup} Metis</div>
-            </div>
-
-            {/* Current APR */}
-            <div className="flex-1 flex flex-col items-center gap-20">
-              <div className="flex flex-row items-center gap-6">
-                <div className="f-14-bold">Current APR</div>
-                <Tooltip title={<span>Tooltip</span>}>
-                  <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-                </Tooltip>
-              </div>
-              <div className="f-18-bold">18.13%</div>
-            </div>
-
-            {/* TOTAL REWARDS  */}
-            <div className="flex-1 flex flex-col items-center gap-20">
-              <div className="flex flex-row items-center gap-6">
-                <div className="f-14-bold">TOTAL REWARDS</div>
-                <Tooltip title={<span>Tooltip</span>}>
-                  <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
-                </Tooltip>
-              </div>
-              <div className="f-18-bold">
-                {lockedup} METIS + {sequencerInfo?.rewardReadable} METIS
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {ifSelf ? (
-          <div className="sc0 w-full mt-32">
-            <div className="b flex flex-col gap-32">
-              <div className="f-20-bold">Claim Your Rewards</div>
-              <div className="unclaimed-rewards-container flex flex-row w-full justify-between items-center">
-                <div className="f-16-bold">
-                  Unclaimed Rewards {sequencerInfo?.rewardReadable} METIS
-                </div>
-                <Button type="metis">
-                  <div
-                    style={{ padding: "14px 42px", color: "#000" }}
-                    className="f-14-bold"
+                <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                  <span>{lockedup}</span>
+                  <img src={getImageUrl('@/assets/images/token/metis.svg')} />
+                  <Button
+                    className="pl-15 pr-15"
+                    type="metis"
+                    onClick={() => {
+                      setIncreaseVisible(true);
+                    }}
                   >
-                    Claim
-                  </div>
-                </Button>
+                    Add
+                  </Button>
+                </div>
+              </div>
+
+              {/* Current APR */}
+              <div className="flex-1 flex flex-col gap-12">
+                <div className="flex flex-row items-center gap-6">
+                  <div className="color-848484 fz-20 fw-500">Current APR</div>
+                  <Tooltip title={<span>Tooltip</span>}>
+                    <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
+                  </Tooltip>
+                </div>
+                <div className="fz-26 color-000 fw-500">-%</div>
+              </div>
+
+              {/* TOTAL REWARDS  */}
+              <div className="flex-1 flex flex-col gap-12">
+                <div className="flex flex-row items-center gap-6">
+                  <div className="color-848484 fz-20 fw-500">TOTAL REWARDS</div>
+                  <Tooltip title={<span>Tooltip</span>}>
+                    <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
+                  </Tooltip>
+                </div>
+                <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                  {/* {lockedup} METIS +  */}
+                  <span>{sequencerInfo?.rewardReadable}</span>{' '}
+                  <img src={getImageUrl('@/assets/images/token/metis.svg')} />
+                </div>
               </div>
             </div>
           </div>
-        ) : null}
 
-        {/* Blocks Signed */}
-        <div className="sc2 w-full mt-48">
-          <div className="f-20-bold mb-24">Blocks Signed(99/100)</div>
-          <div className="block-container flex flex-row ptb-28 w-full">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th>Latest Block Slgned</th>
-                  <th>Status</th>
-                  <th>Rewards</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blocksCol.map((i, index) => (
-                  <tr key={index}>
-                    <td className="align-center">{i.lastSignedBlock}</td>
-                    <td className="align-center">
-                      <span
-                        className={
-                          i.status
-                            ? "success-color"
-                            : "danger-color" + " align-center"
-                        }
-                      >
-                        {i.status ? "Success" : "Failed"}
-                      </span>
-                    </td>
-                    <td className="align-center">
-                      {i.rewards} {i.symbol}
-                    </td>
-                    <td className="align-center">
-                      {dayjs.unix(i.timestamp).format("DD/MM/YYYY HH:mm:ss")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div
-            className="pagination flex flex-row items-center justify-center mt-24"
-            style={{ height: "32px" }}
-          >
-            <Pagination
-              current={blocksCurrentPage}
-              total={blocksTotal}
-              pageSize={blocksPageSize}
-              onChange={(v) => setBlocksCurrentPage(v)}
-            />
-          </div>
-        </div>
+          {/* unclaimed sequencerInfo?.rewardReadable */}
+          {ifSelf ? (
+            <div className="flex flex-row items-center gap-20">
+              <div className="flex-1 wp-50 basic-card gap-21 flex flex-col pb-38">
+                <div className="flex flex-row items-center justify-between">
+                  <div className="fz-28 fw-500 ">Claim Your Rewards</div>
+                </div>
 
-        {/* Transaction history */}
-        <div className="sc3 w-full mt-48">
-          <div className="f-20-bold mb-24">Transaction History</div>
-          <div className="block-container flex flex-row ptb-28 w-full">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th>Transaction</th>
-                  <th>Address</th>
-                  <th>Type</th>
-                  <th>Amount</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {txCol.map((i, index) => (
-                  <tr key={index}>
-                    <td className="align-center underlined pointer">
-                      {filterHideText(i.tx, 8)}
-                    </td>
-                    <td className="align-center">
-                      {filterHideText(i.address, 6, 4)}
-                    </td>
-                    <td className="align-center">{i.type}</td>
-                    <td className="align-center">
-                      {i.amount} {i.symbol}
-                    </td>
-                    <td className="align-center">
-                      {dayjs.unix(i.timestamp).format("DD/MM/YYYY HH:mm:ss")}
-                    </td>
+                <div className="h-1 bg-color-DFDFDF" />
+
+                <div className="flex flex-row items-center gap-20">
+                  {/* Claim Your Rewards */}
+                  <div className="flex-1 flex flex-col gap-12">
+                    <div className="flex flex-row items-center gap-6">
+                      <div className="color-848484 fz-20 fw-500">Unclaimed Rewards</div>
+                      <Tooltip title={<span>Tooltip</span>}>
+                        <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
+                      </Tooltip>
+                    </div>
+                    <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                      <span>{unclaimed}</span>
+                      <img src={getImageUrl('@/assets/images/token/metis.svg')} />
+                      <Button disabled={BigNumber(unclaimed).lte(0)} className="pl-15 pr-15" type="metis">
+                        Claim
+                      </Button>
+                    </div>
+                    {/* <span className="color-848484 fz-14 fw-400 inter">
+                      1,400 USD
+                    </span> */}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 wp-50 basic-card gap-21 flex flex-col pb-38">
+                <div className="flex flex-row items-center justify-between">
+                  <div className="fz-28 fw-500 ">Add</div>
+                </div>
+
+                <div className="h-1 bg-color-DFDFDF" />
+
+                <div className="flex flex-row items-center gap-20">
+                  {/* amount */}
+                  <div className="flex-2 flex flex-col gap-12">
+                    <div className="flex flex-row items-center gap-6">
+                      <div className="color-848484 fz-20 fw-500">Amount</div>
+                    </div>
+                    <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                      <Input
+                        value={relockAmount}
+                        onChange={setRelockAmount}
+                        className="fz-26"
+                        solid
+                        suffix={<img className="s-22" src={getImageUrl('@/assets/images/token/metis.svg')} />}
+                      />
+                    </div>
+                  </div>
+                  {/* apr */}
+                  <div className="flex-2 flex flex-col gap-12">
+                    <div className="flex flex-row items-center gap-6">
+                      <div className="color-848484 fz-20 fw-500">Expected APR</div>
+                    </div>
+                    <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                      <span>-</span>
+                      <img src={getImageUrl('@/assets/images/token/metis.svg')} />
+                    </div>
+                  </div>
+                  {/* confirm */}
+                  <div className="flex-1 flex flex-col gap-12">
+                    <div className="flex flex-row items-center gap-6">
+                      <div className="color-848484 fz-20 fw-500" />
+                    </div>
+                    <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
+                      <Button type="metis" disabled={!relockAmount} loading={approveLoading} onClick={handleRelock}>
+                        {needApprove ? <span>Approve</span> : <span>Confirm</span>}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Blocks Signed */}
+          <div className="sc2 w-full basic-card gap-20">
+            <div className="flex flex-col gap-20">
+              <div className="fz-28 fw-500 ">Blocks Signed(-/-)</div>
+              <div className="h-1 bg-color-DFDFDF" />
+            </div>
+
+            <div className="block-container flex flex-row ptb-28 w-full">
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th>Latest Block Slgned</th>
+                    <th>Status</th>
+                    <th>Rewards</th>
+                    <th>Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {blocksCol?.map((i, index) => (
+                    <tr key={index}>
+                      <td>{i.lastSignedBlock}</td>
+                      <td>
+                        <span className={i.status ? 'success-color' : 'danger-color'}>
+                          {i.status ? 'Success' : 'Failed'}
+                        </span>
+                      </td>
+                      <td>
+                        {i.rewards} {i.symbol}
+                      </td>
+                      <td>{dayjs.unix(i.timestamp).format('DD/MM/YYYY HH:mm:ss')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
+              <Pagination
+                current={blocksCurrentPage}
+                total={blocksTotal}
+                pageSize={blocksPageSize}
+                onChange={(v) => setBlocksCurrentPage(v)}
+              />
+            </div>
           </div>
-          <div
-            className="pagination flex flex-row items-center justify-center mt-24"
-            style={{ height: "32px" }}
-          >
-            <Pagination
-              current={txCurrentPage}
-              total={txTotal}
-              pageSize={txPageSize}
-              onChange={(v) => setTxCurrentPage(v)}
-            />
-          </div>
+
+          {/* Transaction history */}
+          {ifSelf ? <div className="sc3 w-full basic-card gap-20">
+            <div className="flex flex-col gap-20">
+              <div className="fz-28 fw-500 ">Transaction History</div>
+              <div className="h-1 bg-color-DFDFDF" />
+            </div>
+            <div className="block-container flex flex-row ptb-28 w-full">
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th>Transaction</th>
+                    <th>Address</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {txCol?.map(
+                    (
+                      i: any,
+                      index: React.Key | null | undefined,
+                    ) => (
+                      <tr key={index}>
+                        <td
+                          className="align-center underlined pointer"
+                          onClick={() => {
+                            jumpLink(`https://goerli.etherscan.io/tx/${i?.id}`, '_blank');
+                          }}
+                        >
+                          {filterHideText(i?.id, 8)}
+                        </td>
+                        <td>{filterHideText(i?.user, 6, 4)}</td>
+                        <td>{i?.type}</td>
+                        <td>
+                          {i?.amountReadable} {i?.symbol}
+                        </td>
+                        <td>{dayjs.unix(i?.blockTimestamp).format('DD/MM/YYYY HH:mm:ss')}</td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
+              <Pagination
+                current={txCurrentPage}
+                total={txTotal}
+                pageSize={txPageSize}
+                onChange={(v) => setTxCurrentPage(v)}
+              />
+            </div>
+          </div> : null}
+
         </div>
       </div>
 
@@ -780,4 +807,4 @@ export function Component() {
   );
 }
 
-Component.displayName = "SequencerDetail";
+Component.displayName = 'SequencerDetail';

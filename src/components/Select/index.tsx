@@ -31,9 +31,11 @@ export interface SelectProps {
   arrow?: boolean;
   danger?: boolean;
   disabled?: boolean;
-  placeholder?: string;
+  placeholder?: any;
   allowClear?: boolean;
   placement?: 'left' | 'right';
+  arrowPlacement?: 'left' | 'right';
+  style?: any;
   /**
    * @zh 是否插入父级容器
    * @defaultValue false
@@ -149,6 +151,7 @@ const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
 const Select: React.FC<SelectProps> = (props: SelectProps) => {
   const {
     className,
+    style = {},
     type = 'primary',
     options = [],
     arrow = true,
@@ -159,15 +162,18 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
     renderSelector,
     follow = true,
     allowClear = false,
+    arrowPlacement = 'left',
     onChange,
     ...rest
   } = props;
 
-  const classes = classNames(className, 'component-select flex flex-row items-center justify-end', {
+  const classes = classNames(className, 'component-select flex items-center justify-end', {
     [`${type}`]: type,
     danger,
     disabled,
     follow,
+    ['flex-row']: arrowPlacement === 'right',
+    ['flex-row-reverse']: arrowPlacement === 'left'
     // selector
   });
 
@@ -187,6 +193,7 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
   return (
     <React.Fragment>
       <div
+        style={style}
         className={`gap-8 ${classes} ${visible ? 'open' : ''} ${allowClear && value ? 'select-allow-clear' : ''}`.trimEnd()}
         ref={selectorRef}
         onClick={handleVisible}
