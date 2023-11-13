@@ -1,14 +1,14 @@
+/* eslint-disable max-len */
 import * as React from 'react';
 import './index.scss';
 import { styled } from 'styled-components';
-import { getImageUrl } from '@/utils/tools';
+import { getImageUrl, jumpLink } from '@/utils/tools';
 import { Button, Input } from '@/components';
 import Faq from 'react-faq-component';
 import { useNavigate } from 'react-router-dom';
 import useUpdate from '@/hooks/useUpdate';
 import Progress from '@/components/Progress';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
-import { defaultPubKeyList } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import fetchOverview from '@/graphql/overview';
 import BigNumber from 'bignumber.js';
@@ -28,34 +28,6 @@ const ColoredLabel = styled.div<{ color?: string }>`
   align-items: center;
   justify-content: center;
 `;
-
-const sequencer = {
-  title: 'Join us as a sequencer',
-  subTitle: 'We can Make a More Secure,Decentralized,Effcient Ecosystem',
-  children: [
-    {
-      img: getImageUrl('@/assets/images/_global/ic_Security@2x.png'),
-      content: 'Security and Trust',
-    },
-    {
-      img: getImageUrl('@/assets/images/_global/ic_Decentralization@2x.png'),
-      content: 'Decentralization and Fairness',
-    },
-    {
-      img: getImageUrl('@/assets/images/_global/ic_Incentive@2x.png'),
-      content: 'Incentive Alignment',
-    },
-    {
-      img: getImageUrl('@/assets/images/_global/ic_Dynamic@2x.png'),
-      content: 'Dynamic Selection and Rotatiom',
-    },
-
-    {
-      img: getImageUrl('@/assets/images/_global/ic_Network@2x.png'),
-      content: 'Network Participation and Governance',
-    },
-  ],
-};
 
 const section2 = {
   title: 'Benefits',
@@ -99,191 +71,6 @@ const section2 = {
   ],
 };
 
-const section3 = [
-  {
-    type: 'L2 Transactions',
-    color: 'rgba(67, 105, 247, 1)',
-    children: [
-      {
-        src: getImageUrl('@/assets/images/_global/tx@2x.png'),
-        content: 'TX',
-        imgClassName: 'w-56',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/tx@2x.png'),
-        content: 'TX',
-        imgClassName: 'w-56',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/tx@2x.png'),
-        content: 'TX',
-        imgClassName: 'w-56',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/tx@2x.png'),
-        content: 'TX',
-        imgClassName: 'w-56',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/tx@2x.png'),
-        content: '...',
-        imgClassName: 'w-56',
-        containerClassName: 'flex-1',
-      },
-    ],
-    nextBtns: [
-      {
-        src: getImageUrl('@/assets/images/_global/icc_down.svg'),
-      },
-    ],
-  },
-  {
-    type: 'L2 geth Layer',
-    color: 'rgba(24, 160, 196, 1)',
-    children: [
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Producer 1',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Producer 2',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Producer 3',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Producer 4',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: '...',
-        imgClassName: 'w-62',
-        containerClassName: 'flex-2',
-      },
-    ],
-    nextBtns: [
-      {
-        content: 'Submit L2 ovmed txs',
-        src: getImageUrl('@/assets/images/_global/icc_down.svg'),
-      },
-      {
-        content: 'Fetch epoch and producer set',
-        src: getImageUrl('@/assets/images/_global/icc_up.svg'),
-      },
-    ],
-  },
-  {
-    type: 'Pos Layer',
-    color: 'rgba(145, 96, 232, 1)',
-    children: [
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Sequencer 1',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Sequencer 2',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Sequencer 3',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl(
-          '@/assets/images/_global/ic_EarlyAdoptionAdvantage.svg',
-        ),
-        imgClassName: 'w-46',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: 'Sequencer 4',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/layer@2x.png'),
-        content: '...',
-        imgClassName: 'w-62',
-        containerClassName: 'flex-2',
-      },
-    ],
-    nextBtns: [
-      {
-        content: 'Submit L2 ovmed txs',
-        src: getImageUrl('@/assets/images/_global/icc_down.svg'),
-      },
-      {
-        content: 'Fetch epoch and producer set',
-        src: getImageUrl('@/assets/images/_global/icc_up.svg'),
-      },
-    ],
-  },
-  {
-    type: 'L1 Ethereum',
-    color: 'rgba(197, 49, 242, 1)',
-    children: [
-      {
-        src: getImageUrl('@/assets/images/_global/contract@2x.png'),
-        content: 'CTC',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/contract@2x.png'),
-        content: 'SCC',
-        imgClassName: 'w-62',
-      },
-      {
-        src: getImageUrl('@/assets/images/_global/contract@2x.png'),
-        content: 'Mining Contract',
-        subContent: 'Lock Metis to become a Sequencer',
-        imgClassName: 'w-62',
-        containerClassName: 'flex-2',
-        needBorder: true,
-        borderClassName: 'sc3-box',
-      },
-    ],
-  },
-];
-
 const section4 = [
   {
     index: '1',
@@ -307,15 +94,39 @@ const section5 = {
   rows: [
     {
       title: 'How does the sequencer work?',
-      content: 'A1',
+      content: (
+        <span className="flex flex-col gap-4">
+          <span>1. Users initiate transactions.</span>
+          <span>2. The transaction is sent to sequencer nodes in the network.</span>
+          <span>3. The sequencer is responsible for collecting the transaction and packaging into a block.</span>
+          <span>
+            4. This block is then aggregated by MPC (Multi-Party Computation) nodes and submitted to the Ethereum main
+            chain for the final confirmation of the transaction.
+          </span>
+        </span>
+      ),
     },
     {
       title: 'How can I run a sequencer?',
-      content: 'A2',
+      content: (
+        <span>
+          Please visit the{' '}
+          <span className='underlined pointer' onClick={() => jumpLink('https://forms.gle/Ut5A8PqeaVZC9awa6', '_blank')}>
+            Sequencer Whitelist Application
+          </span>{' '}
+          form to apply. Once you have filled out the form, we will get in touch with you.
+        </span>
+      ),
     },
     {
       title: 'What hardware do I need to run a sequencer?',
-      content: 'A4',
+      content: (
+        <span className="flex flex-col gap-4">
+          <span>CPU: 16-core</span>
+          <span>RAM: 32 GB</span>
+          <span>Storage: 1 TB SSD</span>
+        </span>
+      ),
     },
   ],
 };
@@ -398,9 +209,7 @@ const Container = styled.section`
       }
     }
 
-    background: url(${getImageUrl(
-  '@/assets/images/_global/home_top_banner.png',
-)});
+    background: url(${getImageUrl('@/assets/images/_global/home_top_banner.png')});
     /* aspect-ratio: 1440 / 560; */
     width: 100vw;
     background-position: center;
@@ -429,10 +238,7 @@ const Container = styled.section`
     padding-top: 64px;
     padding-bottom: 64px;
     &.main-section-2 {
-      background: url(${getImageUrl(
-  '@/assets/images/_global/main_section_2.png',
-)}),
-        lightgray 50% / cover no-repeat;
+      background: url(${getImageUrl('@/assets/images/_global/main_section_2.png')}), lightgray 50% / cover no-repeat;
       background-size: cover;
       /* filter: blur(100px); */
     }
@@ -485,7 +291,7 @@ const Container = styled.section`
     }
 
     .section2-item {
-      width: calc(50% - 32px);
+      width: calc(50%-32px);
       padding: 22px 42px;
       &:nth-of-type(odd) {
         justify-content: flex-end;
@@ -614,7 +420,7 @@ const Container = styled.section`
 
         .row-title,
         .row-content-text {
-          height: 80px;
+          /* height: 80px; */
         }
         .row-content-text {
           display: flex;
@@ -627,32 +433,24 @@ const Container = styled.section`
           font-weight: 400;
           font-family: Raleway;
           color: #000;
+          line-height: 32px;
         }
+       .row-content-text{
+        font-size: 22px;
+        line-height: 26px;
+       } 
       }
     }
   }
 `;
 
-
-const Section2CardTemplate = ({
-  title,
-  img,
-  content,
-}: {
-  title?: string;
-  img?: string;
-  content?: string;
-}) => {
+const Section2CardTemplate = ({ title, img, content }: { title?: string; img?: string; content?: string }) => {
   return (
     <div className="gap-32 flex flex-row wrap items-start maxw-520">
       {img ? <img className="w-52 h-60" src={img} /> : null}
       <div className="flex flex-col gap-6 ">
-        {title ? (
-          <span className="fz-22 fw-700 raleway color-fff">{title}</span>
-        ) : null}
-        {content ? (
-          <span className="fz-18 fw-400 inter color-fff">{content}</span>
-        ) : null}
+        {title ? <span className="fz-22 fw-700 raleway color-fff">{title}</span> : null}
+        {content ? <span className="fz-18 fw-400 inter color-fff">{content}</span> : null}
       </div>
     </div>
   );
@@ -666,31 +464,24 @@ export function Component() {
 
   const { sequencerTotalInfo } = useUpdate();
 
-
   const jumpSequencer = (id: string) => {
     navigate(`/sequencers/${id}`);
   };
 
-  const { data, loading } = useRequest(fetchOverview)
-
+  const { data, loading } = useRequest(fetchOverview);
 
   const sequencerCards = React.useMemo(() => {
     if (!data?.lockedUserParams) return [];
-    return data?.lockedUserParams?.map(i => (
-      {
-        name: '1',
-        avatar: '1',
-        status: 'HEALTH',
-        color: 'rgba(0, 218, 203, 1)',
-        totalLockUp: '20,000 metis',
-        id: i.address,
-        ...i,
-      }
-    ));
+    return data?.lockedUserParams?.map((i) => ({
+      name: '1',
+      avatar: '1',
+      status: 'HEALTH',
+      color: 'rgba(0, 218, 203, 1)',
+      totalLockUp: '20,000 metis',
+      id: i.address,
+      ...i,
+    }));
   }, [data]);
-
-
-
 
   return (
     <Container className="pages-landing flex flex-col ">
@@ -701,25 +492,18 @@ export function Component() {
               <div className="flex flex-col">
                 <span className="fz-100 fw-700 raleway color-fff">Metis</span>
                 <br />
-                <span className="fz-72 fw-700 raleway color-fff">
-                  Sequencer Mining
-                </span>
+                <span className="fz-72 fw-700 raleway color-fff">Sequencer Mining</span>
               </div>
               <div className="lh-120 maxw-500 fz-20 fw-500 raleway color-fff">
-                Secure the Metis network and earn staking rewards. An exclusive
-                opportunity for qualified operators.
+                Secure the Metis network and earn staking rewards. An exclusive opportunity for qualified operators.
               </div>
             </div>
             <div className="flex flex-row items-center gap-12">
               <Button onClick={jumpLink} type="dark" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
-                  Become a Sequencer
-                </div>
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
               </Button>
               <Button onClick={jumpLink} type="light" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
-                  Read Docs
-                </div>
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
               </Button>
             </div>
           </div>
@@ -744,17 +528,13 @@ export function Component() {
           <div className="opacity-card flex flex-col items-center flex-1">
             <span className="fz-18 fw-700 inter">-%</span>
             <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">
-                Current number of Sequencers
-              </span>
+              <span className="fz-14 fw-400 inter">Current number of Sequencers</span>
             </div>
           </div>
           <div className="opacity-card flex flex-col items-center flex-1">
             <span className="fz-18 fw-700 inter">-%</span>
             <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">
-                Total rewards distributed
-              </span>
+              <span className="fz-14 fw-400 inter">Total rewards distributed</span>
             </div>
           </div>
         </div>
@@ -778,7 +558,9 @@ export function Component() {
           {sequencerCards?.map((i, index) => (
             <SequencerItemContainer
               title="SEQ"
-              totalLockUp={BigNumber(i?.amount || 0).div(1e18).toString()}
+              totalLockUp={BigNumber(i?.amount || 0)
+                .div(1e18)
+                .toString()}
               uptime=""
               since={dayjs(i?.fromTimestamp * 1000).format('YYYY-MM-DD')}
               earned=""
@@ -793,32 +575,17 @@ export function Component() {
 
       <div className="main-section main-section-2 flex flex-col gap-22 h-791 justify-center">
         <div className="flex flex-col gap-12 items-center">
-          <span className="fz-56 fw-700 color-fff raleway">
-            {section2.title}
-          </span>
+          <span className="fz-56 fw-700 color-fff raleway">{section2.title}</span>
         </div>
         <div className="flex flex-row items-center gap-18 items-center justify-center">
           {section2.children.map((i) => (
-            <div
-              className="gap-16 flex flex-col color-fff items-center"
-              key={i.title}
-            >
+            <div className="gap-16 flex flex-col color-fff items-center" key={i.title}>
               <div className="flex flex-col gap-14 ">
-                <span className="fz-36 fw-700 raleway color-fff">
-                  {i.title}
-                </span>
+                <span className="fz-36 fw-700 raleway color-fff">{i.title}</span>
               </div>
-              <div
-                className="flex flex-col gap-38 p-40 radius-30"
-                style={{ background: i.gradient }}
-              >
+              <div className="flex flex-col gap-38 p-40 radius-30" style={{ background: i.gradient }}>
                 {i?.children?.map((j) => (
-                  <Section2CardTemplate
-                    key={j.title}
-                    title={j.title}
-                    content={j.content}
-                    img={j.img}
-                  />
+                  <Section2CardTemplate key={j.title} title={j.title} content={j.content} img={j.img} />
                 ))}
               </div>
             </div>
@@ -844,12 +611,7 @@ export function Component() {
               <br />
               Architecture
             </div>
-            <img
-              className="w-784"
-              src={getImageUrl(
-                '@/assets/images/_global/Decentralized_Sequencer.png',
-              )}
-            />
+            <img className="w-784" src={getImageUrl('@/assets/images/_global/Decentralized_Sequencer.png')} />
           </div>
         </div>
       </div>
@@ -857,24 +619,18 @@ export function Component() {
       {/* waitinglist campagin */}
       <div className="sc4 main-section main-section-4 flex flex-col items-center gap-64 pt-97 pb-121">
         <div className="flex flex-col gap-12 items-center">
-          <span className="fz-56 fw-700 raleway color-fff">
-            Whitelisting Campaign
-          </span>
+          <span className="fz-56 fw-700 raleway color-fff">Whitelisting Campaign</span>
         </div>
 
         <Progress col={section4} activeIndex="1" />
 
         <Button className="light h-60 w-400">
-          <div className="fz-20 fw-500 color-000 raleway">
-            Apply now for the next round
-          </div>
+          <div className="fz-20 fw-500 color-000 raleway">Apply now for the next round</div>
         </Button>
       </div>
 
       {/* FAQ */}
-      <div
-        className="sc5 main-section flex flex-row gap-64 pt-91 pb-54 maxw-1200 m-auto items-center"
-      >
+      <div className="sc5 main-section flex flex-row gap-64 pt-91 pb-54 maxw-1200 m-auto items-center">
         <div className="flex flex-col gap-2 flex-1">
           <span className="fz-56 fw-700 raleway color-000">FAQ</span>
           <span className="fz-20 fw-400 raleway color-000">Frequently asked questions</span>
@@ -884,10 +640,10 @@ export function Component() {
             <path d="M1 0L1.00001 203" stroke="black" />
           </svg>
         </div>
-        <div className="flex flex-row items-center flex-1">
+        <div className="flex flex-row items-center flex-2">
           <Faq
             data={section5}
-          // styles={styles} config={config}
+            // styles={styles} config={config}
           />
         </div>
       </div>
