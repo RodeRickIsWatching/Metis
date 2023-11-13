@@ -459,8 +459,9 @@ const Section2CardTemplate = ({ title, img, content }: { title?: string; img?: s
 export function Component() {
   const navigate = useNavigate();
   const jumpLink = () => {
-    navigate('/sequencers');
+    navigate('/becomeSequencer');
   };
+  
 
   const { sequencerTotalInfo } = useUpdate();
 
@@ -502,7 +503,7 @@ export function Component() {
               <Button onClick={jumpLink} type="dark" className="radius-50">
                 <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
               </Button>
-              <Button onClick={jumpLink} type="light" className="radius-50">
+              <Button onClick={()=>{}} type="light" className="radius-50">
                 <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
               </Button>
             </div>

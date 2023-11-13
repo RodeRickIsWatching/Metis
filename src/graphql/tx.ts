@@ -77,15 +77,52 @@ const fetchUserTx = async (address: string, current?: any, pageSize?: any) => {
     pageSize: +_pageSize,
   });
 
-  const combinedData = Object.keys(data)?.reduce((prev: any, next: any) => {
-    const curArr = data?.[next]?.map((nii: any) => {
+  // lock事件 amount为基础锁仓量
+  // 后续relock事件 total减去前一个则为delta
+  // 后续升级至graph
+  const sortedRelockData = data?.relockedParams?.sort((a, b) => +a?.blockTimestamp - +b?.blockTimestamp);
+
+  const relockData = sortedRelockData?.map((i, index) => {
+    if (index === 0 || i?.sequencerId !== data?.relockedParams?.[index - 1]?.sequencerId) {
+      const lockAmount = data?.lockedParams?.find((j) => j?.sequencerId === i?.sequencerId);
+      return {
+        ...i,
+        deltaAmount: BigNumber(i?.total)
+          .minus(lockAmount?.amount || 0)
+          .toString(),
+        deltaAmountReadable: BigNumber(i?.total)
+        .minus(lockAmount?.amount || 0)
+        .div(1e18)
+        .toString(),
+      };
+    } else {
+      return {
+        ...i,
+        deltaAmount: BigNumber(i?.total)
+          .minus(data?.relockedParams?.[index - 1]?.total || 0)
+          .toString(),
+        deltaAmountReadable: BigNumber(i?.total)
+        .minus(data?.relockedParams?.[index - 1]?.total || 0)
+        .div(1e18)
+        .toString(),
+      };
+    }
+  });
+  // console.log('relockData', data?.lockedParams, relockData);
+
+  const replacedData = JSON.parse(JSON.stringify(data))
+
+  replacedData.relockedParams = relockData;
+
+  const combinedData = Object.keys(replacedData)?.reduce((prev: any, next: any) => {
+    const curArr = replacedData?.[next]?.map((nii: any) => {
       let amountReadable = BigNumber(nii?.amount || 0)
         .div(1e18)
         .toString();
       if (next === 'relockedParams') {
-        const lockConfig = data?.['lockedParams']?.find((i) => i?.sequencerId === nii?.sequencerId);
+        const lockConfig = replacedData?.['lockedParams']?.find((i) => i?.sequencerId === nii?.sequencerId);
 
-        console.log('lockConfig', lockConfig, nii)
+        console.log('lockConfig', lockConfig, nii);
         amountReadable = BigNumber(nii?.total).minus(lockConfig?.amount).div(1e18).toString();
       }
 

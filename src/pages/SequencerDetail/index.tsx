@@ -290,14 +290,14 @@ export function Component() {
   }, [id]);
 
   const txCol = React.useMemo(() => {
-    return fetchUserTxData?.combinedData;
+    return fetchUserTxData?.combinedData?.sort((a, b) => +b?.blockTimestamp - +a?.blockTimestamp);
   }, [fetchUserTxData?.combinedData]);
 
   const curUserActiveSequencerIds = React.useMemo(
     () =>
-      fetchUserTxData?.origin?.lockedParams?.length
+      (fetchUserTxData?.origin?.lockedParams?.length
         ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))
-        : undefined,
+        : undefined),
     [fetchUserTxData?.origin?.lockedParams],
   );
 
@@ -318,7 +318,7 @@ export function Component() {
   }, [cancel, curUserActiveSequencerIds, ifSelf, run]);
 
   const blocksCol = React.useMemo(() => {
-    return []
+    return [];
     return [
       {
         lastSignedBlock: '#45,643',
@@ -746,7 +746,7 @@ export function Component() {
                         <td>{filterHideText(i?.user, 6, 4)}</td>
                         <td>{i?.type}</td>
                         <td>
-                          {i?.amountReadable} {i?.symbol}
+                          {i?.deltaAmountReadable || i?.amountReadable} {i?.symbol}
                         </td>
                         <td>{dayjs.unix(i?.blockTimestamp).format('DD/MM/YYYY HH:mm:ss')}</td>
                       </tr>

@@ -1,25 +1,25 @@
-import * as React from "react";
-import "./index.scss";
-import { styled } from "styled-components";
-import { catchError, getImageUrl } from "@/utils/tools";
-import { useNavigate } from "react-router-dom";
-import Progress from "@/components/Progress";
-import { Button, Input } from "@/components";
-import CopyAddress from "@/components/CopyAddress";
-import useBalance from "@/hooks/useBalance";
-import useAllowance from "@/hooks/useAllowance";
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import { useBoolean } from "ahooks";
-import useLock from "@/hooks/useLock";
-import useAuth from "@/hooks/useAuth";
-import { Address, useSignMessage } from "wagmi";
-import { hashMessage, recoverPublicKey } from "viem";
-import { defaultPubKeyList } from "@/configs/common";
+import * as React from 'react';
+import './index.scss';
+import { styled } from 'styled-components';
+import { catchError, getImageUrl } from '@/utils/tools';
+import { useNavigate } from 'react-router-dom';
+import Progress from '@/components/Progress';
+import { Button, Input } from '@/components';
+import CopyAddress from '@/components/CopyAddress';
+import useBalance from '@/hooks/useBalance';
+import useAllowance from '@/hooks/useAllowance';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
+import { useBoolean } from 'ahooks';
+import useLock from '@/hooks/useLock';
+import useAuth from '@/hooks/useAuth';
+import { Address, useSignMessage } from 'wagmi';
+import { hashMessage, recoverPublicKey } from 'viem';
+import { defaultPubKeyList } from '@/configs/common';
 
 
 const Container = styled.section`
-  background: url(${getImageUrl("@/assets/images/_global/sub_section_bg.png")})
+  background: url(${getImageUrl('@/assets/images/_global/sub_section_bg.png')})
     no-repeat;
   background-size: cover;
 
@@ -126,24 +126,24 @@ const Container = styled.section`
   }
 `;
 
-const message = "test";
+const message = 'test';
 
 export function Component() {
-  const [name, setName] = React.useState<undefined | string>()
-  const [website, setWebsite] = React.useState<undefined | string>()
-  const [account, setAccount] = React.useState<undefined | string>()
-  const [pubKey, setPubKey] = React.useState<undefined | string>()
-  const [desc, setDesc] = React.useState<undefined | string>()
-  
-  const [stakeAmount, setStakeAmount] = React.useState("");
-  const [apr, setApr] = React.useState<undefined | string>()
+  const [name, setName] = React.useState<undefined | string>();
+  const [website, setWebsite] = React.useState<undefined | string>();
+  const [account, setAccount] = React.useState<undefined | string>();
+  const [pubKey, setPubKey] = React.useState<undefined | string>();
+  const [desc, setDesc] = React.useState<undefined | string>();
 
-  const handleChangeApr = (v: string)=>{
-    setApr(v)
-  }
-  const handleLockupChange = (v: string)=>{
-    setStakeAmount(v)
-  }
+  const [stakeAmount, setStakeAmount] = React.useState('');
+  const [apr, setApr] = React.useState<undefined | string>();
+
+  const handleChangeApr = (v: string) => {
+    setApr(v);
+  };
+  const handleLockupChange = (v: string) => {
+    setStakeAmount(v);
+  };
 
   const navigate = useNavigate();
 
@@ -161,15 +161,15 @@ export function Component() {
 
   const needApprove = React.useMemo(
     () =>
-      BigNumber(allowance || "0").lte(
-        ethers.utils.parseEther(stakeAmount || "0").toString()
+      BigNumber(allowance || '0').lte(
+        ethers.utils.parseEther(stakeAmount || '0').toString(),
       ),
-    [allowance, stakeAmount]
+    [allowance, stakeAmount],
   );
 
   const handleApprove = async () => {
     const res = await approve();
-    console.log("res", res);
+    console.log('res', res);
   };
 
   const handleLockup = async () => {
@@ -191,14 +191,14 @@ export function Component() {
       // console.log('pubKey', pubKey)
       const p = {
         address: address as Address,
-        amount: ethers.utils.parseEther(stakeAmount || "0").toString(),
+        amount: ethers.utils.parseEther(stakeAmount || '0').toString(),
         pubKey: (pubKey) as string,
-      }
-      console.log('p', p, allowance, needApprove)
+      };
+      console.log('p', p, allowance, needApprove);
       await lockFor(p);
       setApproveLoadingFalse();
 
-      handleIndex("4")
+      handleIndex('4');
     } catch (e) {
       console.log(e);
       catchError(e);
@@ -207,29 +207,29 @@ export function Component() {
   };
 
   const jumpLink = () => {
-    navigate("/sequencers");
+    navigate('/sequencers');
   };
 
   const col = [
     {
-      index: "1",
-      content: "Setup Sequencer",
+      index: '1',
+      content: 'Setup Sequencer',
     },
     {
-      index: "2",
-      content: "Sequencer details",
+      index: '2',
+      content: 'Sequencer details',
     },
     {
-      index: "3",
-      content: "Lock Metis",
+      index: '3',
+      content: 'Lock Metis',
     },
     {
-      index: "4",
-      content: "Completed",
+      index: '4',
+      content: 'Completed',
     },
   ];
 
-  const [activeIndex, setActiveIndex] = React.useState("1");
+  const [activeIndex, setActiveIndex] = React.useState('1');
 
   const handleIndex = (index: string) => {
     setActiveIndex(index);
@@ -237,10 +237,9 @@ export function Component() {
 
   // const [testPubKey, setTestPubKey] = React.useState<undefined | string>()
   const handleSignAndRecover = async () => {
+    const t = defaultPubKeyList.find(i => i.address.toLowerCase() === address?.toLowerCase());
 
-    const t = defaultPubKeyList.find(i=>i.address.toLowerCase() === address?.toLowerCase())
-
-    setPubKey(t?.pubKey)
+    setPubKey(t?.pubKey);
     // setPubKey(undefined)
     // const message = 'hello world'
     // const signer = await connector?.getWalletClient();
@@ -256,15 +255,15 @@ export function Component() {
 
     // console.log('publicKey', publicKey)
     // setPubKey(publicKey)
-  }
+  };
 
-  const validStep2 = React.useMemo(()=> name&&website&&account&&(pubKey), [
-    name,website,account,pubKey
-  ])
+  const validStep2 = React.useMemo(() => name && website && account && (pubKey), [
+    name, website, account, pubKey,
+  ]);
 
   const step = React.useMemo(() => {
     switch (activeIndex) {
-      case "1":
+      case '1':
         return (
           <div className="flex flex-col gap-32">
             <div className="flex flex-col gap-20">
@@ -272,10 +271,10 @@ export function Component() {
                 className="radius-30 flex flex-col gap-10 p-50"
                 style={{
                   background:
-                    "var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))",
-                  border: "1px solid rgba(255, 255, 255, 0.10)",
-                  backdropFilter: "blur(30px)",
-                  overflow: "hidden",
+                    'var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))',
+                  border: '1px solid rgba(255, 255, 255, 0.10)',
+                  backdropFilter: 'blur(30px)',
+                  overflow: 'hidden',
                 }}
               >
                 <span className="fz-36 fw-700 color-fff raleway">Package</span>
@@ -288,10 +287,10 @@ export function Component() {
                 className="radius-30 flex flex-col gap-10 p-50"
                 style={{
                   background:
-                    "var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))",
-                  border: "1px solid rgba(255, 255, 255, 0.10)",
-                  backdropFilter: "blur(30px)",
-                  overflow: "hidden",
+                    'var(--gradient-glass, linear-gradient(91deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%))',
+                  border: '1px solid rgba(255, 255, 255, 0.10)',
+                  backdropFilter: 'blur(30px)',
+                  overflow: 'hidden',
                 }}
               >
                 <span className="fz-36 fw-700 color-fff raleway">Binaries</span>
@@ -303,7 +302,7 @@ export function Component() {
               <div className="flex flex-row items-center justify-center">
                 <Button
                   type="metis"
-                  onClick={() => handleIndex("2")}
+                  onClick={() => handleIndex('2')}
                   className="w-full radius-30 h-80"
                 >
                   <div className="fz-26 fw-700 raleway color-fff">CONTINUE</div>
@@ -311,7 +310,7 @@ export function Component() {
               </div>
             </div>
             <div className="fz-18 fw-500 color-fff raleway">
-              You have questions? Make sure to read our{" "}
+              You have questions? Make sure to read our{' '}
               <a
                 className="fz-18 fw-700 color-fff underlined"
                 href=""
@@ -320,7 +319,7 @@ export function Component() {
                 Dev Docs
               </a>
               <br />
-              or contact us through{" "}
+              or contact us through{' '}
               <a
                 className="fz-18 fw-700 color-fff underlined"
                 href=""
@@ -333,7 +332,7 @@ export function Component() {
           </div>
         );
 
-      case "2":
+      case '2':
         return (
           <div className="flex flex-col gap-32">
             <div className="p-50 flex flex-col items-center gap-24 cards-container">
@@ -389,7 +388,7 @@ export function Component() {
                   {/* name */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">Name</div>
                     <Input
@@ -403,7 +402,7 @@ export function Component() {
                   {/* website */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">Website</div>
                     <Input
@@ -419,7 +418,7 @@ export function Component() {
                   {/* address */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">Address</div>
                     <Input
@@ -428,7 +427,7 @@ export function Component() {
                       solidLight
                       className="flex-3  fz-22 fw-400 color-000"
                       suffix={
-                        <Button onClick={()=>setAccount(address)}>Addr</Button>
+                        <Button onClick={() => setAccount(address)}>Addr</Button>
                       }
                     />
                   </div>
@@ -436,7 +435,7 @@ export function Component() {
                   {/* publicKey */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">Public Key</div>
                     <Input
@@ -450,12 +449,10 @@ export function Component() {
                 </div>
 
 
-
-
                 {/* desc */}
                 <div
                   className="flex-1 flex flex-col gap-6"
-                  style={{ minWidth: "calc(50% - 56px)" }}
+                  style={{ minWidth: 'calc(50% - 56px)' }}
                 >
                   <div className="fz-14 fw-400 color-fff inter">
                     Description
@@ -473,9 +470,9 @@ export function Component() {
             <div className="flex flex-row items-center justify-center gap-10">
               <Button
                 type="solid"
-                onClick={() => handleIndex("1")}
+                onClick={() => handleIndex('1')}
                 className="w-full radius-30 h-80"
-                style={{ border: "2px solid #FFF" }}
+                style={{ border: '2px solid #FFF' }}
               >
                 <div className="fz-26 fw-700 raleway color-fff">BACK</div>
               </Button>
@@ -483,7 +480,7 @@ export function Component() {
               <Button
                 disabled={!validStep2}
                 type="metis"
-                onClick={() => handleIndex("3")}
+                onClick={() => handleIndex('3')}
                 className="w-full radius-30 h-80"
               >
                 <div className="fz-26 fw-700 raleway color-fff">CONTINUE</div>
@@ -492,7 +489,7 @@ export function Component() {
           </div>
         );
 
-      case "3":
+      case '3':
         return (
           <div className="flex flex-col gap-32">
             <div className="pt-66 pb-16 pl-38 pr-38 flex flex-col items-center gap-73 cards-container">
@@ -501,7 +498,7 @@ export function Component() {
                   {/* name */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">Lockup</div>
                     <Input
@@ -513,7 +510,7 @@ export function Component() {
                       suffix={
                         <img
                           className="s-22"
-                          src={getImageUrl("@/assets/images/token/metis.svg")}
+                          src={getImageUrl('@/assets/images/token/metis.svg')}
                         />
                       }
                     />
@@ -522,7 +519,7 @@ export function Component() {
                   {/* website */}
                   <div
                     className="flex-1 flex flex-col gap-6"
-                    style={{ minWidth: "calc(50% - 56px)" }}
+                    style={{ minWidth: 'calc(50% - 56px)' }}
                   >
                     <div className="fz-14 fw-400 color-fff inter">
                       Expected APR
@@ -535,7 +532,7 @@ export function Component() {
                       suffix={
                         <img
                           className="s-22"
-                          src={getImageUrl("@/assets/images/token/metis.svg")}
+                          src={getImageUrl('@/assets/images/token/metis.svg')}
                         />
                       }
                     />
@@ -576,16 +573,16 @@ export function Component() {
             <div className="flex flex-row items-center justify-center gap-10">
               <Button
                 type="solid"
-                onClick={() => handleIndex("2")}
+                onClick={() => handleIndex('2')}
                 className="w-full radius-30 h-80"
-                style={{ border: "2px solid #FFF" }}
+                style={{ border: '2px solid #FFF' }}
               >
                 <div className="fz-26 fw-700 raleway color-fff">BACK</div>
               </Button>
 
               <Button
                 loading={approveLoading}
-                disabled={!stakeAmount || BigNumber(stakeAmount).lt(20000) }
+                disabled={!stakeAmount || BigNumber(stakeAmount).lt(20000)}
                 type="metis"
                 onClick={handleLockup}
                 className="w-full radius-30 h-80"
@@ -596,7 +593,7 @@ export function Component() {
           </div>
         );
 
-      case "4":
+      case '4':
         return (
           <div className="flex flex-col gap-32">
             <div className="pt-70 pb-34 pl-124 pr-124 flex flex-col items-center gap-26 cards-container">
@@ -608,9 +605,13 @@ export function Component() {
             </div>
 
             <div className="flex flex-row items-center justify-center gap-10">
-              <Button type="metis" onClick={() => { 
-                navigate('/sequencers')
-              }} className="w-full radius-30 h-80">
+              <Button
+                type="metis"
+                onClick={() => {
+                navigate('/sequencers');
+              }}
+                className="w-full radius-30 h-80"
+              >
                 <div className="fz-26 fw-700 raleway color-fff">
                   CHECK MY SEQUENCER
                 </div>
@@ -619,7 +620,7 @@ export function Component() {
           </div>
         );
     }
-  }, [needApprove, allowance, apr,handleChangeApr, handleLockup, stakeAmount, handleLockupChange, validStep2, balance?.readable, name, website, account, pubKey, desc, address, activeIndex]);
+  }, [needApprove, allowance, apr, handleChangeApr, handleLockup, stakeAmount, handleLockupChange, validStep2, balance?.readable, name, website, account, pubKey, desc, address, activeIndex]);
 
   return (
     <Container className="pages-landing flex flex-col gap-48 items-center pt-156 pb-206">
@@ -637,4 +638,4 @@ export function Component() {
   );
 }
 
-Component.displayName = "BecomeSequencer";
+Component.displayName = 'BecomeSequencer';
