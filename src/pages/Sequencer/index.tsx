@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import useUpdate from '@/hooks/useUpdate';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
 import { defaultPubKeyList } from '@/configs/common';
+import { useRequest } from 'ahooks';
+import fetchOverview from '@/graphql/overview';
+import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 
 const Container = styled.section`
   .half-w {
@@ -86,9 +90,7 @@ const Container = styled.section`
       }
     }
 
-    background: url(${getImageUrl(
-  '@/assets/images/_global/home_top_banner.png',
-)});
+    background: url(${getImageUrl('@/assets/images/_global/home_top_banner.png')});
     /* aspect-ratio: 1440 / 560; */
     width: 100vw;
     background-position: center;
@@ -117,10 +119,7 @@ const Container = styled.section`
     padding-top: 64px;
     padding-bottom: 64px;
     &.main-section-2 {
-      background: url(${getImageUrl(
-  '@/assets/images/_global/main_section_2.png',
-)}),
-        lightgray 50% / cover no-repeat;
+      background: url(${getImageUrl('@/assets/images/_global/main_section_2.png')}), lightgray 50% / cover no-repeat;
       background-size: cover;
       /* filter: blur(100px); */
     }
@@ -351,19 +350,21 @@ export function Component() {
   const onChange = (ele: any) => {
     setCurOption(ele?.value);
   };
+
+  const { data, loading } = useRequest(fetchOverview);
+
   const sequencerCards = React.useMemo(() => {
-    return defaultPubKeyList.filter(i => i.active).map(i => (
-      {
-        name: '1',
-        avatar: '1',
-        status: 'HEALTH',
-        color: 'rgba(0, 218, 203, 1)',
-        totalLockUp: '20,000 metis',
-        id: i.address,
-        ...i,
-      }
-    ));
-  }, []);
+    if (!data?.lockedUserParams) return [];
+    return data?.lockedUserParams?.map((i) => ({
+      name: '1',
+      avatar: '1',
+      status: 'HEALTH',
+      color: 'rgba(0, 218, 203, 1)',
+      totalLockUp: '20,000 metis',
+      id: i.address,
+      ...i,
+    }));
+  }, [data]);
 
   const { sequencerTotalInfo } = useUpdate();
   console.log('sequencerTotalInfo', sequencerTotalInfo);
@@ -377,25 +378,18 @@ export function Component() {
               <div className="flex flex-col">
                 <span className="fz-100 fw-700 raleway color-fff">Metis</span>
                 <br />
-                <span className="fz-72 fw-700 raleway color-fff">
-                  Sequencer Mining
-                </span>
+                <span className="fz-72 fw-700 raleway color-fff">Sequencer Mining</span>
               </div>
               <div className="lh-120 maxw-500 fz-20 fw-500 raleway color-fff">
-                Secure the Metis network and earn staking rewards. An exclusive
-                opportunity for qualified operators.
+                Secure the Metis network and earn staking rewards. An exclusive opportunity for qualified operators.
               </div>
             </div>
             <div className="flex flex-row items-center gap-12">
               <Button onClick={jumpLink} type="dark" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
-                  Become a Sequencer
-                </div>
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
               </Button>
               <Button onClick={jumpLink} type="light" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">
-                  Read Docs
-                </div>
+                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
               </Button>
             </div>
           </div>
@@ -420,17 +414,13 @@ export function Component() {
           <div className="opacity-card flex flex-col items-center flex-1">
             <span className="fz-18 fw-700 inter">-%</span>
             <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">
-                Current number of Sequencers
-              </span>
+              <span className="fz-14 fw-400 inter">Current number of Sequencers</span>
             </div>
           </div>
           <div className="opacity-card flex flex-col items-center flex-1">
             <span className="fz-18 fw-700 inter">-%</span>
             <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">
-                Total rewards distributed
-              </span>
+              <span className="fz-14 fw-400 inter">Total rewards distributed</span>
             </div>
           </div>
         </div>
@@ -453,6 +443,11 @@ export function Component() {
         <div className="flex flex-row items-center gap-20 flex-wrap">
           {sequencerCards.map((i, index) => (
             <SequencerItemContainer
+              title="SEQ"
+              totalLockUp={BigNumber(i?.amount || 0).div(1e18).toString()}
+              uptime=""
+              since={dayjs(i?.fromTimestamp * 1000).format('YYYY-MM-DD')}
+              earned=""
               onClick={() => {
                 jumpSequencer(i.id);
               }}

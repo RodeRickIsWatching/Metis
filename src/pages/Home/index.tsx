@@ -9,6 +9,10 @@ import useUpdate from '@/hooks/useUpdate';
 import Progress from '@/components/Progress';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
 import { defaultPubKeyList } from '@/configs/common';
+import { useRequest } from 'ahooks';
+import fetchOverview from '@/graphql/overview';
+import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 
 const ColoredLabel = styled.div<{ color?: string }>`
   width: 226px;
@@ -667,8 +671,12 @@ export function Component() {
     navigate(`/sequencers/${id}`);
   };
 
+  const { data, loading } = useRequest(fetchOverview)
+
+
   const sequencerCards = React.useMemo(() => {
-    return defaultPubKeyList.filter(i => i.active).map(i => (
+    if (!data?.lockedUserParams) return [];
+    return data?.lockedUserParams?.map(i => (
       {
         name: '1',
         avatar: '1',
@@ -679,7 +687,9 @@ export function Component() {
         ...i,
       }
     ));
-  }, []);
+  }, [data]);
+
+
 
 
   return (
@@ -765,8 +775,13 @@ export function Component() {
         </div>
         <div className="mb-35 h-1 w-full bg-color-CDCDCD" />
         <div className="flex flex-row items-center gap-20">
-          {sequencerCards.map((i, index) => (
+          {sequencerCards?.map((i, index) => (
             <SequencerItemContainer
+              title="SEQ"
+              totalLockUp={BigNumber(i?.amount || 0).div(1e18).toString()}
+              uptime=""
+              since={dayjs(i?.fromTimestamp * 1000).format('YYYY-MM-DD')}
+              earned=""
               onClick={() => {
                 jumpSequencer(i.id);
               }}
