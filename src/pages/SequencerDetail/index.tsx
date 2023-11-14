@@ -460,14 +460,11 @@ export function Component() {
             <div className="avatar mb-24 s-150" />
             <div className="flex flex-col gap-12 color-fff">
               <div className="flex flex-col gap-4">
-                <div className="fz-36 fw-500 ">Sequencer 1</div>
-                <div className="fz-16 fw-400 inter maxw-470">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua eiusmod tempor.
-                </div>
+                <div className="fz-36 fw-500 ">-</div>
+                <div className="fz-16 fw-400 inter maxw-470"></div>
               </div>
               <div>
-                <span className="fz-18 fw-400 ">@sequencer1</span>
+                <span className="fz-18 fw-400 "></span>
               </div>
             </div>
           </div>

@@ -1,7 +1,9 @@
-import useAuth from "@/hooks/useAuth";
-import { filterHideText, getImageUrl } from "@/utils/tools";
-import classNames from "classnames";
-import { styled } from "styled-components";
+import useAuth from '@/hooks/useAuth';
+import { filterHideText, getImageUrl } from '@/utils/tools';
+import classNames from 'classnames';
+import { styled } from 'styled-components';
+import clipboard from 'copy-to-clipboard';
+import { message } from '..';
 
 const Container = styled.div`
   span {
@@ -22,31 +24,37 @@ const CopyAddress = ({
   className,
   reverse,
   hide = true,
-  copyTrigger
+  copyTrigger,
 }: {
   addr?: string;
   className?: any;
   reverse?: boolean;
   hide?: boolean;
-  copyTrigger?: any
+  copyTrigger?: any;
 }) => {
   const { address } = useAuth(true);
+
+  const copy = () => {
+    clipboard(addr || address as any);
+    message.success('copied!');
+  };
 
   return (
     <Container
       className="flex flex-row items-center gap-8 pointer"
       style={{
-        flexDirection: reverse ? "row-reverse" : "row",
+        flexDirection: reverse ? 'row-reverse' : 'row',
       }}
+      onClick={copy}
     >
       <span
-       className={`copy-content ${className}`}
+        className={`copy-content ${className}`}
       >
-        
+
         {hide ? filterHideText(addr || (address as string), 6, 4) : addr}
       </span>
 
-      {copyTrigger || <img src={getImageUrl("@/assets/images/_global/ic_copy.svg")} />}
+      {copyTrigger || <img src={getImageUrl('@/assets/images/_global/ic_copy.svg')} />}
     </Container>
   );
 };
