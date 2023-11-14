@@ -1,13 +1,13 @@
-import { Button, Input, Modal, Tooltip, message } from "@/components";
-import Loading from "@/components/_global/Loading";
-import useAuth from "@/hooks/useAuth";
-import useLock from "@/hooks/useLock";
-import useSequencerInfo from "@/hooks/useSequencerInfo";
-import useUpdate from "@/hooks/useUpdate";
-import { catchError, getImageUrl } from "@/utils/tools";
-import { useBoolean, useMount } from "ahooks";
-import React, { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { Button, Input, Modal, Tooltip, message } from '@/components';
+import Loading from '@/components/_global/Loading';
+import useAuth from '@/hooks/useAuth';
+import useLock from '@/hooks/useLock';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
+import useUpdate from '@/hooks/useUpdate';
+import { catchError, getImageUrl } from '@/utils/tools';
+import { useBoolean, useMount } from 'ahooks';
+import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
 
 const Container = styled(Modal)`
   .f-20-bold {
@@ -72,7 +72,7 @@ const ClaimModal = ({
 }) => {
   const { sequencerInfo } = useSequencerInfo();
 
-  const [claimAmount, setClaimAmount] = useState("");
+  const [claimAmount, setClaimAmount] = useState('');
 
   const { sequencerId } = useUpdate();
 
@@ -99,7 +99,7 @@ const ClaimModal = ({
         withdrawToL2: false,
       });
       setFalse();
-      message.success("Success");
+      message.success('Success');
     } catch (e) {
       catchError(e);
     }
@@ -126,7 +126,7 @@ const ClaimModal = ({
           <div className="flex flex-row items-center gap-6">
             <div className="f-12">Receiving address</div>
             <Tooltip title={<span>Tooltip</span>}>
-              <img src={getImageUrl("@/assets/images/_global/ic_q.svg")} />
+              <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
             </Tooltip>
           </div>
           <Input
@@ -140,7 +140,7 @@ const ClaimModal = ({
               <div className="flex flex-row items-center gap-8">
                 <img
                   className="size-12"
-                  src={getImageUrl("@/assets/images/_global/ic_edit.svg")}
+                  src={getImageUrl('@/assets/images/_global/ic_edit.svg')}
                 />
               </div>
             }
@@ -153,11 +153,12 @@ const ClaimModal = ({
         </div>
         <Button
           disabled={sequencerInfo?.reward}
-          style={{ padding: "14px 50px" }}
+          style={{ padding: '14px 50px' }}
           type="metis"
           onClick={handleClaim}
+          className="w-full"
         >
-          {claimLoading ? <Loading /> : "Claim"}
+          {claimLoading ? <Loading /> : 'Claim'}
         </Button>
       </div>
     </Container>

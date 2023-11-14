@@ -300,9 +300,11 @@ export function Component() {
 
   const curUserActiveSequencerId = React.useMemo(
     () =>
-    (fetchUserTxData?.origin?.lockedParams?.length
-      ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))?.[0]
-      : undefined),
+      fetchUserTxData?.origin?.lockedParams?.length
+        ? Array.from(
+            new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
+          )?.[0]
+        : undefined,
     [fetchUserTxData?.origin?.lockedParams],
   );
 
@@ -376,13 +378,10 @@ export function Component() {
     return blocksCol?.slice(fromIndex, toIndex);
   }, [blocksCurrentPage, blocksCol]);
 
-  console.log('sequencerInfo', sequencerInfo)
-
   const lockedup = React.useMemo(
     () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
     [sequencerInfo?.sequencerLock],
   );
-
 
   const { relock } = useLock();
 
@@ -436,24 +435,23 @@ export function Component() {
   const [claimVisible, setClaimVisible] = React.useState(false);
   const [withdrawVisible, setWithdrawVisible] = React.useState(false);
 
+  console.log('sequencerInfo', sequencerInfo);
 
   // 是否unlock后等待中
   const ifInUnlockProgress = sequencerInfo?.ifInUnlockProgress;
 
-  const unlockTo = React.useMemo(
-    () => dayjs.unix(sequencerInfo?.unlockClaimTime || 0).format('YYYY-MM-DD HH:mm:ss'),
-    [sequencerInfo?.unlockClaimTime],
-  );
+  // const unlockTo = React.useMemo(
+  //   () => dayjs.unix(sequencerInfo?.unlockClaimTime || 0).format('YYYY-MM-DD HH:mm:ss'),
+  //   [sequencerInfo?.unlockClaimTime],
+  // );
 
-  const [countdown, formattedRes] = useCountDown({
-    targetDate: unlockTo,
-  });
-
-  const { days } = formattedRes;
-
+  // const [countdown, formattedRes] = useCountDown({
+  //   targetDate: unlockTo,
+  // });
+  
   const unclaimed = React.useMemo(
-    () => sequencerInfo?.sequencerInfo?.rewardReadable || '0',
-    [sequencerInfo?.sequencerInfo?.rewardReadable],
+    () => sequencerInfo?.rewardReadable || '0',
+    [sequencerInfo?.rewardReadable],
   );
 
   return (
@@ -555,19 +553,34 @@ export function Component() {
                   <span>{lockedup}</span>
                   <img src={getImageUrl('@/assets/images/token/metis.svg')} />
                   {ifSelf ? (
-                    <Button
-                      className="pl-15 pr-15"
-                      type="metis"
-                      onClick={() => {
-                        if (BigNumber(lockedup).gt(0)) {
-                          setUnlockVisible(true);
-                        } else {
-                          setIncreaseVisible(true);
-                        }
-                      }}
-                    >
-                      {BigNumber(lockedup).gt(0) ? 'Unlock' : 'Lock'}
-                    </Button>
+                    ifInUnlockProgress ? (
+                      <Button
+                        className="pl-15 pr-15"
+                        type="metis"
+                        // disabled={countdown > 0}
+                        onClick={() => {
+                          if (ifInUnlockProgress) {
+                            setWithdrawVisible(true);
+                          }
+                        }}
+                      >
+                        <span>Withdraw</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        className="pl-15 pr-15"
+                        type="metis"
+                        onClick={() => {
+                          if (BigNumber(lockedup).gt(0)) {
+                            setUnlockVisible(true);
+                          } else {
+                            setIncreaseVisible(true);
+                          }
+                        }}
+                      >
+                        {BigNumber(lockedup).gt(0) ? 'Unlock' : 'Lock'}
+                      </Button>
+                    )
                   ) : null}
                 </div>
               </div>
@@ -622,7 +635,14 @@ export function Component() {
                     <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                       <span>{unclaimed}</span>
                       <img src={getImageUrl('@/assets/images/token/metis.svg')} />
-                      <Button disabled={BigNumber(unclaimed).lte(0)} className="pl-15 pr-15" type="metis">
+                      <Button
+                        onClick={() => {
+                          setClaimVisible(true);
+                        }}
+                        disabled={BigNumber(unclaimed).lte(0)}
+                        className="pl-15 pr-15"
+                        type="metis"
+                      >
                         Claim
                       </Button>
                     </div>
@@ -718,7 +738,9 @@ export function Component() {
                 </tbody>
               </table>
 
-              {filteredBlocksCol?.length ? null : <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>}
+              {filteredBlocksCol?.length ? null : (
+                <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>
+              )}
             </div>
             <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
               <Pagination
@@ -770,7 +792,9 @@ export function Component() {
                   </tbody>
                 </table>
 
-                {filteredTxCol?.length ? null : <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>}
+                {filteredTxCol?.length ? null : (
+                  <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>
+                )}
               </div>
               <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
                 <Pagination
