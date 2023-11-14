@@ -1,3 +1,4 @@
+/* eslint-disable no-negated-condition */
 import { getImageUrl } from '@/utils/tools';
 import LOCK_ABI from '@/configs/abi/lock.json';
 import { erc20ABI, mainnet } from 'wagmi';
@@ -98,3 +99,5 @@ export const defaultPubKeyList = [
 ];
 
 export const baseGraphUrl = 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking';
+
+export const metisRpc = !isProd ? 'http://3.213.188.165:8545' : '';

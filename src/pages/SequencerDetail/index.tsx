@@ -269,6 +269,8 @@ const Container = styled.section`
   }
 `;
 
+
+const txPageSize = 10;
 export function Component() {
   const { id } = useParams();
   const { address } = useAuth(true);
@@ -293,6 +295,20 @@ export function Component() {
   const txCol = React.useMemo(() => {
     return fetchUserTxData?.combinedData?.sort((a, b) => +b?.blockTimestamp - +a?.blockTimestamp);
   }, [fetchUserTxData?.combinedData]);
+
+  
+  const [txCurrentPage, setTxCurrentPage] = React.useState(1);
+  const txTotal = React.useMemo(() => txCol?.length || 0, [txCol?.length]);
+  
+  // a.slice(0,10)
+  // a.slice(10,20)
+  const filteredTxCol = React.useMemo(()=>{
+    const curPage = txCurrentPage - 1
+    const fromIndex = txPageSize*curPage
+    const toIndex = txPageSize*curPage + txPageSize
+    return txCol?.slice(fromIndex, toIndex)
+  }, [txCurrentPage, txCol])
+
 
   const curUserActiveSequencerIds = React.useMemo(
     () =>
@@ -368,10 +384,6 @@ export function Component() {
   const [blocksCurrentPage, setBlocksCurrentPage] = React.useState(1);
   const blocksTotal = React.useMemo(() => blocksCol.length, []);
   const blocksPageSize = 1;
-
-  const [txCurrentPage, setTxCurrentPage] = React.useState(1);
-  const txTotal = React.useMemo(() => txCol?.length || 0, [txCol?.length]);
-  const txPageSize = 1;
 
   const { sequencerId } = useUpdate();
   const { relock } = useLock();
@@ -730,7 +742,7 @@ export function Component() {
                   </tr>
                 </thead>
                 <tbody>
-                  {txCol?.map(
+                  {filteredTxCol?.map(
                     (
                       i: any,
                       index: React.Key | null | undefined,

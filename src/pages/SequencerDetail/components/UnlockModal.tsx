@@ -119,7 +119,7 @@ const UnlockModal = ({
         withdrawRewardToL2: false,
       });
       setFalse();
-      message.success("Success")
+      // message.success("Success")
     } catch (e) {
       console.log(e);
       message.error(catchError(e))
@@ -145,7 +145,7 @@ const UnlockModal = ({
 
             <div className="f-16-bold">Unlock</div>
             <div className="flex flex-col gap-12 items-center">
-              <span className="f-12">
+              <span className="f-12 align-center">
                 Please note, if the funds you lock up fall below 20,000 tokens,
                 you will forfeit your qualification as a Sequencer.
               </span>
@@ -160,7 +160,7 @@ const UnlockModal = ({
 
           <div className="flex flex-row items-center gap-20 w-full">
             <Button disabled={validUnlock} type="metis" className="p-14 flex-1" onClick={handleUnlock}>
-              <div className="f-14-bold">
+              <div className="f-14-bold color-fff">
                 {unlockLoading ? <Loading /> : "Confirm"}
               </div>
             </Button>
