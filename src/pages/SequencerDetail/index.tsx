@@ -549,10 +549,10 @@ export function Component() {
                     className="pl-15 pr-15"
                     type="metis"
                     onClick={() => {
-                      setIncreaseVisible(true);
+                      setUnlockVisible(true);
                     }}
                   >
-                    Add
+                    Unlock
                   </Button>
                 </div>
               </div>
