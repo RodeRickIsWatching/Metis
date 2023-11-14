@@ -6,7 +6,7 @@ import { Button, Input, Select, Tooltip } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import useUpdate from '@/hooks/useUpdate';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
-import { defaultPubKeyList } from '@/configs/common';
+import { defaultExpectedApr, defaultPubKeyList } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import fetchOverview from '@/graphql/overview';
 import BigNumber from 'bignumber.js';
@@ -406,7 +406,7 @@ export function Component() {
             </div>
           </div>
           <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">-%</span>
+            <span className="fz-18 fw-700 inter">{BigNumber(defaultExpectedApr).multipliedBy(100).toString()}%</span>
             <div className="flex items-center gap-8">
               <span className="fz-14 fw-400 inter">Expected APR</span>
             </div>

@@ -15,7 +15,7 @@ import useLock from '@/hooks/useLock';
 import useAuth from '@/hooks/useAuth';
 import { Address, useSignMessage } from 'wagmi';
 import { hashMessage, recoverPublicKey } from 'viem';
-import { defaultPubKeyList, isDev } from '@/configs/common';
+import { defaultExpectedApr, defaultPubKeyList, isDev } from '@/configs/common';
 
 
 const Container = styled.section`
@@ -143,6 +143,7 @@ export function Component() {
   };
   const handleLockupChange = (v: string) => {
     setStakeAmount(v);
+    handleChangeApr(BigNumber(v).multipliedBy(defaultExpectedApr).toString())
   };
 
   const navigate = useNavigate();
@@ -525,6 +526,7 @@ export function Component() {
                       Expected APR
                     </div>
                     <Input
+                      disabled
                       value={apr}
                       onChange={handleChangeApr}
                       solidLight

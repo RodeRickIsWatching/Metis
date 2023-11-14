@@ -21,24 +21,25 @@ const SequencerItemContainer = ({ onClick, avatar, title, totalLockUp, uptime, s
         <div className={'avatar s-90 radiusp-50'}>
           {avatar ? <img src={avatar} /> : null}
         </div>
-        <div className="align-center">{title}</div>
+        <div className="align-center fz-20 fw-700 poppins">{title}</div>
       </div>
       <div className="flex flex-col w-full gap-4">
-        <div className="flex flex-row justify-between items-center w-full">
-          <div className="fz-14 color-000 fw-400">Total Lock-up</div>
-          <div className="flex flex-row items-center gap-4">
-            <img src={getImageUrl('@/assets/images/sequencer/avatar.svg')} className="s-13" />
-            <div className="fz-14 fw-700 color-000">{totalLockUp}</div>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row justify-between items-center w-full">
+            <div className="fz-14 color-000 fw-400">Total Lock-up</div>
+            <div className="flex flex-row items-center gap-4">
+              <img src={getImageUrl('@/assets/images/sequencer/avatar.svg')} className="s-13" />
+              <div className="fz-14 fw-700 color-000">{totalLockUp}</div>
+            </div>
           </div>
-
-        </div>
-        <div className="flex flex-row justify-between items-center w-full">
-          <div className="fz-14 color-000 fw-400">Uptime</div>
-          <div className="fz-14 fw-700 color-000">{uptime}</div>
-        </div>
-        <div className="flex flex-row justify-between items-center w-full">
-          <div className="fz-14 color-000 fw-400">Sequencing Since</div>
-          <div className="fz-14 fw-700 color-000">{since}</div>
+          <div className="flex flex-row justify-between items-center w-full">
+            <div className="fz-14 color-000 fw-400">Uptime</div>
+            <div className="fz-14 fw-700 color-000">{uptime}</div>
+          </div>
+          <div className="flex flex-row justify-between items-center w-full">
+            <div className="fz-14 color-000 fw-400">Sequencing Since</div>
+            <div className="fz-14 fw-700 color-000">{since}</div>
+          </div>
         </div>
         <div className="h-1 w-full mt-10 mb-10 bg-color-CDCDCD" />
         <div className="flex flex-row justify-between items-center w-full">

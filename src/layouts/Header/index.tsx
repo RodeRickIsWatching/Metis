@@ -10,27 +10,27 @@ const Container = styled.div`
 const headerNav = [
   {
     label: 'Developer',
-    link: '',
+    link: 'https://www.metis.io/platform',
   },
   {
     label: 'Ecosystem',
-    link: '',
+    link: 'https://www.metis.io/ecosystem',
   },
   {
     label: 'Governance',
-    link: '',
+    link: 'https://www.metis.io/ceg',
   },
   {
     label: 'Company',
-    link: '',
+    link: 'https://www.metis.io/company',
   },
   {
     label: 'Bridge',
-    link: '',
+    link: 'https://www.metis.io/bridge',
   },
   {
-    label: 'More',
-    link: '',
+    label: 'Knolewdge',
+    link: 'https://www.metis.io/knowledge',
   },
 ];
 
@@ -61,7 +61,7 @@ const Header = () => {
             </div>
           ))}
         </div>
-        <img className="pointer" src={getImageUrl('@/assets/images/_global/dark_theme.svg')} />
+        {/* <img className="pointer" src={getImageUrl('@/assets/images/_global/dark_theme.svg')} /> */}
 
         <WalletModal />
       </div>

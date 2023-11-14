@@ -1,88 +1,103 @@
-import IconDiscord from "@/components/Icons/IconDiscord";
-import IconGithub from "@/components/Icons/IconGithub";
-import IconMedium from "@/components/Icons/IconMedium";
-import IconTelegram from "@/components/Icons/IconTelegram";
-import IconTwitter from "@/components/Icons/IconTwitter";
-import IconYoutube from "@/components/Icons/IconYoutube";
-import { getImageUrl } from "@/utils/tools";
-import { styled } from "styled-components";
+import IconDiscord from '@/components/Icons/IconDiscord';
+import IconGithub from '@/components/Icons/IconGithub';
+import IconIns from '@/components/Icons/IconIns';
+import IconMedium from '@/components/Icons/IconMedium';
+import IconTelegram from '@/components/Icons/IconTelegram';
+import IconTwitter from '@/components/Icons/IconTwitter';
+import IconYoutube from '@/components/Icons/IconYoutube';
+
+import { getImageUrl, jumpLink } from '@/utils/tools';
+import { styled } from 'styled-components';
 
 const links = [
   {
-    content: "Platform",
-    link: "",
+    content: 'Platform',
+    link: 'https://www.metis.io/platform',
   },
   {
-    content: "Knowledge",
-    link: "",
+    content: 'Knowledge',
+    link: 'https://www.metis.io/knowledge',
   },
   {
-    content: "Carrers",
-    link: "",
+    content: 'Carrers',
+    link: 'https://www.metis.io/jobs',
+  },
+  // {
+  //   content: 'Search',
+  //   link: '',
+  // },
+  {
+    content: 'Subscribe',
+    link: 'https://www.metis.io/newsletter',
   },
   {
-    content: "Search",
-    link: "",
+    content: 'Q&A',
+    link: 'https://www.metis.io/knowledge',
   },
   {
-    content: "Subscribe",
-    link: "",
+    content: 'Brand Assets',
+    link: 'https://www.metis.io/brandassets',
   },
 ];
 
 const link2 = [
   {
-    content: "Community",
-    link: "",
+    content: 'Community',
+    link: 'https://www.metis.io/community',
   },
   {
-    content: "Company",
-    link: "",
+    content: 'Company',
+    link: 'https://www.metis.io/company',
   },
   {
-    content: "Ecosystem",
-    link: "",
+    content: 'Ecosystem',
+    link: 'https://www.metis.io/ecosystem',
   },
   {
-    content: "Terms & conditions",
-    link: "",
+    content: 'Terms & conditions',
+    link: 'https://drive.google.com/file/d/1wnNbisUREP_gSX1Vfl1Fjmi9PpObmZZQ/view',
   },
   {
-    content: "Contact",
-    link: "",
+    content: 'Contact',
+    link: 'https://www.metis.io/contact-us',
   },
-]
+];
 
 const medias = [
   {
     content: <IconTwitter />,
     img: getImageUrl('@/assets/images/_media/twi.svg'),
-    link: "",
+    link: 'https://twitter.com/MetisDAO',
   },
   {
     content: <IconTelegram />,
     img: getImageUrl('@/assets/images/_media/telegram.svg'),
-    link: "",
+    link: 'https://t.me/MetisDAO',
   },
   {
     content: <IconMedium />,
     img: getImageUrl('@/assets/images/_media/medium.svg'),
-    link: "",
+    link: 'https://metisdao.medium.com/',
   },
   {
     content: <IconDiscord />,
     img: getImageUrl('@/assets/images/_media/discord.svg'),
-    link: "",
+    link: 'https://discord.com/invite/RqfEJZXnxd',
   },
   {
     content: <IconGithub />,
     img: getImageUrl('@/assets/images/_media/github.svg'),
-    link: "",
+    link: 'https://github.com/MetisProtocol',
   },
   {
     content: <IconYoutube />,
     img: getImageUrl('@/assets/images/_media/you.svg'),
-    link: "",
+    link: 'https://www.youtube.com/@MetisDAO',
+  },
+  {
+    content: <IconIns />,
+    img: getImageUrl('@/assets/images/_media/ins.svg'),
+    link: 'https://www.instagram.com/metisdao',
   },
 ];
 
@@ -114,7 +129,7 @@ const Container = styled.div`
   .r {
     display: flex;
     align-items: flex-start;
-    
+
     gap: 8px;
     svg {
       width: 38px;
@@ -128,27 +143,47 @@ const Footer = () => {
   return (
     <Container className="bg-color-000 flex flex-row justify-between">
       <div className="l flex flex-col gap-45">
-        <img src={getImageUrl("@/assets/images/_global/metis_logo_light.svg")} />
+        <img src={getImageUrl('@/assets/images/_global/metis_logo_light.svg')} />
 
-        <div className="links flex flex-row items-center gap-120 justify-between">
-        <div className="flex flex-col gap-12">
-          {links.map((i, index) => (
-            <div className="fz-14 fw-400 color-fff pointer" key={index}>{i.content}</div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-12">
-          {
-            link2.map((i, index) => (
-              <div className="fz-14 fw-400 color-fff pointer" key={index}>{i.content}</div>
-            ))
-          }
+        <div className="links flex flex-row items-start gap-120 justify-between">
+          <div className="flex flex-col gap-12">
+            {links.map((i, index) => (
+              <div
+                className="fz-14 fw-400 color-fff pointer"
+                key={index}
+                onClick={() => {
+                  jumpLink(i.link, '_blank');
+                }}
+              >
+                {i.content}
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-12">
+            {link2.map((i, index) => (
+              <div
+                className="fz-14 fw-400 color-fff pointer"
+                key={index}
+                onClick={() => {
+                  jumpLink(i.link, '_blank');
+                }}
+              >
+                {i.content}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      </div>
-      
+
       <div className="r">
         {medias.map((i, index) => (
-          <div key={index} className="pointer">
+          <div
+            key={index}
+            className="pointer"
+            onClick={() => {
+              jumpLink(i.link, '_blank');
+            }}
+          >
             <img className="s-50" src={i.img} />
           </div>
         ))}

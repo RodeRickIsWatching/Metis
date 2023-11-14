@@ -13,6 +13,7 @@ import { useRequest } from 'ahooks';
 import fetchOverview from '@/graphql/overview';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
+import { defaultExpectedApr } from '@/configs/common';
 
 const ColoredLabel = styled.div<{ color?: string }>`
   width: 226px;
@@ -436,8 +437,8 @@ const Container = styled.section`
           line-height: 32px;
         }
        .row-content-text{
-        font-size: 22px;
-        line-height: 26px;
+        font-size: 20px!important;
+        line-height: 22px;
        } 
       }
     }
@@ -521,7 +522,7 @@ export function Component() {
             </div>
           </div>
           <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">-%</span>
+            <span className="fz-18 fw-700 inter">{BigNumber(defaultExpectedApr).multipliedBy(100).toString()}%</span>
             <div className="flex items-center gap-8">
               <span className="fz-14 fw-400 inter">Expected APR</span>
             </div>

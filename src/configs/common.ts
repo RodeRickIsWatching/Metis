@@ -3,6 +3,8 @@ import LOCK_ABI from '@/configs/abi/lock.json';
 import { erc20ABI, mainnet } from 'wagmi';
 import { goerli } from 'viem/chains';
 
+export const defaultExpectedApr = 0.2; // 20%
+
 export const MAX_ALLOWANCE = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
 export const isProd = import.meta.env.MODE === 'production';
