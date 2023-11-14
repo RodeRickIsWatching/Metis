@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable max-len */
 import * as React from 'react';
 import './index.scss';
 import { styled } from 'styled-components';
@@ -13,8 +15,7 @@ import { ethers } from 'ethers';
 import { useBoolean } from 'ahooks';
 import useLock from '@/hooks/useLock';
 import useAuth from '@/hooks/useAuth';
-import { Address, useSignMessage } from 'wagmi';
-import { hashMessage, recoverPublicKey } from 'viem';
+import { Address } from 'wagmi';
 import { defaultExpectedApr, defaultPubKeyList, isDev } from '@/configs/common';
 
 
@@ -610,7 +611,7 @@ export function Component() {
               <Button
                 type="metis"
                 onClick={() => {
-                navigate('/sequencers');
+                navigate(`/sequencers/${address}`);
               }}
                 className="w-full radius-30 h-80"
               >
@@ -622,7 +623,7 @@ export function Component() {
           </div>
         );
     }
-  }, [needApprove, allowance, apr, handleChangeApr, handleLockup, stakeAmount, handleLockupChange, validStep2, balance?.readable, name, website, account, pubKey, desc, address, activeIndex]);
+  }, [activeIndex, name, website, account, pubKey, handleSignAndRecover, desc, validStep2, balance?.readable, stakeAmount, handleLockupChange, apr, address, approveLoading, handleLockup, needApprove, navigate]);
 
   return (
     <Container className="pages-landing flex flex-col gap-48 items-center pt-156 pb-206">

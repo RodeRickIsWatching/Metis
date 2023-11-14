@@ -14,21 +14,8 @@ import fetchOverview from '@/graphql/overview';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { defaultExpectedApr } from '@/configs/common';
+import SequencerHeader from '@/components/_global/SequencerHeader';
 
-const ColoredLabel = styled.div<{ color?: string }>`
-  width: 226px;
-  height: 71px;
-  background: ${({ color }) => color || '#4369f7'};
-  border-radius: 8px;
-  color: #fff;
-  font-size: 16px;
-  font-family: Poppins-Bold, Poppins;
-  font-weight: bold;
-  line-height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 const section2 = {
   title: 'Benefits',
@@ -112,7 +99,7 @@ const section5 = {
       content: (
         <span>
           Please visit the{' '}
-          <span className='underlined pointer' onClick={() => jumpLink('https://forms.gle/Ut5A8PqeaVZC9awa6', '_blank')}>
+          <span className="underlined pointer" onClick={() => jumpLink('https://forms.gle/Ut5A8PqeaVZC9awa6', '_blank')}>
             Sequencer Whitelist Application
           </span>{' '}
           form to apply. Once you have filled out the form, we will get in touch with you.
@@ -462,7 +449,7 @@ export function Component() {
   const jumpLink = () => {
     navigate('/becomeSequencer');
   };
-  
+
 
   const { sequencerTotalInfo } = useUpdate();
 
@@ -470,111 +457,10 @@ export function Component() {
     navigate(`/sequencers/${id}`);
   };
 
-  const { data, loading } = useRequest(fetchOverview);
-
-  const sequencerCards = React.useMemo(() => {
-    if (!data?.lockedUserParams) return [];
-    return data?.lockedUserParams?.map((i) => ({
-      name: '1',
-      avatar: '1',
-      status: 'HEALTH',
-      color: 'rgba(0, 218, 203, 1)',
-      totalLockUp: '20,000 metis',
-      id: i.address,
-      ...i,
-    }));
-  }, [data]);
 
   return (
     <Container className="pages-landing flex flex-col ">
-      <div className="top-banner">
-        <div className="top-content flex flex-col gap-58 mt-100">
-          <div className="gap-48 flex flex-col">
-            <div className="gap-16 flex flex-col">
-              <div className="flex flex-col">
-                <span className="fz-100 fw-700 raleway color-fff">Metis</span>
-                <br />
-                <span className="fz-72 fw-700 raleway color-fff">Sequencer Mining</span>
-              </div>
-              <div className="lh-120 maxw-500 fz-20 fw-500 raleway color-fff">
-                Secure the Metis network and earn staking rewards. An exclusive opportunity for qualified operators.
-              </div>
-            </div>
-            <div className="flex flex-row items-center gap-12">
-              <Button onClick={jumpLink} type="dark" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
-              </Button>
-              <Button onClick={()=>{}} type="light" className="radius-50">
-                <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-row items-center gap-8 info-card-container w-1150">
-          <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">
-              {sequencerTotalInfo?.currentSequencerSetTotalLockReadable || '-'}{' '}
-            </span>
-
-            <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">Total METIS locked</span>
-            </div>
-          </div>
-          <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">{BigNumber(defaultExpectedApr).multipliedBy(100).toString()}%</span>
-            <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">Expected APR</span>
-            </div>
-          </div>
-          <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">{data?.lockedUserParams?.length || '-'}</span>
-            <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">Current number of Sequencers</span>
-            </div>
-          </div>
-          <div className="opacity-card flex flex-col items-center flex-1">
-            <span className="fz-18 fw-700 inter">-%</span>
-            <div className="flex items-center gap-8">
-              <span className="fz-14 fw-400 inter">Total rewards distributed</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="main-section maxw-1140 m-auto flex flex-col pt-90 pb-153 wp-100">
-        <div className="flex flex-row items-center justify-between">
-          <div className="fz-36 fw-700 color-000">Sequencers</div>
-          {/* <div>
-            <Input />
-            <div>
-              <span>Sort By</span>
-            </div>
-            <div>
-              <span>Health Status</span>
-            </div>
-          </div> */}
-        </div>
-        <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
-        <div className="flex flex-row items-center gap-20">
-          {sequencerCards?.map((i, index) => (
-            <SequencerItemContainer
-              title="SEQ"
-              totalLockUp={BigNumber(i?.amount || 0)
-                .div(1e18)
-                .toString()}
-              uptime=""
-              since={dayjs(i?.fromTimestamp * 1000).format('YYYY-MM-DD')}
-              earned=""
-              onClick={() => {
-                jumpSequencer(i.id);
-              }}
-              key={index}
-            />
-          ))}
-        </div>
-      </div>
-
+      <SequencerHeader />
       <div className="main-section main-section-2 flex flex-col gap-22 h-791 justify-center">
         <div className="flex flex-col gap-12 items-center">
           <span className="fz-56 fw-700 color-fff raleway">{section2.title}</span>

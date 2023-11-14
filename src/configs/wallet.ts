@@ -1,12 +1,11 @@
-import { publicProvider } from "@wagmi/core/providers/public";
+import { publicProvider } from '@wagmi/core/providers/public';
 import { InjectedConnector } from '@wagmi/core';
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi';
 import { createPublicClient, http } from 'viem';
 
 
-
-import { isProd } from "./common";
-import { goerli } from "viem/chains";
+import { isProd } from './common';
+import { goerli } from 'viem/chains';
 
 export const chainId = isProd ? [mainnet, goerli] : [goerli, mainnet];
 
@@ -25,7 +24,7 @@ export const injectedConnector = new InjectedConnector({
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [...chainId],
-  [publicProvider()]
+  [publicProvider()],
 );
 
 const config = createConfig({
