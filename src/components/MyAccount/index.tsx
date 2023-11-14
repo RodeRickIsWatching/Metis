@@ -158,8 +158,6 @@ const MyAccount = ({
   const handleShow = () => {
     setCheckSequencerVisible(true);
   };
-
-  console.log('balance', balance)
   return (
     <>
       <Container

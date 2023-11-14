@@ -280,7 +280,9 @@ export function Component() {
 
   const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
 
-  const { run, cancel, data: sequencerInfo, getSequencerId } = useSequencerInfo();
+  const { run, cancel, data: sequencerInfoList, getSequencerId } = useSequencerInfo();
+
+  const sequencerInfo = sequencerInfoList?.[0];
 
   const { sequencerId, blockReward, metisBalance } = useUpdate();
 
@@ -374,6 +376,7 @@ export function Component() {
     return blocksCol?.slice(fromIndex, toIndex);
   }, [blocksCurrentPage, blocksCol]);
 
+  console.log('sequencerInfo', sequencerInfo)
 
   const lockedup = React.useMemo(
     () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
@@ -433,6 +436,8 @@ export function Component() {
   const [claimVisible, setClaimVisible] = React.useState(false);
   const [withdrawVisible, setWithdrawVisible] = React.useState(false);
 
+
+  // 是否unlock后等待中
   const ifInUnlockProgress = sequencerInfo?.ifInUnlockProgress;
 
   const unlockTo = React.useMemo(

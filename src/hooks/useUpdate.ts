@@ -111,7 +111,6 @@ const useUpdate = () => {
       result[p[index].functionName] = (i?.result || 0)?.toString();
     });
 
-    console.log('result', result);
     if (result?.BLOCK_REWARD) {
       const rewardReadable = BigNumber(result?.BLOCK_REWARD).div(1e18).toString();
       setBlockReward(rewardReadable);

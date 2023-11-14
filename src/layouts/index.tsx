@@ -21,6 +21,7 @@ function BasicLayout() {
   }, [address]);
 
   React.useEffect(() => {
+    if(!sequencerId) return;
     sequencerInfoRun({ sequencerId: sequencerId, self: true });
   }, [sequencerId]);
 

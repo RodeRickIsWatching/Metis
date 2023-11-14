@@ -2,15 +2,11 @@ import * as React from 'react';
 import './index.scss';
 import { styled } from 'styled-components';
 import { getImageUrl } from '@/utils/tools';
-import { Button, Input, Select, Tooltip } from '@/components';
+
 import { useNavigate } from 'react-router-dom';
 import useUpdate from '@/hooks/useUpdate';
-import SequencerItemContainer from '@/components/SequencerItemContainer';
-import { defaultExpectedApr, defaultPubKeyList } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import fetchOverview from '@/graphql/overview';
-import BigNumber from 'bignumber.js';
-import dayjs from 'dayjs';
 import SequencerHeader from '@/components/_global/SequencerHeader';
 
 const Container = styled.section`

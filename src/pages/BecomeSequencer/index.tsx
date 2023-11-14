@@ -171,7 +171,6 @@ export function Component() {
 
   const handleApprove = async () => {
     const res = await approve();
-    console.log('res', res);
   };
 
   const handleLockup = async () => {

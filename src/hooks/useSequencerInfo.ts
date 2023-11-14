@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { lockContract, basicChainId } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import useAuth from './useAuth';
@@ -6,7 +7,6 @@ import { useRecoilState } from 'recoil';
 import { recoilSequencerInfo } from '@/models';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { useEffect, useState } from 'react';
 
 const useSequencerInfo = () => {
   const { connector } = useAuth(true);
@@ -26,6 +26,46 @@ const useSequencerInfo = () => {
     } catch (e) {
       return undefined;
     }
+  };
+
+  const handleSequencerCal = (sequencerInfo: any, multicallFuntions: any) => {
+    const result: any = {};
+    sequencerInfo.forEach((i: any, index: string | number) => {
+      if (Array.isArray(i?.result)) {
+        let flattedData: any = {};
+
+        const abiOutput = multicallFuntions[index].abi?.find((k) => multicallFuntions[index].functionName === k.name)?.outputs;
+        abiOutput.forEach((j: { name: string | number; }, jndex: string | number) => {
+          flattedData[j?.name] = i?.result?.[jndex]?.toString();
+        });
+
+        result[multicallFuntions[index].functionName] = flattedData;
+      } else {
+        const j = i?.result || 0;
+        result[multicallFuntions[index].functionName] = j?.toString();
+      }
+    });
+
+    const status = result?.sequencers?.status;
+    const unlockClaimTime = result?.sequencers?.unlockClaimTime?.toString();
+    // const reward = BigNumber(result?.sequencers?.reward || '0').minus(1)?.toString();
+    const reward = result?.sequencerReward.toString();
+    const rewardReadable = ethers.utils.formatEther(reward || '0').toString();
+
+    const ifActive = BigNumber(status).eq(1) && BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
+    const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
+
+    const finalRes = {
+      ...result,
+      status,
+      unlockClaimTime,
+      reward,
+      rewardReadable,
+      ifActive,
+      ifInUnlockProgress,
+    };
+
+    return finalRes;
   };
 
   const intervalUpdate = async (
@@ -73,54 +113,21 @@ const useSequencerInfo = () => {
       contracts: multiP,
     });
 
-    const result: any = {};
-    res.forEach((i: any, index) => {
-      //   let temp: any = {};
-      //   if (Array.isArray(i)) {
-      //     Object.keys(i).forEach((j, jndex) => {
-      //       temp[j] = i?.[jndex]?._isBigNumber
-      //         ? i?.[jndex]?.toString()
-      //         : i?.[jndex];
-      //     });
-      //   }
-
-      //   console.log("temo", temp);
-
-      const j = i?.result || 0;
-      result[multiP[index].functionName] = j?.toString();
+    const listedData = s.map((i, index) => {
+      return res?.slice(index * 3, index * 3 + 3);
     });
 
-    const status = result?.sequencers?.status;
-    const unlockClaimTime = result?.sequencers?.unlockClaimTime?.toString();
-    // const reward = BigNumber(result?.sequencers?.reward || '0').minus(1)?.toString();
-    const reward = result?.sequencerReward.toString();
-    const rewardReadable = ethers.utils.formatEther(reward || '0').toString();
-
-    const ifActive = BigNumber(status).eq(1) && BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
-    const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
-
-    const finalRes = {
-      ...result,
-      status,
-      unlockClaimTime,
-      reward,
-      rewardReadable,
-      ifActive,
-      ifInUnlockProgress,
-    };
+    const finalRes = listedData.map((i) => {
+      return handleSequencerCal(i, multiP);
+    });
 
     if (self) {
-      setSequencerInfo(finalRes);
+      setSequencerInfo(finalRes?.[0]);
     }
 
     return finalRes;
   };
 
-  useEffect(() => {
-    if (sequencerInfo) {
-      // console.log("sequencerInfo", sequencerInfo);
-    }
-  }, [sequencerInfo]);
 
   const props = useRequest(intervalUpdate, {
     manual: true,

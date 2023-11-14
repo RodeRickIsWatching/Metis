@@ -8,12 +8,6 @@ import Faq from 'react-faq-component';
 import { useNavigate } from 'react-router-dom';
 import useUpdate from '@/hooks/useUpdate';
 import Progress from '@/components/Progress';
-import SequencerItemContainer from '@/components/SequencerItemContainer';
-import { useRequest } from 'ahooks';
-import fetchOverview from '@/graphql/overview';
-import BigNumber from 'bignumber.js';
-import dayjs from 'dayjs';
-import { defaultExpectedApr } from '@/configs/common';
 import SequencerHeader from '@/components/_global/SequencerHeader';
 
 

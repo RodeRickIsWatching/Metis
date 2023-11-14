@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Button, Modal, message } from '@/components';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
 import { defaultExpectedApr, lockContract } from '@/configs/common';
@@ -8,11 +9,12 @@ import { getImageUrl } from '@/utils/tools';
 import { useBoolean, useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useNetwork } from 'wagmi';
 import { multicall } from '@wagmi/core';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
 
 const StyledModal = styled(Modal)``;
 
@@ -333,7 +335,8 @@ const SequencerHeader = () => {
   const { address } = useAuth(true);
   const { data } = useRequest(fetchOverview);
   const { sequencerTotalInfo } = useUpdate();
-  const [checkLoading, {setTrue: checkLoadingTrue, setFalse: checkLoadingFalse}]  = useBoolean(false)
+  const { runOnce } = useSequencerInfo();
+  const [checkLoading, { setTrue: checkLoadingTrue, setFalse: checkLoadingFalse }] = useBoolean(false);
   const [ifWhiteListed, setIfWhiteListed] = useState<boolean>(false);
   const [isSequencer, setSequencer] = useState<boolean>(false);
   const [visible, { setTrue, setFalse }] = useBoolean(false);
@@ -351,7 +354,7 @@ const SequencerHeader = () => {
   const checkWhiteList = async () => {
     if (!address) return;
     try {
-        checkLoadingTrue()
+      checkLoadingTrue();
       setIfWhiteListed(false);
 
       const multiP: any = [
@@ -383,28 +386,43 @@ const SequencerHeader = () => {
         setIfWhiteListed(false);
         setSequencer(false);
       }
-      checkLoadingFalse()
+      checkLoadingFalse();
       setTrue();
     } catch (e) {
       message.error('Invalid');
-      checkLoadingFalse()
+      checkLoadingFalse();
     }
   };
-
-
 
   const sequencerCards = React.useMemo(() => {
     if (!data?.lockedUserParams) return [];
     return data?.lockedUserParams?.map((i) => ({
-      name: '1',
-      avatar: '1',
-      status: 'HEALTH',
-      color: 'rgba(0, 218, 203, 1)',
-      totalLockUp: '20,000 metis',
       id: i.address,
       ...i,
     }));
   }, [data]);
+
+  const fetchBatchSequencerInfo = async () => {
+    if (!sequencerCards?.length) return;
+    const ids = Array.from(new Set(sequencerCards?.map((i) => i?.sequencerId)));
+    const batchInfo = await runOnce({
+      sequencerIds: ids,
+    });
+
+    return batchInfo?.map((i, index) => {
+      return {
+        ...i,
+        ...sequencerCards?.[index],
+      };
+    });
+  };
+
+  const { run: fetchBatchSequencerInfoRun, data: fetchBatchSequencerInfoData } = useRequest(fetchBatchSequencerInfo, { manual: true });
+
+  useEffect(() => {
+    if (!sequencerCards?.length) return;
+    fetchBatchSequencerInfoRun();
+  }, [sequencerCards]);
 
   return (
     <>
@@ -479,18 +497,18 @@ const SequencerHeader = () => {
           </div>
           <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
           <div className="flex flex-row items-center gap-20">
-            {sequencerCards?.map((i, index) => (
+            {fetchBatchSequencerInfoData?.map((i, index) => (
               <SequencerItemContainer
                 ele={i}
                 title="SEQ"
-                totalLockUp={BigNumber(i?.amount || 0)
+                totalLockUp={BigNumber(i?.sequencerLock || 0)
                   .div(1e18)
                   .toString()}
                 uptime=""
                 since={dayjs(i?.fromTimestamp * 1000).format('YYYY-MM-DD')}
                 earned=""
                 onClick={() => {
-                  jumpSequencer(i.id);
+                  jumpSequencer(i?.user);
                 }}
                 key={index}
               />
