@@ -4,7 +4,7 @@ import { gql, GraphQLClient } from 'graphql-request';
 
 const userTxs = gql`
   query MyQuery($address: String) {
-    lockedParams(orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    lockedParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       activationBatch
       amount
       id
@@ -17,7 +17,7 @@ const userTxs = gql`
       blockTimestamp
     }
 
-    claimRewardsParams(orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    claimRewardsParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       amount
       id
       sequencerId
@@ -26,7 +26,7 @@ const userTxs = gql`
       blockTimestamp
     }
 
-    relockedParams(orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    relockedParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       user
       total
       sequencerId
@@ -35,7 +35,7 @@ const userTxs = gql`
       blockTimestamp
     }
 
-    unlockedParams(orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    unlockedParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       user
       total
       sequencerId
@@ -44,7 +44,7 @@ const userTxs = gql`
       blockTimestamp
     }
 
-    withrawDelayTimeChangeParams(orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    withrawDelayTimeChangeParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       user
       oldWithrawDelayTime
       newWithrawDelayTime

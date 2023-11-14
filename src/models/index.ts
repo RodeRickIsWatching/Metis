@@ -5,6 +5,11 @@ export const recoilSequencerId = atom<string>({
   default: '',
 });
 
+export const recoilBlockReward = atom<string>({
+  key: 'blockReward',
+  default: '0',
+});
+
 
 export const recoilBalance = atom<any>({
   key: 'balance',

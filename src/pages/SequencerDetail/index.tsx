@@ -22,6 +22,7 @@ import useAuth from '@/hooks/useAuth';
 import useAllowance from '@/hooks/useAllowance';
 import useLock from '@/hooks/useLock';
 import { isDev } from '@/configs/common';
+import fetchBlock from '@/graphql/blocks';
 
 const testMode = true;
 
@@ -269,8 +270,8 @@ const Container = styled.section`
   }
 `;
 
-
 const txPageSize = 10;
+const blocksPageSize = 10;
 export function Component() {
   const { id } = useParams();
   const { address } = useAuth(true);
@@ -279,16 +280,24 @@ export function Component() {
 
   const { run, cancel, data: sequencerInfo } = useSequencerInfo();
 
-  // const { sequencerId } = useUpdate();
+  const { sequencerId, blockReward } = useUpdate();
+
   const {
     run: fetchUserTxRun,
     loading: fetchUserTxLoading,
     data: fetchUserTxData,
   }: any = useRequest(fetchUserTx, { manual: true });
 
+  const {
+    run: fetchBlockTxRun,
+    loading: fetchBlockTxLoading,
+    data: fetchBlockTxData,
+  }: any = useRequest(fetchBlock, { manual: true });
+
   React.useEffect(() => {
     if (id) {
       fetchUserTxRun(id);
+      fetchBlockTxRun(id);
     }
   }, [id]);
 
@@ -296,25 +305,41 @@ export function Component() {
     return fetchUserTxData?.combinedData?.sort((a, b) => +b?.blockTimestamp - +a?.blockTimestamp);
   }, [fetchUserTxData?.combinedData]);
 
-  
   const [txCurrentPage, setTxCurrentPage] = React.useState(1);
   const txTotal = React.useMemo(() => txCol?.length || 0, [txCol?.length]);
-  
+
   // a.slice(0,10)
   // a.slice(10,20)
-  const filteredTxCol = React.useMemo(()=>{
-    const curPage = txCurrentPage - 1
-    const fromIndex = txPageSize*curPage
-    const toIndex = txPageSize*curPage + txPageSize
-    return txCol?.slice(fromIndex, toIndex)
-  }, [txCurrentPage, txCol])
+  const filteredTxCol = React.useMemo(() => {
+    const curPage = txCurrentPage - 1;
+    const fromIndex = txPageSize * curPage;
+    const toIndex = txPageSize * curPage + txPageSize;
+    return txCol?.slice(fromIndex, toIndex);
+  }, [txCurrentPage, txCol]);
 
+  const blocksCol = React.useMemo(() => {
+    return fetchBlockTxData?.userEpochParams?.map((i: any) => {
+      const blockNumbers = BigNumber(i?.endBlock).minus(i?.startBlock).plus(1).toString();
+      const rewards = BigNumber(blockNumbers).multipliedBy(blockReward).toFixed(4, BigNumber.ROUND_DOWN);
+      return { ...i, rewards: rewards };
+    });
+  }, [blockReward, fetchBlockTxData?.userEpochParams]);
+
+  const [blocksCurrentPage, setBlocksCurrentPage] = React.useState(1);
+  const blocksTotal = React.useMemo(() => blocksCol?.length || 0, [blocksCol?.length]);
+
+  const filteredBlocksCol = React.useMemo(() => {
+    const curPage = blocksCurrentPage - 1;
+    const fromIndex = blocksPageSize * curPage;
+    const toIndex = blocksPageSize * curPage + blocksPageSize;
+    return blocksCol?.slice(fromIndex, toIndex);
+  }, [blocksCurrentPage, blocksCol]);
 
   const curUserActiveSequencerIds = React.useMemo(
     () =>
-      (fetchUserTxData?.origin?.lockedParams?.length
+      fetchUserTxData?.origin?.lockedParams?.length
         ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))
-        : undefined),
+        : undefined,
     [fetchUserTxData?.origin?.lockedParams],
   );
 
@@ -334,58 +359,6 @@ export function Component() {
     };
   }, [cancel, curUserActiveSequencerIds, ifSelf, run]);
 
-  const blocksCol = React.useMemo(() => {
-    return [];
-    return [
-      {
-        lastSignedBlock: '#45,643',
-        status: true,
-        rewards: '0.2',
-        symbol: 'METIS',
-        timestamp: 1691313480,
-      },
-      {
-        lastSignedBlock: '#45,643',
-        status: false,
-        rewards: '-',
-        timestamp: 1691313480,
-      },
-      {
-        lastSignedBlock: '#45,643',
-        status: true,
-        rewards: '0.2',
-        symbol: 'METIS',
-        timestamp: 1691313480,
-      },
-      {
-        lastSignedBlock: '#45,643',
-        status: true,
-        rewards: '0.2',
-        symbol: 'METIS',
-        timestamp: 1691313480,
-      },
-      {
-        lastSignedBlock: '#45,643',
-        status: true,
-        rewards: '0.2',
-        symbol: 'METIS',
-        timestamp: 1691313480,
-      },
-      {
-        lastSignedBlock: '#45,643',
-        status: true,
-        rewards: '0.2',
-        symbol: 'METIS',
-        timestamp: 1691313480,
-      },
-    ];
-  }, []);
-
-  const [blocksCurrentPage, setBlocksCurrentPage] = React.useState(1);
-  const blocksTotal = React.useMemo(() => blocksCol.length, []);
-  const blocksPageSize = 1;
-
-  const { sequencerId } = useUpdate();
   const { relock } = useLock();
 
   const { allowance, approve } = useAllowance();
@@ -505,8 +478,8 @@ export function Component() {
           <div className="w-full basic-card gap-21 flex flex-col pb-38">
             <div className="flex flex-row items-center justify-between">
               <div className="fz-28 fw-500 ">Mining Overview</div>
-              {
-                isDev ? <div className="flex flex-row items-center gap-8">
+              {isDev ? (
+                <div className="flex flex-row items-center gap-8">
                   <Button
                     type="solid"
                     onClick={() => {
@@ -539,8 +512,8 @@ export function Component() {
                   >
                     <div style={{ padding: '10px 16px' }}>Withdraw</div>
                   </Button>
-                </div> : null
-              }
+                </div>
+              ) : null}
             </div>
 
             <div className="h-1 bg-color-DFDFDF" />
@@ -682,7 +655,7 @@ export function Component() {
           {/* Blocks Signed */}
           <div className="sc2 w-full basic-card gap-20">
             <div className="flex flex-col gap-20">
-              <div className="fz-28 fw-500 ">Blocks Signed(-/-)</div>
+              <div className="fz-28 fw-500 ">Block Produced</div>
               <div className="h-1 bg-color-DFDFDF" />
             </div>
 
@@ -690,25 +663,25 @@ export function Component() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th>Latest Block Slgned</th>
+                    <th>Latest Block Produced</th>
                     <th>Status</th>
                     <th>Rewards</th>
+                    <th>Date</th>
                     <th>Time</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {blocksCol?.map((i, index) => (
+                  {filteredBlocksCol?.map((i, index) => (
                     <tr key={index}>
-                      <td>{i.lastSignedBlock}</td>
                       <td>
-                        <span className={i.status ? 'success-color' : 'danger-color'}>
-                          {i.status ? 'Success' : 'Failed'}
-                        </span>
+                        {i?.startBlock} - {i?.endBlock}
                       </td>
                       <td>
-                        {i.rewards} {i.symbol}
+                        <span className={true ? 'success-color' : 'danger-color'}>{true ? 'Success' : 'Failed'}</span>
                       </td>
-                      <td>{dayjs.unix(i.timestamp).format('DD/MM/YYYY HH:mm:ss')}</td>
+                      <td>{i.rewards} METIS</td>
+                      <td>{dayjs.unix(i.blockTimestamp).format('DD/MM/YYYY')}</td>
+                      <td>{dayjs.unix(i.blockTimestamp).format('HH:mm:ss')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -725,28 +698,25 @@ export function Component() {
           </div>
 
           {/* Transaction history */}
-          {ifSelf ? <div className="sc3 w-full basic-card gap-20">
-            <div className="flex flex-col gap-20">
-              <div className="fz-28 fw-500 ">Transaction History</div>
-              <div className="h-1 bg-color-DFDFDF" />
-            </div>
-            <div className="block-container flex flex-row ptb-28 w-full">
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th>Transaction</th>
-                    <th>Address</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredTxCol?.map(
-                    (
-                      i: any,
-                      index: React.Key | null | undefined,
-                    ) => (
+          {ifSelf ? (
+            <div className="sc3 w-full basic-card gap-20">
+              <div className="flex flex-col gap-20">
+                <div className="fz-28 fw-500 ">Transaction History</div>
+                <div className="h-1 bg-color-DFDFDF" />
+              </div>
+              <div className="block-container flex flex-row ptb-28 w-full">
+                <table className="w-full">
+                  <thead>
+                    <tr>
+                      <th>Transaction</th>
+                      <th>Address</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTxCol?.map((i: any, index: React.Key | null | undefined) => (
                       <tr key={index}>
                         <td
                           className="align-center underlined pointer"
@@ -763,21 +733,20 @@ export function Component() {
                         </td>
                         <td>{dayjs.unix(i?.blockTimestamp).format('DD/MM/YYYY HH:mm:ss')}</td>
                       </tr>
-                    ),
-                  )}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
+                <Pagination
+                  current={txCurrentPage}
+                  total={txTotal}
+                  pageSize={txPageSize}
+                  onChange={(v) => setTxCurrentPage(v)}
+                />
+              </div>
             </div>
-            <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
-              <Pagination
-                current={txCurrentPage}
-                total={txTotal}
-                pageSize={txPageSize}
-                onChange={(v) => setTxCurrentPage(v)}
-              />
-            </div>
-          </div> : null}
-
+          ) : null}
         </div>
       </div>
 

@@ -99,5 +99,6 @@ export const defaultPubKeyList = [
 ];
 
 export const baseGraphUrl = 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking';
+export const blockGraphUrl = 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block';
 
 export const metisRpc = !isProd ? 'http://3.213.188.165:8545' : '';
