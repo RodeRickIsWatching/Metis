@@ -1,3 +1,4 @@
+/* eslint-disable no-negated-condition */
 /* eslint-disable max-len */
 import * as React from 'react';
 import './index.scss';
@@ -278,7 +279,7 @@ export function Component() {
 
   const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
 
-  const { run, cancel, data: sequencerInfo } = useSequencerInfo();
+  const { run, cancel, data: sequencerInfo, getSequencerId } = useSequencerInfo();
 
   const { sequencerId, blockReward } = useUpdate();
 
@@ -293,6 +294,35 @@ export function Component() {
     loading: fetchBlockTxLoading,
     data: fetchBlockTxData,
   }: any = useRequest(fetchBlock, { manual: true });
+
+  const curUserActiveSequencerId = React.useMemo(
+    () =>
+    (fetchUserTxData?.origin?.lockedParams?.length
+      ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))?.[0]
+      : undefined),
+    [fetchUserTxData?.origin?.lockedParams],
+  );
+
+  const ifSelf = React.useMemo(() => id?.toLowerCase() === address?.toLowerCase(), [address, id]);
+
+  const handleInitCheck = async () => {
+    let activeSequencerId = curUserActiveSequencerId;
+    if (!activeSequencerId) {
+      activeSequencerId = await getSequencerId(id);
+
+    }
+
+    if (!activeSequencerId) return;
+    cancel();
+    run({ sequencerId: activeSequencerId, self: ifSelf });
+    return () => {
+      cancel();
+    };
+  };
+
+  React.useEffect(() => {
+    handleInitCheck();
+  }, [curUserActiveSequencerId]);
 
   React.useEffect(() => {
     if (id) {
@@ -317,6 +347,15 @@ export function Component() {
     return txCol?.slice(fromIndex, toIndex);
   }, [txCurrentPage, txCol]);
 
+  const totalRewards = React.useMemo(() => {
+    if (!fetchBlockTxData?.userEpochParams) return '0';
+    return fetchBlockTxData?.userEpochParams?.reduce((prev: any, next: any) => {
+      const blockNumbers = BigNumber(next?.endBlock).minus(next?.startBlock).plus(1).toString();
+      const rewards = BigNumber(blockNumbers).multipliedBy(blockReward).toString();
+      return BigNumber(prev).plus(rewards).toString();
+    }, '0');
+  }, [blockReward, fetchBlockTxData?.userEpochParams]);
+
   const blocksCol = React.useMemo(() => {
     return fetchBlockTxData?.userEpochParams?.map((i: any) => {
       const blockNumbers = BigNumber(i?.endBlock).minus(i?.startBlock).plus(1).toString();
@@ -335,29 +374,12 @@ export function Component() {
     return blocksCol?.slice(fromIndex, toIndex);
   }, [blocksCurrentPage, blocksCol]);
 
-  const curUserActiveSequencerIds = React.useMemo(
-    () =>
-      fetchUserTxData?.origin?.lockedParams?.length
-        ? Array.from(new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)))
-        : undefined,
-    [fetchUserTxData?.origin?.lockedParams],
-  );
 
   const lockedup = React.useMemo(
     () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
     [sequencerInfo?.sequencerLock],
   );
 
-  const ifSelf = React.useMemo(() => id?.toLowerCase() === address?.toLowerCase(), [address, id]);
-
-  React.useEffect(() => {
-    if (!curUserActiveSequencerIds) return;
-    cancel();
-    run({ sequencerIds: curUserActiveSequencerIds, self: ifSelf });
-    return () => {
-      cancel();
-    };
-  }, [cancel, curUserActiveSequencerIds, ifSelf, run]);
 
   const { relock } = useLock();
 
@@ -522,7 +544,7 @@ export function Component() {
               {/* Locked UP */}
               <div className="flex-1 flex flex-col gap-12">
                 <div className="flex flex-row items-center gap-6">
-                  <div className="color-848484 fz-20 fw-500">Locked UP</div>
+                  <div className="color-848484 fz-20 fw-500">Locked-UP</div>
                   <Tooltip title={<span>Tooltip</span>}>
                     <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
                   </Tooltip>
@@ -530,15 +552,17 @@ export function Component() {
                 <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                   <span>{lockedup}</span>
                   <img src={getImageUrl('@/assets/images/token/metis.svg')} />
-                  <Button
-                    className="pl-15 pr-15"
-                    type="metis"
-                    onClick={() => {
-                      setUnlockVisible(true);
-                    }}
-                  >
-                    Unlock
-                  </Button>
+                  {ifSelf ? (
+                    <Button
+                      className="pl-15 pr-15"
+                      type="metis"
+                      onClick={() => {
+                        setUnlockVisible(true);
+                      }}
+                    >
+                      Unlock
+                    </Button>
+                  ) : null}
                 </div>
               </div>
 
@@ -563,7 +587,7 @@ export function Component() {
                 </div>
                 <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                   {/* {lockedup} METIS +  */}
-                  <span>{sequencerInfo?.rewardReadable}</span>{' '}
+                  <span>{sequencerInfo?.rewardReadable || '0'}</span>{' '}
                   <img src={getImageUrl('@/assets/images/token/metis.svg')} />
                 </div>
               </div>

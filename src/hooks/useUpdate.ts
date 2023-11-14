@@ -15,7 +15,7 @@ const useUpdate = () => {
   const [sequencerId, setSequencerId] = useRecoilState(recoilSequencerId);
   const [balance, setBalance] = useRecoilState(recoilBalance);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
-  const [blockReward, setBlockReward] = useRecoilState(recoilBlockReward)
+  const [blockReward, setBlockReward] = useRecoilState(recoilBlockReward);
 
   const [sequencerTotalInfo, setSequencerTotalInfo] = useRecoilState(recoilSequencerTotalInfo);
 
@@ -37,7 +37,7 @@ const useUpdate = () => {
       {
         ...lockContract,
         functionName: 'BLOCK_REWARD',
-        args: []
+        args: [],
       },
       {
         ...lockContract,
@@ -111,10 +111,10 @@ const useUpdate = () => {
       result[p[index].functionName] = (i?.result || 0)?.toString();
     });
 
-    console.log('result', result)
-    if(result?.BLOCK_REWARD){
-      const rewardReadable = BigNumber(result?.BLOCK_REWARD).div(1e18).toString()
-      setBlockReward(rewardReadable)
+    console.log('result', result);
+    if (result?.BLOCK_REWARD) {
+      const rewardReadable = BigNumber(result?.BLOCK_REWARD).div(1e18).toString();
+      setBlockReward(rewardReadable);
     }
 
     if (result?.getSequencerId) {

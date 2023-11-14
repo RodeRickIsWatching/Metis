@@ -1,7 +1,7 @@
 import { lockContract, basicChainId } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import useAuth from './useAuth';
-import { multicall } from '@wagmi/core';
+import { multicall, readContract } from '@wagmi/core';
 import { useRecoilState } from 'recoil';
 import { recoilSequencerInfo } from '@/models';
 import { ethers } from 'ethers';
@@ -11,6 +11,22 @@ import { useEffect, useState } from 'react';
 const useSequencerInfo = () => {
   const { connector } = useAuth(true);
   const [sequencerInfo, setSequencerInfo] = useRecoilState(recoilSequencerInfo);
+
+  const getSequencerId = async (address?: string) => {
+    if (!address) return;
+    try {
+      const data = await readContract({
+        address: lockContract.address,
+        abi: lockContract.abi,
+        functionName: 'getSequencerId',
+        args: [address],
+      });
+
+      return data?.toString();
+    } catch (e) {
+      return undefined;
+    }
+  };
 
   const intervalUpdate = async (
     props: any = {
@@ -74,7 +90,6 @@ const useSequencerInfo = () => {
       result[multiP[index].functionName] = j?.toString();
     });
 
-
     const status = result?.sequencers?.status;
     const unlockClaimTime = result?.sequencers?.unlockClaimTime?.toString();
     // const reward = BigNumber(result?.sequencers?.reward || '0').minus(1)?.toString();
@@ -98,8 +113,6 @@ const useSequencerInfo = () => {
       setSequencerInfo(finalRes);
     }
 
-    console.log('finalRes', finalRes);
-
     return finalRes;
   };
 
@@ -114,7 +127,7 @@ const useSequencerInfo = () => {
     pollingInterval: 5000,
   });
 
-  return { sequencerInfo, ...props };
+  return { getSequencerId, sequencerInfo, ...props };
 };
 
 export default useSequencerInfo;
