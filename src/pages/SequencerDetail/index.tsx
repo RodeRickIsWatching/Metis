@@ -309,7 +309,6 @@ export function Component() {
     let activeSequencerId = curUserActiveSequencerId;
     if (!activeSequencerId) {
       activeSequencerId = await getSequencerId(id);
-
     }
 
     if (!activeSequencerId) return;
@@ -683,7 +682,7 @@ export function Component() {
               <div className="h-1 bg-color-DFDFDF" />
             </div>
 
-            <div className="block-container flex flex-row ptb-28 w-full">
+            <div className="block-container flex flex-row ptb-28 w-full position-relative">
               <table className="w-full">
                 <thead>
                   <tr>
@@ -710,6 +709,8 @@ export function Component() {
                   ))}
                 </tbody>
               </table>
+
+              {filteredBlocksCol?.length ? null : <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>}
             </div>
             <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
               <Pagination
@@ -728,7 +729,7 @@ export function Component() {
                 <div className="fz-28 fw-500 ">Transaction History</div>
                 <div className="h-1 bg-color-DFDFDF" />
               </div>
-              <div className="block-container flex flex-row ptb-28 w-full">
+              <div className="block-container flex flex-row ptb-28 w-full position-relative">
                 <table className="w-full">
                   <thead>
                     <tr>
@@ -760,6 +761,8 @@ export function Component() {
                     ))}
                   </tbody>
                 </table>
+
+                {filteredTxCol?.length ? null : <div className="position-absolute translateCenter topr-50 leftr-50 color-848484">No Data</div>}
               </div>
               <div className="pagination flex flex-row items-center justify-end mt-24" style={{ height: '32px' }}>
                 <Pagination

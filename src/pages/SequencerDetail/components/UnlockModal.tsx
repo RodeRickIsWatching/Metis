@@ -1,17 +1,16 @@
-import { Button, Input, Modal, message } from "@/components";
-import CopyAddress from "@/components/CopyAddress";
-import Loading from "@/components/_global/Loading";
-import useBalance from "@/hooks/useBalance";
-import useLock from "@/hooks/useLock";
-import useSequencerInfo from "@/hooks/useSequencerInfo";
-import useUpdate from "@/hooks/useUpdate";
-import { catchError, getImageUrl } from "@/utils/tools";
-import { useBoolean } from "ahooks";
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import React, { useMemo } from "react";
-import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { Button, Input, Modal, message } from '@/components';
+import CopyAddress from '@/components/CopyAddress';
+import Loading from '@/components/_global/Loading';
+import useBalance from '@/hooks/useBalance';
+import useLock from '@/hooks/useLock';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
+import useUpdate from '@/hooks/useUpdate';
+import { catchError, getImageUrl } from '@/utils/tools';
+import { useBoolean } from 'ahooks';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
+import React, { useMemo, useEffect, useState } from 'react';
+import { styled } from 'styled-components';
 
 const Container = styled(Modal)`
   .p-warning {
@@ -83,13 +82,13 @@ const UnlockModal = ({
 
   const validUnlock = useMemo(
     () => !!(+sequencerInfo?.unlockClaimTime),
-    [sequencerInfo?.unlockClaimTime]
+    [sequencerInfo?.unlockClaimTime],
   );
 
   const lockedup = React.useMemo(
     () =>
-      ethers.utils.formatEther(sequencerInfo?.sequencerLock || "0").toString(),
-    [sequencerInfo?.sequencerLock]
+      ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
+    [sequencerInfo?.sequencerLock],
   );
 
   const [showWarning, setShowWarning] = useState(false);
@@ -122,7 +121,7 @@ const UnlockModal = ({
       // message.success("Success")
     } catch (e) {
       console.log(e);
-      message.error(catchError(e))
+      message.error(catchError(e));
     }
   };
 
@@ -132,7 +131,7 @@ const UnlockModal = ({
       onCancel={onClose}
       onClose={onClose}
       onOk={onOk}
-      title={showWarning ? "" : "Unlock"}
+      title={showWarning ? '' : 'Unlock'}
       middleHeader
     >
       {showWarning ? (
@@ -140,7 +139,7 @@ const UnlockModal = ({
           <div className="flex flex-col items-center gap-24">
             <img
               className="size-64"
-              src={getImageUrl("@/assets/images/_global/ic_Unlock.svg")}
+              src={getImageUrl('@/assets/images/_global/ic_Unlock.svg')}
             />
 
             <div className="f-16-bold">Unlock</div>
@@ -151,7 +150,7 @@ const UnlockModal = ({
               </span>
               <span
                 className="f-12"
-                style={{ color: "rgba(255, 104, 104, 1)" }}
+                style={{ color: 'rgba(255, 104, 104, 1)' }}
               >
                 *The withdrawal period requires 21 days.
               </span>
@@ -161,7 +160,7 @@ const UnlockModal = ({
           <div className="flex flex-row items-center gap-20 w-full">
             <Button disabled={validUnlock} type="metis" className="p-14 flex-1" onClick={handleUnlock}>
               <div className="f-14-bold color-fff">
-                {unlockLoading ? <Loading /> : "Confirm"}
+                {unlockLoading ? <Loading /> : 'Confirm'}
               </div>
             </Button>
             <Button
@@ -190,7 +189,7 @@ const UnlockModal = ({
               }
             /> */}
             <Button
-              style={{ padding: "14px 50px" }}
+              style={{ padding: '14px 50px' }}
               className="flex-1"
               type="metis"
               disabled={validUnlock}
@@ -202,7 +201,7 @@ const UnlockModal = ({
           <div className="flex flex-col gap-16">
             <div className="flex flex-row items-center justify-between">
               <span className="f-14">Your Wallet Address</span>
-              <CopyAddress className={"f-14"} />
+              <CopyAddress className={'f-14'} />
             </div>
 
             <div className="flex flex-row items-center justify-between">

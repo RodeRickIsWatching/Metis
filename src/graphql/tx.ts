@@ -43,6 +43,18 @@ const userTxs = gql`
       amount
       blockTimestamp
     }
+    unlockInitParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+      amount
+      block
+      blockTimestamp
+      deactivationBatch
+      deactivationTime
+      id
+      nonce
+      sequencerId
+      unlockClaimTime
+      user
+    }
 
     withrawDelayTimeChangeParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
       user
