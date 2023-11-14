@@ -24,6 +24,7 @@ import useAllowance from '@/hooks/useAllowance';
 import useLock from '@/hooks/useLock';
 import { isDev } from '@/configs/common';
 import fetchBlock from '@/graphql/blocks';
+import useBalance from '@/hooks/useBalance';
 
 const testMode = true;
 
@@ -281,7 +282,7 @@ export function Component() {
 
   const { run, cancel, data: sequencerInfo, getSequencerId } = useSequencerInfo();
 
-  const { sequencerId, blockReward } = useUpdate();
+  const { sequencerId, blockReward, metisBalance } = useUpdate();
 
   const {
     run: fetchUserTxRun,
@@ -556,10 +557,14 @@ export function Component() {
                       className="pl-15 pr-15"
                       type="metis"
                       onClick={() => {
-                        setUnlockVisible(true);
+                        if (BigNumber(lockedup).gt(0)) {
+                          setUnlockVisible(true);
+                        } else {
+                          setIncreaseVisible(true);
+                        }
                       }}
                     >
-                      Unlock
+                      {BigNumber(lockedup).gt(0) ? 'Unlock' : 'Lock'}
                     </Button>
                   ) : null}
                 </div>
@@ -641,6 +646,7 @@ export function Component() {
                     </div>
                     <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                       <Input
+                        max={metisBalance?.readable || 0}
                         value={relockAmount}
                         onChange={setRelockAmount}
                         className="fz-26"

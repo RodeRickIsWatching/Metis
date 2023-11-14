@@ -127,7 +127,7 @@ const useSequencerInfo = () => {
     pollingInterval: 5000,
   });
 
-  return { getSequencerId, sequencerInfo, ...props };
+  return { getSequencerId, runOnce: intervalUpdate, sequencerInfo, ...props };
 };
 
 export default useSequencerInfo;

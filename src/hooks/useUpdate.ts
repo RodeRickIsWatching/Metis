@@ -146,7 +146,7 @@ const useUpdate = () => {
     pollingInterval: 5000,
   });
 
-  return { ...props, sequencerTotalInfo, sequencerId, blockReward };
+  return { ...props, metisBalance: balance, sequencerTotalInfo, sequencerId, blockReward };
 };
 
 export default useUpdate;

@@ -481,6 +481,7 @@ const SequencerHeader = () => {
           <div className="flex flex-row items-center gap-20">
             {sequencerCards?.map((i, index) => (
               <SequencerItemContainer
+                ele={i}
                 title="SEQ"
                 totalLockUp={BigNumber(i?.amount || 0)
                   .div(1e18)

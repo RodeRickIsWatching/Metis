@@ -1,5 +1,4 @@
 import { baseGraphUrl } from '@/configs/common';
-import BigNumber from 'bignumber.js';
 import { gql, GraphQLClient } from 'graphql-request';
 
 const userTxs = gql`
@@ -11,6 +10,7 @@ const userTxs = gql`
       id
       signerPubkey
       user
+      sequencerId
     }
   }
 `;
