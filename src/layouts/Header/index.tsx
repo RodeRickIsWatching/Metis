@@ -1,4 +1,5 @@
 import WalletModal from '@/components/WalletModal';
+import { isDev } from '@/configs/common';
 import useWatchAsset from '@/hooks/useWatchAsset';
 import { getImageUrl, jumpLink } from '@/utils/tools';
 import { styled } from 'styled-components';
@@ -49,7 +50,7 @@ const Header = () => {
       </span>
 
       <div className="flex flex-row gap-20 items-center">
-        <div onClick={watchMetis}>Add Metis</div>
+        {isDev ? <div onClick={watchMetis}>Add Metis</div> : null}
         <div className="flex flex-row items-center gap-20">
           {headerNav.map((i) => (
             <div
