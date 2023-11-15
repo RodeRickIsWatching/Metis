@@ -44,10 +44,10 @@ const rightNav = [
     label: 'Metis Explorer',
     link: 'https://explorer.metis.io/',
   },
-  {
-    label: 'FAQ',
-    link: '',
-  },
+  // {
+  //   label: 'FAQ',
+  //   link: '',
+  // },
   {
     label: 'Support',
     link: '',

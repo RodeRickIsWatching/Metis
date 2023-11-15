@@ -379,9 +379,9 @@ export function Component() {
                     </defs>
                   </svg>
                 </div>
-                <span className="fz-14 fw-400 color-fff inter">
+                {/* <span className="fz-14 fw-400 color-fff inter">
                   Upload your logo
-                </span>
+                </span> */}
               </div>
 
               <div className="flex flex-col gap-25 minw-620">
