@@ -160,7 +160,7 @@ const UnlockModal = ({
 
           <div className="flex flex-row items-center gap-20 w-full">
             <Button disabled={validUnlock || unlockLoading} type="metis" className="p-14 flex-1" onClick={handleUnlock}>
-              <div className="f-14-bold color-fff">
+              <div className="f-14-bold color-fff flex items-center justify-center">
                 {unlockLoading ? <Loading color="#fff" /> : 'Confirm'}
               </div>
             </Button>

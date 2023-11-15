@@ -430,7 +430,8 @@ export function Component() {
       setApproveLoadingFalse();
     } catch (e) {
       console.log(e);
-      catchError(e);
+      setApproveLoadingFalse();
+      // catchError(e);
     }
   };
 
@@ -719,7 +720,7 @@ export function Component() {
                       <div className="color-848484 fz-20 fw-500" />
                     </div>
                     <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
-                      <Button type="metis" disabled={!relockAmount} loading={approveLoading} onClick={handleRelock}>
+                      <Button type="metis" className='h-26' disabled={!relockAmount} loading={approveLoading} onClick={handleRelock}>
                         {needApprove ? <span>Approve</span> : <span>Confirm</span>}
                       </Button>
                     </div>

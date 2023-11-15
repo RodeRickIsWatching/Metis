@@ -1,14 +1,14 @@
-import { chainId, txPublicClients } from '@/configs/wallet';
+import { txPublicClients } from '@/configs/wallet';
 import { encodeFunctionData, Abi, decodeFunctionResult, decodeEventLog, WalletClient } from 'viem';
 
 export interface SendTxInterface {
-    walletClient?: WalletClient;
-    to: string | `0x${string}`;
-    account?: string | `0x${string}`;
-    value?: string | `0x${string}`;
-    data?: string | `0x${string}`;
-    chain?: any;
-  }
+  walletClient: WalletClient;
+  to: string | `0x${string}`;
+  chain: any;
+  account?: string | `0x${string}`;
+  value?: string | `0x${string}`;
+  data?: string | `0x${string}`;
+}
 
 export const calTxData = ({ abi, functionName, args }: { abi: Abi | any; functionName: string; args?: any[] }) => {
   const data = encodeFunctionData({
@@ -110,11 +110,14 @@ export const txAwait = async (hash: string | `0x${string}`, chainId: number) => 
 
 export const sendTx = async ({ walletClient, to, account, value, data, chain }: SendTxInterface) => {
   try {
+    if(!walletClient) throw new Error('Invalid Account')
     let p: any = {
       to,
       value,
       data,
-      chain: chainId[0],
+      chain,
+      account: walletClient.account?.address
+      // chain: chainId[0],
     };
     if (account) {
       p.account = account;
@@ -129,7 +132,17 @@ export const sendTx = async ({ walletClient, to, account, value, data, chain }: 
       p.chain = chain;
     }
 
-    const hash = await walletClient.sendTransaction({
+    const chainId = chain?.id;
+
+    const txPublicClient = txPublicClients[chainId.toString()];
+    if (!txPublicClient) {
+      throw new Error('Invalid Clent');
+    }
+    const gasEstimate = await txPublicClient.estimateGas({
+      ...p,
+    });
+
+    const hash = await walletClient!.sendTransaction({
       ...p,
     });
     return hash;

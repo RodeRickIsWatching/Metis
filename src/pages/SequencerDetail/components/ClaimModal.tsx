@@ -158,9 +158,10 @@ const ClaimModal = ({
           style={{ padding: '14px 50px' }}
           type="metis"
           onClick={handleClaim}
-          className="w-full"
+          className="w-full flex items-center justify-center"
         >
-          {claimLoading ? <Loading color="#fff"/> : 'Claim'}
+          <div className="flex items-center justify-center">{claimLoading ? <Loading color="#fff" /> : 'Claim'}</div>
+
         </Button>
       </div>
     </Container>

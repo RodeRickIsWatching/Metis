@@ -27,6 +27,7 @@ const useLock = () => {
         to: lockContract.address,
         value: '0x0',
         data: txData,
+        chain: chain
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');
@@ -68,6 +69,7 @@ const useLock = () => {
         to: lockContract.address,
         value: '0x0',
         data: txData,
+        chain: chain
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');
@@ -102,6 +104,7 @@ const useLock = () => {
         to: lockContract.address,
         value: '0x0',
         data: txData,
+        chain: chain
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');
@@ -136,6 +139,7 @@ const useLock = () => {
         to: lockContract.address,
         value: '0x0',
         data: txData,
+        chain: chain
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');
@@ -175,6 +179,7 @@ const useLock = () => {
         to: lockContract.address,
         value: '0x0',
         data: txData,
+        chain: chain
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');
