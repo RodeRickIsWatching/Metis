@@ -228,15 +228,25 @@ export const download = (fileName: string, content: Blob) => {
 };
 
 export const catchError = (e: any) => {
-  if (e?.reason) return e?.reason;
-  if (e?.message) {
+  let message = 'unknown error';
+  if (e?.shortMessage) {
+    message = e?.shortMessage;
+  } else if (e?.details) {
+    message = e?.details;
+  } else if (e?.reason) {
+    message = e?.reason;
+  } else if (e?.message) {
     const reg = /reason="([^"]*)",/;
     const matches = e?.message.match(reg);
 
     const errMsg = matches?.length ? matches[1] : e?.message;
-    return errMsg;
+    message = errMsg;
   }
-  return 'unknown error';
+
+  if (message === 'insufficient funds for intrinsic transaction cost') {
+    message = 'Insufficient gas for 1ClickTrade';
+  }
+  return message;
 };
 
 // warning

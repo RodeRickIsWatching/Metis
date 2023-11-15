@@ -120,8 +120,9 @@ const UnlockModal = ({
       setFalse();
       // message.success("Success")
     } catch (e) {
+      setFalse();
       console.log(e);
-      message.error(catchError(e));
+      // message.error(catchError(e));
     }
   };
 
@@ -158,9 +159,9 @@ const UnlockModal = ({
           </div>
 
           <div className="flex flex-row items-center gap-20 w-full">
-            <Button disabled={validUnlock} type="metis" className="p-14 flex-1" onClick={handleUnlock}>
+            <Button disabled={validUnlock || unlockLoading} type="metis" className="p-14 flex-1" onClick={handleUnlock}>
               <div className="f-14-bold color-fff">
-                {unlockLoading ? <Loading /> : 'Confirm'}
+                {unlockLoading ? <Loading color="#fff" /> : 'Confirm'}
               </div>
             </Button>
             <Button

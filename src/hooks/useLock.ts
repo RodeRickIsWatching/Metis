@@ -36,10 +36,9 @@ const useLock = () => {
 
       return tx;
     } catch (e) {
-      message.error('Fail');
+      message.error(catchError(e) || 'Fail');
       throw e;
       console.log(e);
-      catchError(e);
     }
   };
 
@@ -78,7 +77,7 @@ const useLock = () => {
 
       return tx;
     } catch (e) {
-      message.error('Fail');
+      message.error(catchError(e) || 'Fail');
       throw e;
       catchError(e);
     }
@@ -113,7 +112,7 @@ const useLock = () => {
       return tx;
     } catch (e) {
       console.log('e', e);
-      message.error('Fail');
+      message.error(catchError(e) || 'Fail');
       throw e;
       catchError(e);
     }
@@ -146,7 +145,7 @@ const useLock = () => {
 
       return tx;
     } catch (e) {
-      message.error('Fail');
+      message.error(catchError(e) || 'Fail');
       throw e;
       catchError(e);
     }
@@ -185,7 +184,7 @@ const useLock = () => {
 
       return tx;
     } catch (e) {
-      message.error('Fail');
+      message.error(catchError(e) || 'Fail');
       throw e;
       catchError(e);
     }

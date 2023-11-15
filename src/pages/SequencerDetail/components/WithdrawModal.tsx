@@ -99,7 +99,8 @@ const WithdrawModal = ({
       });
       setFalse();
     } catch (e) {
-      message.error(catchError(e));
+      setFalse();
+      // message.error(catchError(e));
     }
   };
 
@@ -124,13 +125,13 @@ const WithdrawModal = ({
         </div>
         <div className="flex flex-row items-center gap-20">
           <Button
-            disabled={!!countdown || !+sequencerInfo?.unlockClaimTime || !+lockedup}
+            disabled={!!countdown || !+sequencerInfo?.unlockClaimTime || !+lockedup || withdrawLoading}
             style={{ padding: "14px 50px" }}
             type="metis"
             className="flex-1"
             onClick={handleWithdraw}
           >
-            {withdrawLoading ? <Loading /> : "Confirm"}
+            {withdrawLoading ? <Loading  color="#fff"/> : "Confirm"}
           </Button>
         </div>
         <div className="flex flex-col gap-16">

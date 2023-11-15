@@ -100,10 +100,10 @@ const ClaimModal = ({
         withdrawToL2: false,
       });
       setFalse();
-      message.success('Success');
+      // message.success('Success');
     } catch (e) {
       setFalse();
-      catchError(e);
+      // catchError(e);
     }
   };
 
@@ -160,7 +160,7 @@ const ClaimModal = ({
           onClick={handleClaim}
           className="w-full"
         >
-          {claimLoading ? <Loading /> : 'Claim'}
+          {claimLoading ? <Loading color="#fff"/> : 'Claim'}
         </Button>
       </div>
     </Container>

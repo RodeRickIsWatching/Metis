@@ -115,8 +115,9 @@ const IncreaseModal = ({ visible, onOk, onClose }: { visible: boolean; onOk?: an
       });
       setApproveLoadingFalse();
     } catch (e) {
+      setApproveLoadingFalse();
       console.log(e);
-      catchError(e);
+      // catchError(e);
     }
   };
 
@@ -141,12 +142,12 @@ const IncreaseModal = ({ visible, onOk, onClose }: { visible: boolean; onOk?: an
             }
           />
           <Button
-            disabled={+sequencerInfo?.unlockClaimTime}
+            disabled={+sequencerInfo?.unlockClaimTime || approveLoading}
             onClick={handleRelock}
             style={{ padding: '14px 50px' }}
             type="metis"
           >
-            {approveLoading ? <Loading /> : needApprove ? <span>Approve</span> : <span>Add</span>}
+            {approveLoading ? <Loading color="#fff"/> : needApprove ? <span>Approve</span> : <span>Add</span>}
           </Button>
         </div>
         <div className="flex flex-col gap-16">
