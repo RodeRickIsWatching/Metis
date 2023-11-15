@@ -150,7 +150,6 @@ const fetchUserTx = async (address: string, current?: any, pageSize?: any) => {
     return [...prev, ...curArr];
   }, []);
 
-  console.log('combinedData', { combinedData, origin: data });
   return { combinedData, origin: data };
 };
 

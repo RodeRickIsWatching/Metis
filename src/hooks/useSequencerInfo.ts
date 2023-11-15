@@ -113,8 +113,6 @@ const useSequencerInfo = () => {
       contracts: multiP,
     });
 
-    console.log('res', res)
-
     const listedData = s.map((i, index) => {
       return res?.slice(index * 3, index * 3 + 3);
     });

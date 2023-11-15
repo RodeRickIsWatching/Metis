@@ -29,7 +29,6 @@ const fetchBlock = async (address: string, current?: any, pageSize?: any) => {
     pageSize: +_pageSize,
   });
 
-  console.log('data', data)
   return data;
 };
 

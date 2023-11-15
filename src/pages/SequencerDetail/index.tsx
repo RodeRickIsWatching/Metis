@@ -326,7 +326,7 @@ export function Component() {
 
   React.useEffect(() => {
     handleInitCheck();
-  }, [curUserActiveSequencerId]);
+  }, [curUserActiveSequencerId, ifSelf, id]);
 
   React.useEffect(() => {
     if (id) {
@@ -352,13 +352,15 @@ export function Component() {
   }, [txCurrentPage, txCol]);
 
   const totalRewards = React.useMemo(() => {
-    if (!fetchBlockTxData?.userEpochParams) return '0';
-    return fetchBlockTxData?.userEpochParams?.reduce((prev: any, next: any) => {
-      const blockNumbers = BigNumber(next?.endBlock).minus(next?.startBlock).plus(1).toString();
-      const rewards = BigNumber(blockNumbers).multipliedBy(blockReward).toString();
-      return BigNumber(prev).plus(rewards).toString();
+    const claimedAmount = fetchUserTxData?.origin?.claimRewardsParams?.reduce((prev: any, next: any) => {
+      return BigNumber(prev).plus(next?.amount).toString();
     }, '0');
-  }, [blockReward, fetchBlockTxData?.userEpochParams]);
+
+    const claimedAmountReadable = BigNumber(claimedAmount || 0).div(1e18).toString()
+
+    return BigNumber(sequencerInfo?.rewardReadable || 0).plus(claimedAmountReadable || 0).toString()
+
+  }, [fetchUserTxData?.origin?.claimRewardsParams, sequencerInfo?.rewardReadable]);
 
   const blocksCol = React.useMemo(() => {
     return fetchBlockTxData?.userEpochParams?.map((i: any) => {
@@ -434,8 +436,6 @@ export function Component() {
   const [unlockVisible, setUnlockVisible] = React.useState(false);
   const [claimVisible, setClaimVisible] = React.useState(false);
   const [withdrawVisible, setWithdrawVisible] = React.useState(false);
-
-  console.log('sequencerInfo', sequencerInfo);
 
   // 是否unlock后等待中
   const ifInUnlockProgress = sequencerInfo?.ifInUnlockProgress;
@@ -606,7 +606,7 @@ export function Component() {
                 </div>
                 <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                   {/* {lockedup} METIS +  */}
-                  <span>{sequencerInfo?.rewardReadable || '0'}</span>{' '}
+                  <span>{totalRewards || '0'}</span>{' '}
                   <img src={getImageUrl('@/assets/images/token/metis.svg')} />
                 </div>
               </div>

@@ -6,6 +6,7 @@ import useSequencerInfo from '@/hooks/useSequencerInfo';
 import useUpdate from '@/hooks/useUpdate';
 import { catchError, getImageUrl } from '@/utils/tools';
 import { useBoolean, useMount } from 'ahooks';
+import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
@@ -101,6 +102,7 @@ const ClaimModal = ({
       setFalse();
       message.success('Success');
     } catch (e) {
+      setFalse();
       catchError(e);
     }
   };
@@ -152,7 +154,7 @@ const ClaimModal = ({
           Andromeda Network.
         </div>
         <Button
-          disabled={sequencerInfo?.reward}
+          disabled={BigNumber(sequencerInfo?.reward).lte(0)}
           style={{ padding: '14px 50px' }}
           type="metis"
           onClick={handleClaim}

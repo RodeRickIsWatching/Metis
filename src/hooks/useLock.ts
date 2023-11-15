@@ -78,6 +78,7 @@ const useLock = () => {
 
   const withdrawRewards = async ({ sequencerId, withdrawToL2 }: { sequencerId: string; withdrawToL2: boolean }) => {
     try {
+      console.log('sequencerId', sequencerId)
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
@@ -100,6 +101,7 @@ const useLock = () => {
 
       return tx;
     } catch (e) {
+      console.log('e', e)
       message.error('Fail')
       throw e;
       catchError(e);
