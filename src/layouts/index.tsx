@@ -23,7 +23,7 @@ function BasicLayout() {
   }, [address, chainId]);
 
   React.useEffect(() => {
-    if (!sequencerId) return;
+    // if (!sequencerId) return;
     sequencerInfoCancel();
     sequencerInfoRun({ sequencerId: sequencerId, self: true });
     return () => {

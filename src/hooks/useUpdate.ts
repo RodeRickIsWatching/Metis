@@ -132,8 +132,6 @@ const useUpdate = () => {
       result[p[index].functionName] = (i?.result)?.toString();
     });
 
-    console.log('res', res, result);
-
     if (result?.totalRewardsLiquidated) {
       const rewardReadable = BigNumber(result?.totalRewardsLiquidated).div(1e18).toString();
       setLiquidateReward(rewardReadable);
@@ -146,6 +144,8 @@ const useUpdate = () => {
 
     if (result?.getSequencerId) {
       setSequencerId(result?.getSequencerId);
+    } else {
+      setSequencerId('')
     }
 
     if (result?.whiteListAddresses) {

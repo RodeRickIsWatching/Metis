@@ -84,7 +84,10 @@ const useSequencerInfo = () => {
       self?: boolean;
     } = props;
 
-    if (!sequencerId && !sequencerIds?.length) return;
+    if (!sequencerId && !sequencerIds?.length) {
+      setSequencerInfo(null)
+      return
+    };
     const s = sequencerIds || [sequencerId];
     const multiP: any[] = s.reduce((prev: any, next: any) => {
       const n = [
