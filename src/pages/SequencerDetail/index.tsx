@@ -448,7 +448,7 @@ export function Component() {
   // const [countdown, formattedRes] = useCountDown({
   //   targetDate: unlockTo,
   // });
-  
+
   const unclaimed = React.useMemo(
     () => sequencerInfo?.rewardReadable || '0',
     [sequencerInfo?.rewardReadable],
@@ -545,7 +545,7 @@ export function Component() {
               <div className="flex-1 flex flex-col gap-12">
                 <div className="flex flex-row items-center gap-6">
                   <div className="color-848484 fz-20 fw-500">Locked-UP</div>
-                  <Tooltip title={<span>Tooltip</span>}>
+                  <Tooltip title={<span>The amount of METIS tokens sequencer locked up in the pool.</span>}>
                     <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
                   </Tooltip>
                 </div>
@@ -589,7 +589,7 @@ export function Component() {
               <div className="flex-1 flex flex-col gap-12">
                 <div className="flex flex-row items-center gap-6">
                   <div className="color-848484 fz-20 fw-500">Current APR</div>
-                  <Tooltip title={<span>Tooltip</span>}>
+                  <Tooltip title={<span>The annual rate of return from sequencer mining.</span>}>
                     <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
                   </Tooltip>
                 </div>
@@ -600,7 +600,7 @@ export function Component() {
               <div className="flex-1 flex flex-col gap-12">
                 <div className="flex flex-row items-center gap-6">
                   <div className="color-848484 fz-20 fw-500">TOTAL REWARDS</div>
-                  <Tooltip title={<span>Tooltip</span>}>
+                  <Tooltip title={<span>The total amount of METIS tokens the sequencer has earned from mining.</span>}>
                     <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
                   </Tooltip>
                 </div>

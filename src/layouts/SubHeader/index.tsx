@@ -66,7 +66,7 @@ const Header = () => {
 
   return (
     <Container className="flex flex-row items-center justify-between">
-      <div className="flex flex-row gap-300 items-center maxw-1440 m-auto justify-between">
+      <div className="flex flex-row gap-300 items-center maxw-1440 m-auto justify-between w-full">
         <div className="flex flex-row items-center gap-30">
           {leftNav.map((i) => (
             <div

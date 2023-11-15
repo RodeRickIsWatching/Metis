@@ -5,7 +5,7 @@ import { defaultExpectedApr, lockContract } from '@/configs/common';
 import fetchOverview from '@/graphql/overview';
 import useAuth from '@/hooks/useAuth';
 import useUpdate from '@/hooks/useUpdate';
-import { getImageUrl } from '@/utils/tools';
+import { getImageUrl, jumpLink } from '@/utils/tools';
 import { useBoolean, useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -347,7 +347,7 @@ const SequencerHeader = () => {
 
   const navigate = useNavigate();
 
-  const jumpLink = async () => {
+  const jumpLinkBecomeSequencer = async () => {
     navigate('/becomeSequencer');
   };
 
@@ -381,7 +381,7 @@ const SequencerHeader = () => {
         setIfWhiteListed(true);
         setSequencer(true);
       } else if (isWhiteListed) {
-        jumpLink();
+        jumpLinkBecomeSequencer();
       } else {
         setIfWhiteListed(false);
         setSequencer(false);
@@ -444,7 +444,7 @@ const SequencerHeader = () => {
                 <Button loading={checkLoading} onClick={checkWhiteList} type="dark" className="radius-50 h-53 w-250">
                   <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
                 </Button>
-                <Button onClick={() => {}} type="light" className="radius-50">
+                <Button onClick={() => { }} type="light" className="radius-50">
                   <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
                 </Button>
               </div>
@@ -569,7 +569,13 @@ const SequencerHeader = () => {
                 Check my Sequencer
               </Button>
             ) : (
-              <Button className="h-48 flex-1 fz-18 fw-500 poppins" type="metis">
+              <Button
+                className="h-48 flex-1 fz-18 fw-500 poppins"
+                type="metis"
+                onClick={() => {
+                  jumpLink('https://forms.gle/uxYAieUuudBDWrzF6', '_blank');
+                }}
+              >
                 Join the Waiting List
               </Button>
             )}

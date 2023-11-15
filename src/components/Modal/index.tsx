@@ -1,13 +1,14 @@
-import * as React from "react";
-import { createPortal } from "react-dom";
-import classNames from "classnames";
-import { maskConfig, modalConfig } from "@/configs/motion";
-import { AnimatePresence, motion } from "framer-motion";
-import { RemoveScroll } from "react-remove-scroll";
-import { cloneElement } from "../_util/reactNode";
-import { getImageUrl } from "@/utils/tools";
-import { Scrollbar, Button } from "../";
-import "./index.scss";
+import * as React from 'react';
+import { createPortal } from 'react-dom';
+import classNames from 'classnames';
+import { maskConfig, modalConfig } from '@/configs/motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { RemoveScroll } from 'react-remove-scroll';
+import { cloneElement } from '../_util/reactNode';
+import { getImageUrl } from '@/utils/tools';
+import { Scrollbar, Button } from '../';
+import './index.scss';
+import { useClickAway } from 'ahooks';
 
 export interface ModalProps {
   middleHeader?: boolean;
@@ -27,6 +28,7 @@ export interface ModalProps {
 
 const Portal: React.FC<ModalProps> = (props: ModalProps) => {
   const {
+    visible,
     middleHeader,
     className,
     title,
@@ -41,38 +43,54 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     onOk,
   } = props;
 
+  const ref = React.useRef<HTMLButtonElement>(null);
+  // useClickAway(() => {
+  //   if (visible) {
+  //     onClose?.();
+  //   }
+  // }, ref);
+
+
+  const handleCloseWithMask = (e) => {
+    e.stopPropagation();
+    if (visible && e.target === ref.current) {
+      onClose?.();
+    }
+  };
+
+
   const classes = classNames(
     className,
-    "component-modal flex flex-col items-stretch justify-center",
-    {}
+    'component-modal flex flex-col items-stretch justify-center',
+    {},
   );
 
   const handleCancel = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
       onCancel?.(e) || onClose?.();
     },
-    [onCancel, onClose]
+    [onCancel, onClose],
   );
 
   const handleOk = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       onOk?.(e);
     },
-    [onOk]
+    [onOk],
   );
 
   const renderHeader = React.useMemo(() => {
     return (
       <div
         className={`header flex flex-row items-center justify-between ${
-          middleHeader ? "middle-header" : ""
+          middleHeader ? 'middle-header' : ''
         }`}
       >
         <h2 className="title">{title}</h2>
         {closable && (
           <img
             className="close"
-            src={getImageUrl("@/assets/images/_global/ic_close.svg")}
+            src={getImageUrl('@/assets/images/_global/ic_close.svg')}
             alt="icon"
             onClick={handleCancel}
           />
@@ -105,8 +123,9 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
 
   const memoElement = React.useMemo(() => {
     const renderPortal = (
-      <motion.div className={classes} {...maskConfig}>
+      <motion.div className={classes} {...maskConfig} onClick={handleCloseWithMask} ref={ref}>
         <motion.div
+          // ref={ref}
           className="inside flex flex-col items-stretch justify-between"
           {...modalConfig}
         >
@@ -118,16 +137,7 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     );
 
     return <RemoveScroll>{renderPortal}</RemoveScroll>;
-  }, [
-    classes,
-    title,
-    closable,
-    renderHeader,
-    children,
-    cancel,
-    ok,
-    renderFooter,
-  ]);
+  }, [classes, title, closable, renderHeader, children, cancel, ok, renderFooter]);
 
   return createPortal(memoElement, window.document.body);
 };
@@ -135,7 +145,7 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
 const Modal: React.FC<ModalProps> = (props: ModalProps) => {
   const { visible = false } = props;
 
-  return <AnimatePresence>{visible && <Portal {...props} />}</AnimatePresence>;
+  return <AnimatePresence>{visible && <Portal {...props} visible={visible} />}</AnimatePresence>;
 };
 
 export default Modal;

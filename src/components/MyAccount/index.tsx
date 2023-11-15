@@ -1,12 +1,12 @@
-import { styled } from "styled-components";
-import { Button, Modal } from "..";
-import { filterHideText, getImageUrl } from "@/utils/tools";
-import CheckSequencer from "../CheckSequencer";
-import React from "react";
-import CopyAddress from "../CopyAddress";
-import useAuth from "@/hooks/useAuth";
-import useBalance from "@/hooks/useBalance";
-import { generateAvatar } from "@/utils/jazzIcon";
+import { styled } from 'styled-components';
+import { Button, Modal } from '..';
+import { filterHideText, getImageUrl, jumpLink } from '@/utils/tools';
+import CheckSequencer from '../CheckSequencer';
+import React from 'react';
+import CopyAddress from '../CopyAddress';
+import useAuth from '@/hooks/useAuth';
+import useBalance from '@/hooks/useBalance';
+import { generateAvatar } from '@/utils/jazzIcon';
 
 const Container = styled(Modal)`
   .inside {
@@ -169,14 +169,14 @@ const MyAccount = ({
         <div className="flex flex-col gap-10">
           <div className="basic-card flex flex-col gap-16">
             <div className="flex flex-col gap-6">
-              <span>Connected with Nuvo</span>
+              <span>Connected with MetaMask</span>
               <div className="flex flex-row items-center gap-10">
                 <img
                   className="radiusp-50 s-38"
-                  src={generateAvatar(address || "", 200)}
+                  src={generateAvatar(address || '', 200)}
                 />
                 <span className="fz-18 fw-400 color-000">
-                  {filterHideText(address || "", 6)}
+                  {filterHideText(address || '', 6)}
                 </span>
               </div>
             </div>
@@ -187,7 +187,7 @@ const MyAccount = ({
                 <CopyAddress
                   hide={false}
                   addr="Copy Address"
-                  className={"fz-12 fw-400 color-8E8E8E poppins"}
+                  className={'fz-12 fw-400 color-8E8E8E poppins'}
                   reverse
                   copyTrigger={
                     <svg
@@ -226,7 +226,12 @@ const MyAccount = ({
                 />
 
                 {/* Etherscan */}
-                <div className="copy flex flex-row items-center gap-6 pointer">
+                <div
+                  className="copy flex flex-row items-center gap-6 pointer"
+                  onClick={() => {
+                    jumpLink(`https://goerli.etherscan.io/address/${address}`, '_blank');
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
@@ -269,7 +274,11 @@ const MyAccount = ({
                 </div>
 
                 {/* Andromeda-explore */}
-                <div className="copy flex flex-row items-center gap-6 pointer">
+                <div className="copy flex flex-row items-center gap-6 pointer"
+                  onClick={() => {
+                    jumpLink(`https://explorer.metis.io/address/${address}`, '_blank');
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"

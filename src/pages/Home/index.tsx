@@ -440,7 +440,7 @@ const Section2CardTemplate = ({ title, img, content }: { title?: string; img?: s
 
 export function Component() {
   const navigate = useNavigate();
-  const jumpLink = () => {
+  const jumpLinkBecomeSequencer = () => {
     navigate('/becomeSequencer');
   };
 
@@ -506,7 +506,12 @@ export function Component() {
 
         <Progress col={section4} activeIndex="1" />
 
-        <Button className="light h-60 w-400">
+        <Button
+          className="light h-60 w-400"
+          onClick={() => {
+          jumpLink('https://forms.gle/uxYAieUuudBDWrzF6', '_blank');
+        }}
+        >
           <div className="fz-20 fw-500 color-000 raleway">Apply now for the next round</div>
         </Button>
       </div>
