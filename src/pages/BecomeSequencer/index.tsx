@@ -17,6 +17,7 @@ import useLock from '@/hooks/useLock';
 import useAuth from '@/hooks/useAuth';
 import { Address } from 'wagmi';
 import { defaultExpectedApr, defaultPubKeyList, isDev } from '@/configs/common';
+import { createUser } from '@/services';
 
 
 const Container = styled.section`
@@ -130,6 +131,7 @@ const Container = styled.section`
 const message = 'test';
 
 export function Component() {
+  const [avatar, setAvatar] = React.useState<undefined | string>();
   const [name, setName] = React.useState<undefined | string>();
   const [website, setWebsite] = React.useState<undefined | string>();
   const [account, setAccount] = React.useState<undefined | string>();
@@ -144,7 +146,7 @@ export function Component() {
   };
   const handleLockupChange = (v: string) => {
     setStakeAmount(v);
-    handleChangeApr(BigNumber(v).multipliedBy(defaultExpectedApr).toString())
+    handleChangeApr(BigNumber(v).multipliedBy(defaultExpectedApr).toString());
   };
 
   const navigate = useNavigate();
@@ -258,6 +260,29 @@ export function Component() {
     // setPubKey(publicKey)
   };
 
+  const handleUpload = async () => {
+    const params = {
+      name,
+      avatar,
+      desc,
+      address: address as string,
+      pubKey,
+      url: website,
+      // media,
+    };
+    try {
+      const res = await createUser(params);
+      console.log('res', res)
+    } catch (e) {
+      console.log('e', e);
+    }
+
+    console.log(params);
+
+
+    // handleIndex('3')
+  };
+
   const validStep2 = React.useMemo(() => name && website && account && (pubKey), [
     name, website, account, pubKey,
   ]);
@@ -283,7 +308,7 @@ export function Component() {
                   Set up Sequencer via Docker
                 </span>
               </div>
-              {/* 
+              {/*
               <div
                 className="radius-30 flex flex-col gap-10 p-50"
                 style={{
@@ -481,7 +506,7 @@ export function Component() {
               <Button
                 disabled={!validStep2}
                 type="metis"
-                onClick={() => handleIndex('3')}
+                onClick={handleUpload}
                 className="w-full radius-30 h-80"
               >
                 <div className="fz-26 fw-700 raleway color-fff">CONTINUE</div>
