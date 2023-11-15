@@ -3,7 +3,14 @@ import useAuth from './useAuth';
 import { basicChainId, depositToken, lockContract } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import { useRecoilState } from 'recoil';
-import { recoilAllowance, recoilBalance, recoilBlockReward, recoilSequencerId, recoilSequencerTotalInfo } from '@/models';
+import {
+  recoilAllowance,
+  recoilBalance,
+  recoilBlockReward,
+  recoilLiquidateReward,
+  recoilSequencerId,
+  recoilSequencerTotalInfo,
+} from '@/models';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
@@ -13,6 +20,7 @@ const useUpdate = () => {
   const { connector } = useAuth(true);
 
   const [sequencerId, setSequencerId] = useRecoilState(recoilSequencerId);
+  const [liquidateReward, setLiquidateReward] = useRecoilState(recoilLiquidateReward);
   const [balance, setBalance] = useRecoilState(recoilBalance);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
   const [blockReward, setBlockReward] = useRecoilState(recoilBlockReward);
@@ -34,6 +42,11 @@ const useUpdate = () => {
     } = props;
 
     let p: any[] = [
+      {
+        ...lockContract,
+        functionName: 'totalRewardsLiquidated',
+        args: [],
+      },
       {
         ...lockContract,
         functionName: 'BLOCK_REWARD',
@@ -111,6 +124,11 @@ const useUpdate = () => {
       result[p[index].functionName] = (i?.result || 0)?.toString();
     });
 
+    if (result?.totalRewardsLiquidated) {
+      const rewardReadable = BigNumber(result?.totalRewardsLiquidated).div(1e18).toString();
+      setLiquidateReward(rewardReadable);
+    }
+
     if (result?.BLOCK_REWARD) {
       const rewardReadable = BigNumber(result?.BLOCK_REWARD).div(1e18).toString();
       setBlockReward(rewardReadable);
@@ -145,7 +163,7 @@ const useUpdate = () => {
     pollingInterval: 5000,
   });
 
-  return { ...props, metisBalance: balance, sequencerTotalInfo, sequencerId, blockReward };
+  return { ...props, liquidateReward, metisBalance: balance, sequencerTotalInfo, sequencerId, blockReward };
 };
 
 export default useUpdate;

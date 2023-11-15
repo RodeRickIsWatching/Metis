@@ -10,6 +10,10 @@ export const recoilBlockReward = atom<string>({
   default: '0',
 });
 
+export const recoilLiquidateReward = atom<string>({
+  key: 'liquidateReward',
+  default: '0',
+});
 
 export const recoilBalance = atom<any>({
   key: 'balance',

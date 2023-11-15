@@ -335,7 +335,7 @@ const Container = styled.section`
 const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   const { address } = useAuth(true);
   const { data } = useRequest(fetchOverview);
-  const { sequencerTotalInfo } = useUpdate();
+  const { sequencerTotalInfo, liquidateReward } = useUpdate();
   const { runOnce } = useSequencerInfo();
   const [checkLoading, { setTrue: checkLoadingTrue, setFalse: checkLoadingFalse }] = useBoolean(false);
   const [ifWhiteListed, setIfWhiteListed] = useState<boolean>(false);
@@ -418,7 +418,11 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
     });
   };
 
-  const { run: fetchBatchSequencerInfoRun, data: fetchBatchSequencerInfoData, loading: fetchBatchSequencerInfoLoading } = useRequest(fetchBatchSequencerInfo, { manual: true });
+  const {
+    run: fetchBatchSequencerInfoRun,
+    data: fetchBatchSequencerInfoData,
+    loading: fetchBatchSequencerInfoLoading,
+  } = useRequest(fetchBatchSequencerInfo, { manual: true });
 
   // const status = useMemo(() => {
   //   if (ele?.ifInUnlockProgress) {
@@ -430,15 +434,26 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   //   return { label: 'Healthy', color: '00EA5E' };
   // }, [ele?.ifActive, ele?.ifInUnlockProgress]);
 
-  const filteredFetchBatchSequencerInfoData = useMemo(() => fetchBatchSequencerInfoData?.filter(i => {
-    if (filterBy === 'all') {
-      return true
-    }
-    if (filterBy === 'healthy') {
-      return !i.ifInUnlockProgress && i.ifActive
-    }
+  const filteredFetchBatchSequencerInfoData = useMemo(
+    () =>
+      fetchBatchSequencerInfoData?.filter((i) => {
+        if (filterBy === 'all') {
+          return true;
+        }
+        if (filterBy === 'healthy') {
+          return !i.ifInUnlockProgress && i.ifActive;
+        }
+      }),
+    [fetchBatchSequencerInfoData, filterBy],
+  );
 
-  }), [fetchBatchSequencerInfoData, filterBy])
+  const totalReward = useMemo(() => {
+    // ele?.rewardReadable
+    const amount = fetchBatchSequencerInfoData?.reduce((prev, next) => {
+      return BigNumber(prev).plus(next?.rewardReadable).toString();
+    }, 0);
+    return BigNumber(liquidateReward || '0').plus(amount || '0').toString();
+  }, [fetchBatchSequencerInfoData, liquidateReward]);
 
   useEffect(() => {
     if (!sequencerCards?.length) return;
@@ -495,7 +510,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
               </div>
             </div>
             <div className="opacity-card flex flex-col items-center flex-1">
-              <span className="fz-18 fw-700 inter">-%</span>
+              <span className="fz-18 fw-700 inter">{totalReward || '-'}</span>
               <div className="flex items-center gap-8">
                 <span className="fz-14 fw-400 inter">Total rewards distributed</span>
               </div>
@@ -517,9 +532,11 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
           </div> */}
           </div>
           <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
-          {
-            (!filteredFetchBatchSequencerInfoData || fetchBatchSequencerInfoLoading) ? (<div className="h-200 w-full flex flex-row justify-center items-center"><Loading size={32} /></div>) : null
-          }
+          {!filteredFetchBatchSequencerInfoData || fetchBatchSequencerInfoLoading ? (
+            <div className="h-200 w-full flex flex-row justify-center items-center">
+              <Loading size={32} />
+            </div>
+          ) : null}
           <div className="flex flex-row items-center gap-20 flex-wrap">
             {filteredFetchBatchSequencerInfoData?.map((i, index) => (
               <SequencerItemContainer

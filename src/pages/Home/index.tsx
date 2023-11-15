@@ -5,8 +5,6 @@ import { styled } from 'styled-components';
 import { getImageUrl, jumpLink } from '@/utils/tools';
 import { Button, Input } from '@/components';
 import Faq from 'react-faq-component';
-import { useNavigate } from 'react-router-dom';
-import useUpdate from '@/hooks/useUpdate';
 import Progress from '@/components/Progress';
 import SequencerHeader from '@/components/_global/SequencerHeader';
 
@@ -439,19 +437,6 @@ const Section2CardTemplate = ({ title, img, content }: { title?: string; img?: s
 };
 
 export function Component() {
-  const navigate = useNavigate();
-  const jumpLinkBecomeSequencer = () => {
-    navigate('/becomeSequencer');
-  };
-
-
-  const { sequencerTotalInfo } = useUpdate();
-
-  const jumpSequencer = (id: string) => {
-    navigate(`/sequencers/${id}`);
-  };
-
-
   return (
     <Container className="pages-landing flex flex-col ">
       <SequencerHeader filterBy="healthy" />

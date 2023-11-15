@@ -302,8 +302,8 @@ export function Component() {
     () =>
       fetchUserTxData?.origin?.lockedParams?.length
         ? Array.from(
-            new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
-          )?.[0]
+          new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
+        )?.[0]
         : undefined,
     [fetchUserTxData?.origin?.lockedParams],
   );
@@ -356,10 +356,13 @@ export function Component() {
       return BigNumber(prev).plus(next?.amount).toString();
     }, '0');
 
-    const claimedAmountReadable = BigNumber(claimedAmount || 0).div(1e18).toString()
+    const claimedAmountReadable = BigNumber(claimedAmount || 0)
+      .div(1e18)
+      .toString();
 
-    return BigNumber(sequencerInfo?.rewardReadable || 0).plus(claimedAmountReadable || 0).toString()
-
+    return BigNumber(sequencerInfo?.rewardReadable || 0)
+      .plus(claimedAmountReadable || 0)
+      .toString();
   }, [fetchUserTxData?.origin?.claimRewardsParams, sequencerInfo?.rewardReadable]);
 
   const blocksCol = React.useMemo(() => {
@@ -449,10 +452,34 @@ export function Component() {
   //   targetDate: unlockTo,
   // });
 
-  const unclaimed = React.useMemo(
-    () => sequencerInfo?.rewardReadable || '0',
-    [sequencerInfo?.rewardReadable],
-  );
+  const unclaimed = React.useMemo(() => sequencerInfo?.rewardReadable || '0', [sequencerInfo?.rewardReadable]);
+
+  const joinedDuration = React.useMemo(() => {
+    // 默认 desc，todo 保证不出错进行排序
+    const fromDate = fetchUserTxData?.origin?.lockedParams?.[0]?.blockTimestamp;
+    const lastDate = fetchUserTxData?.origin?.unlockInitParams?.length
+      ? fetchUserTxData?.origin?.unlockInitParams?.[0]?.blockTimestamp
+      : +dayjs().unix();
+
+    return BigNumber(lastDate).minus(fromDate).toString();
+  }, [fetchUserTxData?.origin?.lockedParams, fetchUserTxData?.origin?.unlockInitParams]);
+
+  // Current APR = (Total Reward/加入天数/Lock-up)*365*100%
+  const currentApr = React.useMemo(() => {
+    const days = BigNumber(joinedDuration).div(3600).div(24).toFixed(0, BigNumber.ROUND_DOWN);
+
+    if (
+      BigNumber(days).isZero() ||
+      BigNumber(days).isNaN() ||
+      BigNumber(totalRewards).isZero() ||
+      BigNumber(totalRewards).isNaN() ||
+      BigNumber(lockedup).isZero() ||
+      BigNumber(lockedup).isNaN()
+    ) {
+      return '0';
+    }
+    return BigNumber(totalRewards).div(days).div(lockedup).multipliedBy(365).multipliedBy(100).toFixed(2, BigNumber.ROUND_CEIL);
+  }, [joinedDuration, lockedup, totalRewards]);
 
   return (
     <Container className="pages-landing flex flex-col ">
@@ -464,10 +491,10 @@ export function Component() {
             <div className="flex flex-col gap-12 color-fff">
               <div className="flex flex-col gap-4">
                 <div className="fz-36 fw-500 ">-</div>
-                <div className="fz-16 fw-400 inter maxw-470"></div>
+                <div className="fz-16 fw-400 inter maxw-470" />
               </div>
               <div>
-                <span className="fz-18 fw-400 "></span>
+                <span className="fz-18 fw-400 " />
               </div>
             </div>
           </div>
@@ -593,7 +620,7 @@ export function Component() {
                     <img src={getImageUrl('@/assets/images/_global/ic_q.svg')} />
                   </Tooltip>
                 </div>
-                <div className="fz-26 color-000 fw-500">-%</div>
+                <div className="fz-26 color-000 fw-500">{currentApr}%</div>
               </div>
 
               {/* TOTAL REWARDS  */}
@@ -606,8 +633,7 @@ export function Component() {
                 </div>
                 <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
                   {/* {lockedup} METIS +  */}
-                  <span>{totalRewards || '0'}</span>{' '}
-                  <img src={getImageUrl('@/assets/images/token/metis.svg')} />
+                  <span>{totalRewards || '0'}</span> <img src={getImageUrl('@/assets/images/token/metis.svg')} />
                 </div>
               </div>
             </div>
@@ -728,9 +754,13 @@ export function Component() {
                         {i?.startBlock} - {i?.endBlock}
                       </td>
                       <td>
-                        <span className={true ? 'success-color' : 'danger-color'}>{true ? 'Success' : 'Failed'}</span>
+                        <div style={{ width: 'fit-content' }} className="pl-10 pr-10 radius-5 bg-color-00DACC33">
+                          <span className={true ? 'success-color' : 'danger-color'}>{true ? 'Success' : 'Failed'}</span>
+                        </div>
                       </td>
-                      <td>{i.rewards} METIS</td>
+                      <td>
+                        <span className="fw-700 inter">{i.rewards} METIS</span>
+                      </td>
                       <td>{dayjs.unix(i.blockTimestamp).format('DD/MM/YYYY')}</td>
                       <td>{dayjs.unix(i.blockTimestamp).format('HH:mm:ss')}</td>
                     </tr>
