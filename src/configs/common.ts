@@ -80,7 +80,7 @@ export const defaultPubKeyList = [
 
 
 export const mainnetGraphUrl = '';
-export const holeskyGraphUrl = 'http://staking.preview.metisdevops.link/holesky/subgraphs/name/metis/holesky-staking';
+export const holeskyGraphUrl = 'http://holesky-sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking';
 export const goerliGraphUrl = 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking';
 export const blockGraphUrl = 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block';
 
