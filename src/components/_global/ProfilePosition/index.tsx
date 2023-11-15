@@ -13,19 +13,19 @@ import useOptionPosition from '@/hooks/option/useOptionPosition';
 
 function ProfilePosition() {
   const [tabValue, setTabValue] = React.useState<0 | 1>(0);
-  const { address } = useAuth(true);
+  const { address, chainId } = useAuth(true);
 
   const { combinedPosition: perpetualCombinedPosition } = usePositionListeners();
   const { run: futurePositionRun, cancel: futurePositionCancel } = useFuturePositions();
   const { combinedPosition: optionCombinedPosition } = useOptionPosition();
 
   React.useEffect(() => {
-    if (address) {
+    if (address && chainId) {
       futurePositionRun(address);
     } else {
       futurePositionCancel();
     }
-  }, [address]);
+  }, [address, chainId]);
 
   React.useEffect(() => {
     cw.init();

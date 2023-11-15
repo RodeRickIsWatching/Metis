@@ -3,9 +3,11 @@ import useAuth from './useAuth';
 import { lockContract } from '@/configs/common';
 import { catchError } from '@/utils/tools';
 import { calTxData, sendTx, txAwait } from '@/utils/tx';
+import useChainWatcher from './useChainWatcher';
 
 const useLock = () => {
   const { connector, address } = useAuth(true);
+  const { chain } = useChainWatcher();
 
   const lockFor = async ({ address, amount, pubKey }: { address: string; amount: string; pubKey: string }) => {
     try {
@@ -26,12 +28,15 @@ const useLock = () => {
         value: '0x0',
         data: txData,
       });
-      const tx = await txAwait(hash);
-      message.success('Success')
+      if (!chain?.id) {
+        throw new Error('Invalid Clent');
+      }
+      const tx = await txAwait(hash, chain?.id);
+      message.success('Success');
 
       return tx;
     } catch (e) {
-      message.error('Fail')
+      message.error('Fail');
       throw e;
       console.log(e);
       catchError(e);
@@ -65,12 +70,15 @@ const useLock = () => {
         value: '0x0',
         data: txData,
       });
-      const tx = await txAwait(hash);
-      message.success('Success')
+      if (!chain?.id) {
+        throw new Error('Invalid Clent');
+      }
+      const tx = await txAwait(hash, chain?.id);
+      message.success('Success');
 
       return tx;
     } catch (e) {
-      message.error('Fail')
+      message.error('Fail');
       throw e;
       catchError(e);
     }
@@ -78,7 +86,7 @@ const useLock = () => {
 
   const withdrawRewards = async ({ sequencerId, withdrawToL2 }: { sequencerId: string; withdrawToL2: boolean }) => {
     try {
-      console.log('sequencerId', sequencerId)
+      console.log('sequencerId', sequencerId);
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
         abi: lockContract.abi,
@@ -96,13 +104,16 @@ const useLock = () => {
         value: '0x0',
         data: txData,
       });
-      const tx = await txAwait(hash);
-      message.success('Success')
+      if (!chain?.id) {
+        throw new Error('Invalid Clent');
+      }
+      const tx = await txAwait(hash, chain?.id);
+      message.success('Success');
 
       return tx;
     } catch (e) {
-      console.log('e', e)
-      message.error('Fail')
+      console.log('e', e);
+      message.error('Fail');
       throw e;
       catchError(e);
     }
@@ -127,12 +138,15 @@ const useLock = () => {
         value: '0x0',
         data: txData,
       });
-      const tx = await txAwait(hash);
-      message.success('Success')
+      if (!chain?.id) {
+        throw new Error('Invalid Clent');
+      }
+      const tx = await txAwait(hash, chain?.id);
+      message.success('Success');
 
       return tx;
     } catch (e) {
-      message.error('Fail')
+      message.error('Fail');
       throw e;
       catchError(e);
     }
@@ -163,12 +177,15 @@ const useLock = () => {
         value: '0x0',
         data: txData,
       });
-      const tx = await txAwait(hash);
-      message.success('Success')
+      if (!chain?.id) {
+        throw new Error('Invalid Clent');
+      }
+      const tx = await txAwait(hash, chain?.id);
+      message.success('Success');
 
       return tx;
     } catch (e) {
-      message.error('Fail')
+      message.error('Fail');
       throw e;
       catchError(e);
     }

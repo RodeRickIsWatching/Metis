@@ -17,7 +17,7 @@ import BigNumber from 'bignumber.js';
 const mockId = '3';
 
 const useUpdate = () => {
-  const { connector } = useAuth(true);
+  const { chainId } = useAuth(true);
 
   const [sequencerId, setSequencerId] = useRecoilState(recoilSequencerId);
   const [liquidateReward, setLiquidateReward] = useRecoilState(recoilLiquidateReward);

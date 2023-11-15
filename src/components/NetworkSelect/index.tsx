@@ -1,11 +1,11 @@
-import { styled } from "styled-components";
-import { Button, Select } from "..";
-import { getImageUrl } from "@/utils/tools";
-import useChainWatcher from "@/hooks/useChainWatcher";
-import { useEffect, useMemo, useState } from "react";
-import { mainnet, useNetwork } from "wagmi";
-import { goerli } from "viem/chains";
-import useAuth from "@/hooks/useAuth";
+import { styled } from 'styled-components';
+import { Select } from '..';
+import useChainWatcher from '@/hooks/useChainWatcher';
+import { useEffect, useMemo, useState } from 'react';
+import { mainnet, useNetwork } from 'wagmi';
+import { goerli, holesky } from 'viem/chains';
+import { isProd } from '@/configs/common';
+
 
 const Container = styled.div`
   .f-14 {
@@ -18,12 +18,13 @@ const Container = styled.div`
   }
 `;
 
-const options = [
-  // {label: '-', value: -1, name: '-', hide: true}
-  { ...goerli, label: goerli.name, value: goerli.id, name: goerli.name, },
-  { ...mainnet, label: mainnet.name, value: mainnet.id, name: mainnet.name, },
-
-]
+const options = isProd ? [
+  { ...holesky, label: holesky.name, value: holesky.id, name: holesky.name },
+  { ...mainnet, label: mainnet.name, value: mainnet.id, name: mainnet.name },
+] : [
+  { ...goerli, label: goerli.name, value: goerli.id, name: goerli.name },
+  { ...mainnet, label: mainnet.name, value: mainnet.id, name: mainnet.name },
+];
 
 const NetworkSelect = () => {
   const { unsupported, isLoading, pendingChainId, setupNetwork } =
@@ -32,41 +33,40 @@ const NetworkSelect = () => {
   const { chain } = useNetwork();
 
 
-  const [curOption, setCurOption] = useState()
+  const [curOption, setCurOption] = useState();
 
-  const curOptionName = useMemo(() => options.find(i => i.value === curOption)?.name, [curOption])
+  const curOptionName = useMemo(() => options.find(i => i.value === curOption)?.name, [curOption]);
 
   const handleOption = (ele: any) => {
-    setCurOption(ele?.value)
-  }
+    setCurOption(ele?.value);
+  };
   const handleChange = async (ele: any) => {
     if (!ele?.value) return;
     try {
-      await setupNetwork(ele?.value)
+      await setupNetwork(ele?.value);
     } catch (e) { }
-  }
-
+  };
 
 
   useEffect(() => {
-    const t = options.find(i => i.id === chain?.id)
+    const t = options.find(i => i.id === chain?.id);
     if (t) {
-      handleOption(t)
+      handleOption(t);
     }
-  }, [chain?.id])
+  }, [chain?.id]);
 
 
   useEffect(() => {
     if (unsupported) {
-      setupNetwork()
+      setupNetwork();
     } else if (!curOption) {
       if (chain?.id) {
-        handleChange({ value: chain.id })
+        handleChange({ value: chain.id });
       } else {
-        handleChange(options?.[0])
+        handleChange(options?.[0]);
       }
     }
-  }, [curOption, unsupported, chain?.id])
+  }, [curOption, unsupported, chain?.id]);
 
   return (
     <Container className="h-full">

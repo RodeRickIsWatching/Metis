@@ -56,7 +56,12 @@ const userTxs = gql`
       user
     }
 
-    withrawDelayTimeChangeParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    withrawDelayTimeChangeParams(
+      first: 1000
+      orderBy: blockTimestamp
+      orderDirection: desc
+      where: { user: $address }
+    ) {
       user
       oldWithrawDelayTime
       newWithrawDelayTime
@@ -74,12 +79,13 @@ const userTxs = gql`
   }
 `;
 
-const perpetualClient = new GraphQLClient(baseGraphUrl, {
-  headers: {},
-});
+const fetchUserTx = async (address: string, chainId: number, current?: any, pageSize?: any) => {
+  if (!address) throw new Error('Invalid Address');
+  if (!chainId || !baseGraphUrl?.[chainId.toString()]) throw new Error('Invalid Client');
+  const perpetualClient = new GraphQLClient(baseGraphUrl?.[chainId.toString()], {
+    headers: {},
+  });
 
-const fetchUserTx = async (address: string, current?: any, pageSize?: any) => {
-  if (!address) return null;
   const _address = address.toString().toLowerCase();
   const _current = current || 0;
   const _pageSize = pageSize || 1000;
@@ -103,9 +109,9 @@ const fetchUserTx = async (address: string, current?: any, pageSize?: any) => {
           .minus(lockAmount?.amount || 0)
           .toString(),
         deltaAmountReadable: BigNumber(i?.total)
-        .minus(lockAmount?.amount || 0)
-        .div(1e18)
-        .toString(),
+          .minus(lockAmount?.amount || 0)
+          .div(1e18)
+          .toString(),
       };
     } else {
       return {
@@ -114,15 +120,15 @@ const fetchUserTx = async (address: string, current?: any, pageSize?: any) => {
           .minus(data?.relockedParams?.[index - 1]?.total || 0)
           .toString(),
         deltaAmountReadable: BigNumber(i?.total)
-        .minus(data?.relockedParams?.[index - 1]?.total || 0)
-        .div(1e18)
-        .toString(),
+          .minus(data?.relockedParams?.[index - 1]?.total || 0)
+          .div(1e18)
+          .toString(),
       };
     }
   });
   // console.log('relockData', data?.lockedParams, relockData);
 
-  const replacedData = JSON.parse(JSON.stringify(data))
+  const replacedData = JSON.parse(JSON.stringify(data));
 
   replacedData.relockedParams = relockData;
 

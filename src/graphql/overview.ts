@@ -15,11 +15,14 @@ const userTxs = gql`
   }
 `;
 
-const perpetualClient = new GraphQLClient(baseGraphUrl, {
-  headers: {},
-});
+const fetchOverview = async (chainId?: number) => {
+  if (!chainId || !baseGraphUrl?.[chainId.toString()]) return undefined;
 
-const fetchOverview = async () => {
+  const perpetualClient = new GraphQLClient(baseGraphUrl?.[chainId.toString()], {
+    headers: {},
+  });
+
+
   const data: any = await perpetualClient.request(userTxs);
   return data;
 };

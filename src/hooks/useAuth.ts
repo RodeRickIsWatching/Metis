@@ -1,10 +1,11 @@
-import { injectedConnector, particleConnector, web3AuthConnector } from '@/configs/wallet';
+import { injectedConnector} from '@/configs/wallet';
 import { useMount } from 'ahooks';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi';
 
 const autoLogin = true;
 
 const useAuth = (needStatus?: boolean | undefined) => {
+  const { chain } = useNetwork()
   const { address, status, isConnected, isConnecting, isDisconnected, connector, isReconnecting } = useAccount();
 
   const { connect, pendingConnector } = useConnect();
@@ -38,6 +39,8 @@ const useAuth = (needStatus?: boolean | undefined) => {
 
   if (needStatus) {
     return {
+      chain,
+      chainId: chain?.id,
       connector,
       address,
       status,

@@ -276,7 +276,7 @@ const txPageSize = 10;
 const blocksPageSize = 10;
 export function Component() {
   const { id } = useParams();
-  const { address } = useAuth(true);
+  const { address, chainId } = useAuth(true);
 
   const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
 
@@ -300,11 +300,11 @@ export function Component() {
 
   const curUserActiveSequencerId = React.useMemo(
     () =>
-      fetchUserTxData?.origin?.lockedParams?.length
+      (fetchUserTxData?.origin?.lockedParams?.length
         ? Array.from(
           new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
         )?.[0]
-        : undefined,
+        : undefined),
     [fetchUserTxData?.origin?.lockedParams],
   );
 
@@ -330,10 +330,10 @@ export function Component() {
 
   React.useEffect(() => {
     if (id) {
-      fetchUserTxRun(id);
+      fetchUserTxRun(id, chainId);
       fetchBlockTxRun(id);
     }
-  }, [id]);
+  }, [id, chainId]);
 
   const txCol = React.useMemo(() => {
     return fetchUserTxData?.combinedData?.sort((a, b) => +b?.blockTimestamp - +a?.blockTimestamp);

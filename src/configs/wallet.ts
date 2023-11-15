@@ -5,9 +5,9 @@ import { createPublicClient, http } from 'viem';
 
 
 import { isProd } from './common';
-import { goerli } from 'viem/chains';
-
-export const chainId = isProd ? [mainnet, goerli] : [goerli, mainnet];
+import { goerli, holesky } from 'viem/chains';
+console.log('holesky', holesky)
+export const chainId = isProd ? [holesky, mainnet] : [goerli, mainnet];
 
 export const injectedConnector = new InjectedConnector({
   chains: [...chainId],
@@ -32,17 +32,33 @@ const config = createConfig({
   connectors: [injectedConnector],
   publicClient,
   // provider: getDefaultProvider(),
-  webSocketPublicClient,
+  // webSocketPublicClient,
 });
 
 // const transport = webSocket(wssUrl, {
 //   timeout: 60_000,
 // });
 
-export const txPublicClient = createPublicClient({
-  chain: chainId?.[0],
+export const mainnetTxPublicClient = createPublicClient({
+  chain: mainnet,
   // transport,
   transport: http(),
 });
+export const goerliTxPublicClient = createPublicClient({
+  chain: goerli,
+  // transport,
+  transport: http(),
+});
+export const holeskyTxPublicClient = createPublicClient({
+  chain: holesky,
+  // transport,
+  transport: http(),
+});
+
+export const txPublicClients = {
+  [goerli.id.toString()]: goerliTxPublicClient,
+  [mainnet.id.toString()]: mainnetTxPublicClient,
+  [holesky.id.toString()]: holeskyTxPublicClient,
+}
 
 export { config, WagmiConfig as WagmiProvider, publicClient };

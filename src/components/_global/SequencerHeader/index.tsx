@@ -333,14 +333,20 @@ const Container = styled.section`
 `;
 
 const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
-  const { address } = useAuth(true);
-  const { data } = useRequest(fetchOverview);
+  const { address, chainId } = useAuth(true);
+  const { run, data } = useRequest(fetchOverview, { manual: true });
   const { sequencerTotalInfo, liquidateReward } = useUpdate();
   const { runOnce } = useSequencerInfo();
   const [checkLoading, { setTrue: checkLoadingTrue, setFalse: checkLoadingFalse }] = useBoolean(false);
   const [ifWhiteListed, setIfWhiteListed] = useState<boolean>(false);
   const [isSequencer, setSequencer] = useState<boolean>(false);
   const [visible, { setTrue, setFalse }] = useBoolean(false);
+
+  useEffect(() => {
+    if (chainId) {
+      run(chainId)
+    }
+  }, [chainId])
 
   const jumpSequencer = (id: string) => {
     navigate(`/sequencers/${id}`);
@@ -404,7 +410,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   }, [data]);
 
   const fetchBatchSequencerInfo = async () => {
-    if (!sequencerCards?.length) return;
+    if (!sequencerCards?.length) return undefined
     const ids = Array.from(new Set(sequencerCards?.map((i) => i?.sequencerId)));
     const batchInfo = await runOnce({
       sequencerIds: ids,
@@ -422,6 +428,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
     run: fetchBatchSequencerInfoRun,
     data: fetchBatchSequencerInfoData,
     loading: fetchBatchSequencerInfoLoading,
+    error: fetchBatchSequencerInfoError
   } = useRequest(fetchBatchSequencerInfo, { manual: true });
 
   // const status = useMemo(() => {
@@ -458,7 +465,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   useEffect(() => {
     if (!sequencerCards?.length) return;
     fetchBatchSequencerInfoRun();
-  }, [sequencerCards]);
+  }, [sequencerCards, chainId]);
 
   return (
     <>
@@ -532,9 +539,14 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
           </div> */}
           </div>
           <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
-          {!filteredFetchBatchSequencerInfoData || fetchBatchSequencerInfoLoading ? (
+          {!filteredFetchBatchSequencerInfoData && fetchBatchSequencerInfoLoading ? (
             <div className="h-200 w-full flex flex-row justify-center items-center">
               <Loading size={32} />
+            </div>
+          ) : null}
+          {!filteredFetchBatchSequencerInfoData?.length && !fetchBatchSequencerInfoLoading ? (
+            <div className="h-200 w-full flex flex-row justify-center items-center">
+              <span>No Data</span>
             </div>
           ) : null}
           <div className="flex flex-row items-center gap-20 flex-wrap">

@@ -278,12 +278,12 @@ export function Component() {
                   overflow: 'hidden',
                 }}
               >
-                <span className="fz-36 fw-700 color-fff raleway">Package</span>
+                <span className="fz-36 fw-700 color-fff raleway">Docker</span>
                 <span className="fz-26 fw-500 color-fff raleway">
-                  Set up Sequencer via package
+                  Set up Sequencer via Docker
                 </span>
               </div>
-
+              {/* 
               <div
                 className="radius-30 flex flex-col gap-10 p-50"
                 style={{
@@ -298,7 +298,7 @@ export function Component() {
                 <span className="fz-26 fw-500 color-fff raleway">
                   Build from source to set up your Sequencer
                 </span>
-              </div>
+              </div> */}
 
               <div className="flex flex-row items-center justify-center">
                 <Button
@@ -589,7 +589,7 @@ export function Component() {
                 onClick={handleLockup}
                 className="w-full radius-30 h-80"
               >
-                <div className="fz-26 fw-700 raleway color-fff">{ needApprove ? 'APPROVE' : 'CONTINUE'}</div>
+                <div className="fz-26 fw-700 raleway color-fff">{needApprove ? 'APPROVE' : 'CONTINUE'}</div>
               </Button>
             </div>
           </div>
@@ -610,8 +610,8 @@ export function Component() {
               <Button
                 type="metis"
                 onClick={() => {
-                navigate(`/sequencers/${address}`);
-              }}
+                  navigate(`/sequencers/${address}`);
+                }}
                 className="w-full radius-30 h-80"
               >
                 <div className="fz-26 fw-700 raleway color-fff">
