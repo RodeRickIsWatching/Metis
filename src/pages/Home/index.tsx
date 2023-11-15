@@ -454,7 +454,7 @@ export function Component() {
 
   return (
     <Container className="pages-landing flex flex-col ">
-      <SequencerHeader />
+      <SequencerHeader filterBy="healthy" />
       <div className="main-section main-section-2 flex flex-col gap-22 h-791 justify-center">
         <div className="flex flex-col gap-12 items-center">
           <span className="fz-56 fw-700 color-fff raleway">{section2.title}</span>

@@ -6,9 +6,9 @@ import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import Loading from '../_global/Loading';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
 
 const SequencerStatusContainer = styled.div`
   .avatar {
@@ -26,10 +26,20 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
   }, [ele?.user]);
 
   const fromNow = useMemo(() => {
-    if(!data) return '-'
+    if (!data) return '-';
     const _duration = data - +dayjs().unix();
     return dayjs.duration(_duration, 's').humanize(true);
   }, [data]);
+
+  const status = useMemo(() => {
+    if (ele?.ifInUnlockProgress) {
+      return { label: 'Exit Period', color: 'E9B261' };
+    }
+    if (!ele?.ifInUnlockProgress && !ele?.ifActive) {
+      return { label: 'Exited', color: 'B3B3B3' };
+    }
+    return { label: 'Healthy', color: '00EA5E' };
+  }, [ele?.ifActive, ele?.ifInUnlockProgress]);
 
   return (
     <SequencerStatusContainer
@@ -38,8 +48,21 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
       className="pointer radius-30 w-340 pt-37 pl-30 pr-30 pb-20 flex flex-col gap-42 items-center position-relative"
     >
       <div className="flex flex-row items-center gap-8 position-absolute top-14 right-20">
-        <span className="fz-14 fw-500 color-00EA5E">Healthy</span>
-        <div className="s-12 bg-color-00EA5E radiusp-50" />
+        {loading ? (
+          <div className="h-18 flex items-center justify-center">
+            <Loading />
+          </div>
+        ) : (
+          <>
+            <span
+              className={`fz-14 fw-500 color-${status.color}`}
+              style={{
+              color: `#${status?.color}`,
+            }}
+            >{status?.label}</span>
+            <div className={`s-12 bg-color-${status.color} radiusp-50`} style={{ backgroundColor: `#${status?.color}` }} />
+          </>
+        )}
       </div>
 
       <div className="flex flex-col gap-5">

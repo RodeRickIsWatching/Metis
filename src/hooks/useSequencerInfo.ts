@@ -52,6 +52,7 @@ const useSequencerInfo = () => {
     const reward = result?.sequencerReward.toString();
     const rewardReadable = ethers.utils.formatEther(reward || '0').toString();
 
+
     const ifActive = BigNumber(status).eq(1) && BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
     const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
 

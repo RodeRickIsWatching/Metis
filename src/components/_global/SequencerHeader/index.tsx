@@ -9,12 +9,13 @@ import { getImageUrl, jumpLink } from '@/utils/tools';
 import { useBoolean, useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useNetwork } from 'wagmi';
 import { multicall } from '@wagmi/core';
 import useSequencerInfo from '@/hooks/useSequencerInfo';
+import Loading from '../Loading';
 
 const StyledModal = styled(Modal)``;
 
@@ -331,7 +332,7 @@ const Container = styled.section`
   }
 `;
 
-const SequencerHeader = () => {
+const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   const { address } = useAuth(true);
   const { data } = useRequest(fetchOverview);
   const { sequencerTotalInfo } = useUpdate();
@@ -417,7 +418,27 @@ const SequencerHeader = () => {
     });
   };
 
-  const { run: fetchBatchSequencerInfoRun, data: fetchBatchSequencerInfoData } = useRequest(fetchBatchSequencerInfo, { manual: true });
+  const { run: fetchBatchSequencerInfoRun, data: fetchBatchSequencerInfoData, loading: fetchBatchSequencerInfoLoading } = useRequest(fetchBatchSequencerInfo, { manual: true });
+
+  // const status = useMemo(() => {
+  //   if (ele?.ifInUnlockProgress) {
+  //     return { label: 'Exit Period', color: 'E9B261' };
+  //   }
+  //   if (!ele?.ifInUnlockProgress && !ele?.ifActive) {
+  //     return { label: 'Exited', color: 'B3B3B3' };
+  //   }
+  //   return { label: 'Healthy', color: '00EA5E' };
+  // }, [ele?.ifActive, ele?.ifInUnlockProgress]);
+
+  const filteredFetchBatchSequencerInfoData = useMemo(() => fetchBatchSequencerInfoData?.filter(i => {
+    if (filterBy === 'all') {
+      return true
+    }
+    if (filterBy === 'healthy') {
+      return !i.ifInUnlockProgress && i.ifActive
+    }
+
+  }), [fetchBatchSequencerInfoData, filterBy])
 
   useEffect(() => {
     if (!sequencerCards?.length) return;
@@ -496,8 +517,11 @@ const SequencerHeader = () => {
           </div> */}
           </div>
           <div className="mb-35 h-1 w-full bg-color-CDCDCD mt-20" />
+          {
+            (!filteredFetchBatchSequencerInfoData || fetchBatchSequencerInfoLoading) ? (<div className="h-200 w-full flex flex-row justify-center items-center"><Loading size={32} /></div>) : null
+          }
           <div className="flex flex-row items-center gap-20 flex-wrap">
-            {fetchBatchSequencerInfoData?.map((i, index) => (
+            {filteredFetchBatchSequencerInfoData?.map((i, index) => (
               <SequencerItemContainer
                 ele={i}
                 title="SEQ"
