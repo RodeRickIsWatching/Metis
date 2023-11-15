@@ -11,6 +11,7 @@ const userTxs = gql`
       signerPubkey
       user
       sequencerId
+      claimAmount
     }
   }
 `;

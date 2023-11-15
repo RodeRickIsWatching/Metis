@@ -16,6 +16,7 @@ import { useNetwork } from 'wagmi';
 import { multicall } from '@wagmi/core';
 import useSequencerInfo from '@/hooks/useSequencerInfo';
 import Loading from '../Loading';
+import NumberText from '@/components/NumberText';
 
 const StyledModal = styled(Modal)``;
 
@@ -401,6 +402,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
     }
   };
 
+
   const sequencerCards = React.useMemo(() => {
     if (!data?.lockedUserParams) return [];
     return data?.lockedUserParams?.map((i) => ({
@@ -497,7 +499,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
           <div className="flex flex-row items-center gap-8 info-card-container w-1150">
             <div className="opacity-card flex flex-col items-center flex-1">
               <span className="fz-18 fw-700 inter">
-                {sequencerTotalInfo?.currentSequencerSetTotalLockReadable || '-'}{' '}
+                <NumberText value={sequencerTotalInfo?.currentSequencerSetTotalLockReadable} />
               </span>
 
               <div className="flex items-center gap-8">
@@ -505,19 +507,24 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
               </div>
             </div>
             <div className="opacity-card flex flex-col items-center flex-1">
-              <span className="fz-18 fw-700 inter">{BigNumber(defaultExpectedApr).multipliedBy(100).toString()}%</span>
+              <span className="fz-18 fw-700 inter">
+                {BigNumber(defaultExpectedApr).multipliedBy(100).toString()}%</span>
               <div className="flex items-center gap-8">
                 <span className="fz-14 fw-400 inter">Expected APR</span>
               </div>
             </div>
             <div className="opacity-card flex flex-col items-center flex-1">
-              <span className="fz-18 fw-700 inter">{data?.lockedUserParams?.length || '-'}</span>
+              <span className="fz-18 fw-700 inter">
+                <NumberText value={data?.lockedUserParams?.length} />
+              </span>
               <div className="flex items-center gap-8">
                 <span className="fz-14 fw-400 inter">Current number of Sequencers</span>
               </div>
             </div>
             <div className="opacity-card flex flex-col items-center flex-1">
-              <span className="fz-18 fw-700 inter">{totalReward || '-'}</span>
+              <span className="fz-18 fw-700 inter">
+                <NumberText value={totalReward} />
+              </span>
               <div className="flex items-center gap-8">
                 <span className="fz-14 fw-400 inter">Total rewards distributed</span>
               </div>

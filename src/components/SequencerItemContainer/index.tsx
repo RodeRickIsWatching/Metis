@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Loading from '../_global/Loading';
+import NumberText from '../NumberText';
+import BigNumber from 'bignumber.js';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
@@ -41,6 +43,10 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
     return { label: 'Healthy', color: '00EA5E' };
   }, [ele?.ifActive, ele?.ifInUnlockProgress]);
 
+  const totlaEarned = useMemo(()=>{
+    return BigNumber(ele?.rewardReadable).plus(BigNumber(ele?.claimAmount).div(1e18)).toString()
+  }, [ele?.claimAmount, ele?.rewardReadable])
+
   return (
     <SequencerStatusContainer
       onClick={onClick}
@@ -57,10 +63,15 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
             <span
               className={`fz-14 fw-500 color-${status.color}`}
               style={{
-              color: `#${status?.color}`,
-            }}
-            >{status?.label}</span>
-            <div className={`s-12 bg-color-${status.color} radiusp-50`} style={{ backgroundColor: `#${status?.color}` }} />
+                color: `#${status?.color}`,
+              }}
+            >
+              {status?.label}
+            </span>
+            <div
+              className={`s-12 bg-color-${status.color} radiusp-50`}
+              style={{ backgroundColor: `#${status?.color}` }}
+            />
           </>
         )}
       </div>
@@ -75,16 +86,22 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
             <div className="fz-14 color-000 fw-400">Total Lock-up</div>
             <div className="flex flex-row items-center gap-4">
               <img src={getImageUrl('@/assets/images/sequencer/avatar.svg')} className="s-13" />
-              <div className="fz-14 fw-700 color-000">{totalLockUp || '-'}</div>
+              <div className="fz-14 fw-700 color-000">
+                <NumberText value={totalLockUp} />
+              </div>
             </div>
           </div>
           <div className="flex flex-row justify-between items-center w-full">
             <div className="fz-14 color-000 fw-400">Uptime</div>
-            <div className="fz-14 fw-700 color-000">{fromNow || '-'}</div>
+            <div className="fz-14 fw-700 color-000">
+              {fromNow || '-'}
+            </div>
           </div>
           <div className="flex flex-row justify-between items-center w-full">
             <div className="fz-14 color-000 fw-400">Sequencing Since</div>
-            <div className="fz-14 fw-700 color-000">{since || '-'}</div>
+            <div className="fz-14 fw-700 color-000">
+              {since || '-'}
+            </div>
           </div>
         </div>
         <div className="h-1 w-full mt-10 mb-10 bg-color-CDCDCD" />
@@ -93,7 +110,9 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
 
           <div className="flex flex-row items-center gap-4">
             <img src={getImageUrl('@/assets/images/sequencer/avatar.svg')} className="s-13" />
-            <div className="fz-14 fw-700 color-000">{ele?.rewardReadable || '-'}</div>
+            <div className="fz-14 fw-700 color-000">
+              <NumberText value={totlaEarned} />
+            </div>
           </div>
         </div>
       </div>
