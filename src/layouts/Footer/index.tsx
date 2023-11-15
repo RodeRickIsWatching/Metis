@@ -105,6 +105,13 @@ const Container = styled.div`
   padding: 52px 200px 156px;
   gap: 80px;
 
+  .hover-color {
+    transition: all linear 0.1s;
+  }
+  .hover-color:hover {
+    filter: opacity(0.7);
+  }
+
   .l {
     img {
       width: 207px;
@@ -149,7 +156,7 @@ const Footer = () => {
           <div className="flex flex-col gap-12">
             {links.map((i, index) => (
               <div
-                className="fz-14 fw-400 color-fff pointer"
+                className="fz-14 fw-400 color-fff pointer hover-color"
                 key={index}
                 onClick={() => {
                   jumpLink(i.link, '_blank');
@@ -162,7 +169,7 @@ const Footer = () => {
           <div className="flex flex-col gap-12">
             {link2.map((i, index) => (
               <div
-                className="fz-14 fw-400 color-fff pointer"
+                className="fz-14 fw-400 color-fff pointer hover-color"
                 key={index}
                 onClick={() => {
                   jumpLink(i.link, '_blank');
@@ -179,7 +186,7 @@ const Footer = () => {
         {medias.map((i, index) => (
           <div
             key={index}
-            className="pointer"
+            className="pointer hover-color"
             onClick={() => {
               jumpLink(i.link, '_blank');
             }}

@@ -6,6 +6,13 @@ import { styled } from 'styled-components';
 
 const Container = styled.div`
   padding: 22px 32px;
+
+  .hover-color-00D2FF {
+    transition: all linear 0.1s;
+  }
+  .hover-color-00D2FF:hover {
+    color: #00d2ff !important;
+  }
 `;
 
 const headerNav = [
@@ -54,7 +61,7 @@ const Header = () => {
         <div className="flex flex-row items-center gap-20">
           {headerNav.map((i) => (
             <div
-              className="raleway pointer fz-15 fw-500 color-000"
+              className="raleway pointer fz-15 fw-500 color-000 hover-color-00D2FF"
               onClick={() => handleJumpLink(i?.link)}
               key={i.label}
             >
