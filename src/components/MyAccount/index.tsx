@@ -356,45 +356,51 @@ const MyAccount = ({
               </div>
             </div>
 
-            <div
-              className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
-              style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
-            >
-              <div className="fz-14 fw-400 color-000 poppins">Locked-Up</div>
-              <div className="flex flex-row items-center gap-8">
-                <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
-                <div className="fz-18 fw-400 color-000 poppins">{lockedup || 0} METIS</div>
-              </div>
-            </div>
+            {
+              sequencerId ? (<>
 
-            <div
-              className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
-              style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
-            >
-              <div className="fz-14 fw-400 color-000 poppins">Total Rewards</div>
-              <div className="flex flex-row items-center gap-8">
-                <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
-                <div className="fz-18 fw-400 color-000 poppins">{totalRewards || 0} METIS</div>
-              </div>
-            </div>
-
-            <div className="bg-color-F1F1F1 mt-27  pb-14 pt-14 pl-10 pr-10 radius-10 flex flex-row items-center justify-between">
-              <div className="flex flex-col gap-5">
-                <div className="fz-14 fw-400 color-000 poppins">Unclaimed Rewards</div>
-                <div className="flex flex-row items-center gap-8">
-                  <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
-                  <div className="fz-18 fw-400 color-000 poppins">{unclaimedAmount || 0} METIS</div>
+                <div
+                  className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
+                  style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
+                >
+                  <div className="fz-14 fw-400 color-000 poppins">Locked-Up</div>
+                  <div className="flex flex-row items-center gap-8">
+                    <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                    <div className="fz-18 fw-400 color-000 poppins">{lockedup || 0} METIS</div>
+                  </div>
                 </div>
-              </div>
-              <Button
-                onClick={handleShowClaim}
-                type="metis"
-                className="w-107 h-36"
-                disabled={BigNumber(unclaimedAmount).lte(0)}
-              >
-                <div className="fz-14 fw-500">Claim</div>
-              </Button>
-            </div>
+
+                <div
+                  className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
+                  style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
+                >
+                  <div className="fz-14 fw-400 color-000 poppins">Total Rewards</div>
+                  <div className="flex flex-row items-center gap-8">
+                    <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                    <div className="fz-18 fw-400 color-000 poppins">{totalRewards || 0} METIS</div>
+                  </div>
+                </div>
+
+                <div className="bg-color-F1F1F1 mt-27  pb-14 pt-14 pl-10 pr-10 radius-10 flex flex-row items-center justify-between">
+                  <div className="flex flex-col gap-5">
+                    <div className="fz-14 fw-400 color-000 poppins">Unclaimed Rewards</div>
+                    <div className="flex flex-row items-center gap-8">
+                      <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                      <div className="fz-18 fw-400 color-000 poppins">{unclaimedAmount || 0} METIS</div>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={handleShowClaim}
+                    type="metis"
+                    className="w-107 h-36"
+                    disabled={BigNumber(unclaimedAmount).lte(0)}
+                  >
+                    <div className="fz-14 fw-500">Claim</div>
+                  </Button>
+                </div>
+              </>) : null
+            }
+
           </div>
 
           <Button type="metis" onClick={handleJumpStatus} className="w-full">
