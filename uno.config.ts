@@ -88,8 +88,8 @@ const margin: Rule[] = [
 const padding: Rule[] = [
   [/^p-([\.\d]+)$/, ([_, num]) => ({ padding: `${num}px!important` })],
   [/^pt-([\.\d]+)$/, ([_, num]) => ({ 'padding-top': `${num}px!important` })],
-  [/^pl-([\.\d]+)$/, ([_, num]) => ({ 'padding-left': `${num}px` })],
-  [/^pr-([\.\d]+)$/, ([_, num]) => ({ 'padding-right': `${num}px` })],
+  [/^pl-([\.\d]+)$/, ([_, num]) => ({ 'padding-left': `${num}px!important` })],
+  [/^pr-([\.\d]+)$/, ([_, num]) => ({ 'padding-right': `${num}px!important` })],
   [/^pb-([\.\d]+)$/, ([_, num]) => ({ 'padding-bottom': `${num}px!important` })],
 ];
 

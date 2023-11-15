@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import { lockContract, basicChainId } from '@/configs/common';
 import { useRequest } from 'ahooks';
-import useAuth from './useAuth';
 import { multicall, readContract } from '@wagmi/core';
 import { useRecoilState } from 'recoil';
 import { recoilSequencerInfo } from '@/models';
@@ -9,7 +8,6 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
 const useSequencerInfo = () => {
-  const { connector } = useAuth(true);
   const [sequencerInfo, setSequencerInfo] = useRecoilState(recoilSequencerInfo);
 
   const getSequencerId = async (address?: string) => {
@@ -35,7 +33,7 @@ const useSequencerInfo = () => {
         let flattedData: any = {};
 
         const abiOutput = multicallFuntions[index].abi?.find((k) => multicallFuntions[index].functionName === k.name)?.outputs;
-        abiOutput.forEach((j: { name: string | number; }, jndex: string | number) => {
+        abiOutput.forEach((j: { name: string | number }, jndex: string | number) => {
           flattedData[j?.name] = i?.result?.[jndex]?.toString();
         });
 
@@ -79,9 +77,11 @@ const useSequencerInfo = () => {
     const {
       sequencerId,
       sequencerIds,
+      self,
     }: {
       sequencerId?: string;
       sequencerIds?: string[];
+      self?: boolean;
     } = props;
 
     if (!sequencerId && !sequencerIds?.length) return;
@@ -113,6 +113,7 @@ const useSequencerInfo = () => {
     const res = await multicall({
       contracts: multiP,
     });
+
 
     const listedData = s.map((i, index) => {
       return res?.slice(index * 3, index * 3 + 3);

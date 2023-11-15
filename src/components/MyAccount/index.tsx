@@ -2,11 +2,19 @@ import { styled } from 'styled-components';
 import { Button, Modal } from '..';
 import { filterHideText, getImageUrl, jumpLink } from '@/utils/tools';
 import CheckSequencer from '../CheckSequencer';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CopyAddress from '../CopyAddress';
 import useAuth from '@/hooks/useAuth';
 import useBalance from '@/hooks/useBalance';
 import { generateAvatar } from '@/utils/jazzIcon';
+import { ethers } from 'ethers';
+import useSequencerInfo from '@/hooks/useSequencerInfo';
+import BigNumber from 'bignumber.js';
+import useUpdate from '@/hooks/useUpdate';
+import { useRequest } from 'ahooks';
+import fetchOverview from '@/graphql/overview';
+import fetchUserTx from '@/graphql/tx';
+import ClaimModal from '@/pages/SequencerDetail/components/ClaimModal';
 
 const Container = styled(Modal)`
   .inside {
@@ -143,41 +151,83 @@ const MyAccount = ({
   onOk?: any;
   claimable?: boolean;
 }) => {
-  const { address } = useAuth(true);
-
+  const { address, chainId, disconnect } = useAuth(true);
+  const { sequencerId } = useUpdate();
   const { balance } = useBalance();
 
-  const [checkSequencerVisible, setCheckSequencerVisible] =
-    React.useState(false);
-  const handleClose = () => {
-    setCheckSequencerVisible(false);
+  const { run, data } = useRequest(fetchUserTx, { manual: true });
+
+  useEffect(() => {
+    if (sequencerId && address && chainId) {
+      run(address, chainId);
+    }
+  }, [address, chainId, sequencerId]);
+
+  const [claimVisible, setClaimVisible] = useState(false);
+
+  // const [checkSequencerVisible, setCheckSequencerVisible] = React.useState(false);
+  // const handleClose = () => {
+  //   setCheckSequencerVisible(false);
+  // };
+  // const handleOk = () => {
+  //   setCheckSequencerVisible(true);
+  // };
+  // const handleShow = () => {
+  //   setCheckSequencerVisible(true);
+  // };
+
+  const { sequencerInfo } = useSequencerInfo();
+
+  const unclaimedAmount = useMemo(() => {
+    return ethers.utils.formatEther(sequencerInfo?.reward || '0').toString();
+  }, [sequencerInfo?.reward]);
+
+  const claimedAmount = useMemo(() => {
+    return data?.origin?.claimRewardsParams?.reduce((prev, next) => {
+      return BigNumber(prev).plus(BigNumber(next?.amount).div(1e18)).toString();
+    }, 0);
+  }, [data?.origin?.claimRewardsParams]);
+
+  const lockedup = React.useMemo(
+    () => ethers.utils.formatEther(sequencerInfo?.sequencerLock || '0').toString(),
+    [sequencerInfo?.sequencerLock],
+  );
+  const totalRewards = React.useMemo(
+    () => BigNumber(unclaimedAmount).plus(claimedAmount).toString(),
+    [claimedAmount, unclaimedAmount],
+  );
+
+  const handleShowClaim = () => {
+    if (BigNumber(unclaimedAmount).lte(0) || BigNumber(unclaimedAmount).isNaN()) return;
+    setClaimVisible(true);
   };
-  const handleOk = () => {
-    setCheckSequencerVisible(true);
+
+  const handleDisconnect = () => {
+    disconnect();
+    setTimeout(() => {
+      onClose?.();
+    }, 1000);
+    window.location.reload();
   };
-  const handleShow = () => {
-    setCheckSequencerVisible(true);
-  };
+
   return (
     <>
-      <Container
-        visible={visible}
-        onClose={onClose}
-        onOk={onOk}
-        title="My Account"
-      >
+      <Container visible={visible} onClose={onClose} onOk={onOk} title="My Account">
         <div className="flex flex-col gap-10">
           <div className="basic-card flex flex-col gap-16">
             <div className="flex flex-col gap-6">
               <span>Connected with MetaMask</span>
-              <div className="flex flex-row items-center gap-10">
-                <img
-                  className="radiusp-50 s-38"
-                  src={generateAvatar(address || '', 200)}
-                />
-                <span className="fz-18 fw-400 color-000">
-                  {filterHideText(address || '', 6)}
-                </span>
+              <div className="flex flex-row items-center justify-between">
+                {address ? (
+                  <div className="flex flex-row items-center gap-10">
+                    <img className="radiusp-50 s-38" src={generateAvatar(address || '', 200)} />
+                    <span className="fz-18 fw-400 color-000">{filterHideText(address || '', 6)}</span>
+                  </div>
+                ) : null}
+
+                <Button className="w-107 h-36" type="metis" onClick={handleDisconnect}>
+                  <div className="fz-14 fw-500 color-fff">Change</div>
+                </Button>
               </div>
             </div>
 
@@ -190,13 +240,7 @@ const MyAccount = ({
                   className={'fz-12 fw-400 color-8E8E8E poppins'}
                   reverse
                   copyTrigger={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 14 14"
-                      fill="none"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                       <g clipPath="url(#clip0_674_1240)">
                         <path
                           d="M11.0171 5.60962H6.22186C5.63334 5.60962 5.15625 6.08671 5.15625 6.67523V11.4705C5.15625 12.059 5.63334 12.5361 6.22186 12.5361H11.0171C11.6056 12.5361 12.0827 12.059 12.0827 11.4705V6.67523C12.0827 6.08671 11.6056 5.60962 11.0171 5.60962Z"
@@ -232,13 +276,7 @@ const MyAccount = ({
                     jumpLink(`https://goerli.etherscan.io/address/${address}`, '_blank');
                   }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <g clipPath="url(#clip0_674_1246)">
                       <path
                         d="M9.8911 8.30103L9.8911 11.5798C9.8911 11.9277 9.75292 12.2613 9.50696 12.5072C9.261 12.7532 8.92741 12.8914 8.57958 12.8914L2.67773 12.8914C2.3299 12.8914 1.9963 12.7532 1.75035 12.5072C1.50439 12.2613 1.36621 11.9277 1.36621 11.5798L1.36621 5.67799C1.36621 5.33016 1.50439 4.99657 1.75035 4.75061C1.9963 4.50465 2.32989 4.36647 2.67773 4.36647L5.95653 4.36647"
@@ -246,46 +284,26 @@ const MyAccount = ({
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
-                      <path
-                        d="M4.91895 9.33926L10.6022 3.65601"
-                        stroke="#8E8E8E"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M7.76074 2.94556H11.3128V6.49759"
-                        stroke="#8E8E8E"
-                        strokeLinecap="round"
-                      />
+                      <path d="M4.91895 9.33926L10.6022 3.65601" stroke="#8E8E8E" strokeLinecap="round" />
+                      <path d="M7.76074 2.94556H11.3128V6.49759" stroke="#8E8E8E" strokeLinecap="round" />
                     </g>
                     <defs>
                       <clipPath id="clip0_674_1246">
-                        <rect
-                          width="12.7873"
-                          height="12.7873"
-                          fill="white"
-                          transform="translate(0.65625 0.814453)"
-                        />
+                        <rect width="12.7873" height="12.7873" fill="white" transform="translate(0.65625 0.814453)" />
                       </clipPath>
                     </defs>
                   </svg>
-                  <span className="fz-12 fw-400 color-8E8E8E poppins">
-                    Etherscan
-                  </span>
+                  <span className="fz-12 fw-400 color-8E8E8E poppins">Etherscan</span>
                 </div>
 
                 {/* Andromeda-explore */}
-                <div className="copy flex flex-row items-center gap-6 pointer"
+                <div
+                  className="copy flex flex-row items-center gap-6 pointer"
                   onClick={() => {
                     jumpLink(`https://explorer.metis.io/address/${address}`, '_blank');
                   }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <g clipPath="url(#clip0_674_1246)">
                       <path
                         d="M9.8911 8.30103L9.8911 11.5798C9.8911 11.9277 9.75292 12.2613 9.50696 12.5072C9.261 12.7532 8.92741 12.8914 8.57958 12.8914L2.67773 12.8914C2.3299 12.8914 1.9963 12.7532 1.75035 12.5072C1.50439 12.2613 1.36621 11.9277 1.36621 11.5798L1.36621 5.67799C1.36621 5.33016 1.50439 4.99657 1.75035 4.75061C1.9963 4.50465 2.32989 4.36647 2.67773 4.36647L5.95653 4.36647"
@@ -293,44 +311,72 @@ const MyAccount = ({
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
-                      <path
-                        d="M4.91895 9.33926L10.6022 3.65601"
-                        stroke="#8E8E8E"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M7.76074 2.94556H11.3128V6.49759"
-                        stroke="#8E8E8E"
-                        strokeLinecap="round"
-                      />
+                      <path d="M4.91895 9.33926L10.6022 3.65601" stroke="#8E8E8E" strokeLinecap="round" />
+                      <path d="M7.76074 2.94556H11.3128V6.49759" stroke="#8E8E8E" strokeLinecap="round" />
                     </g>
                     <defs>
                       <clipPath id="clip0_674_1246">
-                        <rect
-                          width="12.7873"
-                          height="12.7873"
-                          fill="white"
-                          transform="translate(0.65625 0.814453)"
-                        />
+                        <rect width="12.7873" height="12.7873" fill="white" transform="translate(0.65625 0.814453)" />
                       </clipPath>
                     </defs>
                   </svg>
-                  <span className="fz-12 fw-400 color-8E8E8E poppins">
-                    Andromeda-explore
-                  </span>
+                  <span className="fz-12 fw-400 color-8E8E8E poppins">Andromeda-explore</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* balances */}
-          <div className="basic-card">
-            <div className="flex flex-col gap-2 pb-14 pt-14" style={true ? {} : { borderTop: '1px solid #CDCDCD' }}>
+          <div className="basic-card pl-10 pr-10">
+            <div
+              className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
+              style={true ? {} : { borderTop: '1px solid #CDCDCD' }}
+            >
               <div className="fz-14 fw-400 color-000 poppins">Balance on L1</div>
               <div className="flex flex-row items-center gap-8">
                 <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
                 <div className="fz-18 fw-400 color-000 poppins">{balance?.readable || 0} METIS</div>
               </div>
+            </div>
+
+            <div
+              className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
+              style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
+            >
+              <div className="fz-14 fw-400 color-000 poppins">Locked-Up</div>
+              <div className="flex flex-row items-center gap-8">
+                <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                <div className="fz-18 fw-400 color-000 poppins">{lockedup || 0} METIS</div>
+              </div>
+            </div>
+
+            <div
+              className="flex flex-col gap-5 pb-14 pt-14 pl-10 pr-10"
+              style={false ? {} : { borderTop: '1px solid #CDCDCD' }}
+            >
+              <div className="fz-14 fw-400 color-000 poppins">Total Rewards</div>
+              <div className="flex flex-row items-center gap-8">
+                <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                <div className="fz-18 fw-400 color-000 poppins">{totalRewards || 0} METIS</div>
+              </div>
+            </div>
+
+            <div className="bg-color-F1F1F1 mt-27  pb-14 pt-14 pl-10 pr-10 radius-10 flex flex-row items-center justify-between">
+              <div className="flex flex-col gap-5">
+                <div className="fz-14 fw-400 color-000 poppins">Unclaimed Rewards</div>
+                <div className="flex flex-row items-center gap-8">
+                  <img className="s-15" src={getImageUrl('@/assets/images/token/metis.svg')} />
+                  <div className="fz-18 fw-400 color-000 poppins">{unclaimedAmount || 0} METIS</div>
+                </div>
+              </div>
+              <Button
+                onClick={handleShowClaim}
+                type="metis"
+                className="w-107 h-36"
+                disabled={BigNumber(unclaimedAmount).lte(0)}
+              >
+                <div className="fz-14 fw-500">Claim</div>
+              </Button>
             </div>
           </div>
 
@@ -377,11 +423,18 @@ const MyAccount = ({
         </div>
       </Container>
 
-      <CheckSequencer
+      {/* <CheckSequencer
         invalid={Math.random() > 0.5}
         visible={checkSequencerVisible}
         onClose={handleClose}
         onOk={handleOk}
+      /> */}
+
+      <ClaimModal
+        visible={claimVisible}
+        onClose={() => {
+          setClaimVisible(false);
+        }}
       />
     </>
   );

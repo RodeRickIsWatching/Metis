@@ -9,27 +9,26 @@ import useAuth from '@/hooks/useAuth';
 import useSequencerInfo from '@/hooks/useSequencerInfo';
 import SubHeader from './SubHeader';
 
-
 function BasicLayout() {
   const { address, chainId } = useAuth(true);
   const { sequencerId, run: updateRun, cancel: updateCancel } = useUpdate();
-  const { run: sequencerInfoRun,  cancel: sequencerInfoCancel } = useSequencerInfo();
+  const { run: sequencerInfoRun, cancel: sequencerInfoCancel } = useSequencerInfo();
 
   React.useEffect(() => {
-    updateCancel()
+    updateCancel();
     updateRun({ address });
-    return ()=>{
-      updateCancel()
-    }
+    return () => {
+      updateCancel();
+    };
   }, [address, chainId]);
 
   React.useEffect(() => {
     if (!sequencerId) return;
-    sequencerInfoCancel()
+    sequencerInfoCancel();
     sequencerInfoRun({ sequencerId: sequencerId, self: true });
-    return ()=>{
-      sequencerInfoCancel()
-    }
+    return () => {
+      sequencerInfoCancel();
+    };
   }, [sequencerId, chainId]);
 
   return (
