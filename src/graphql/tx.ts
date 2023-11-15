@@ -4,7 +4,7 @@ import { gql, GraphQLClient } from 'graphql-request';
 
 const userTxs = gql`
   query MyQuery($address: String) {
-    lockedParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { user: $address }) {
+    lockedParams(first: 1000, orderBy: blockTimestamp, orderDirection: desc, where: { signer: $address }) {
       activationBatch
       amount
       id
