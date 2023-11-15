@@ -140,7 +140,6 @@ const fetchUserTx = async (address: string, chainId: number, current?: any, page
       if (next === 'relockedParams') {
         const lockConfig = replacedData?.['lockedParams']?.find((i) => i?.sequencerId === nii?.sequencerId);
 
-        console.log('lockConfig', lockConfig, nii);
         amountReadable = BigNumber(nii?.total).minus(lockConfig?.amount).div(1e18).toString();
       }
 
