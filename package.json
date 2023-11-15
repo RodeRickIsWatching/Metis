@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "vite --open --host",
+    "start:prod": "vite --open --host --mode production",
     "build": "vite build --mode production",
     "build:qa": "vite build --mode test",
     "preview": "vite preview",

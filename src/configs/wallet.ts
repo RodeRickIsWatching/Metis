@@ -1,13 +1,34 @@
 import { publicProvider } from '@wagmi/core/providers/public';
 import { InjectedConnector } from '@wagmi/core';
 import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi';
-import { createPublicClient, http } from 'viem';
-
+import { createPublicClient, defineChain, http, webSocket } from 'viem';
 
 import { isProd } from './common';
 import { goerli, holesky } from 'viem/chains';
-console.log('holesky', holesky)
-export const chainId = isProd ? [holesky, mainnet] : [goerli, mainnet];
+
+const _holesky = defineChain({
+  id: 17000,
+  network: 'holesky',
+  name: 'Holesky',
+  nativeCurrency: { name: 'Holesky Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://ethereum-holesky.publicnode.com'],
+    },
+    public: {
+      http: ['https://ethereum-holesky.publicnode.com'],
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xca11bde05977b3631167028862be2a173976ca11',
+      blockCreated: 77,
+    },
+  },
+  testnet: true,
+});
+
+export const chainId = isProd ? [_holesky, mainnet] : [goerli, mainnet];
 
 export const injectedConnector = new InjectedConnector({
   chains: [...chainId],
@@ -21,11 +42,7 @@ export const injectedConnector = new InjectedConnector({
   // },
 });
 
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [...chainId],
-  [publicProvider()],
-);
+const { chains, publicClient, webSocketPublicClient } = configureChains([...chainId], [publicProvider()]);
 
 const config = createConfig({
   autoConnect: true,
@@ -35,7 +52,7 @@ const config = createConfig({
   // webSocketPublicClient,
 });
 
-// const transport = webSocket(wssUrl, {
+// const transport = webSocket('wss://ethereum-holesky.publicnode.com', {
 //   timeout: 60_000,
 // });
 
@@ -59,6 +76,6 @@ export const txPublicClients = {
   [goerli.id.toString()]: goerliTxPublicClient,
   [mainnet.id.toString()]: mainnetTxPublicClient,
   [holesky.id.toString()]: holeskyTxPublicClient,
-}
+};
 
 export { config, WagmiConfig as WagmiProvider, publicClient };

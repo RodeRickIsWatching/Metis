@@ -109,7 +109,7 @@ const IconRoundGray = ({ className }: { className?: any }) => (
     </g>
     <defs>
       <filter id="filter0_d_361_2492" x="0" y="0" width="84" height="84" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
         <feOffset />
         <feGaussianBlur stdDeviation="15" />
