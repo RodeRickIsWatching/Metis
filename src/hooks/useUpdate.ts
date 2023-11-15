@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { multicall } from '@wagmi/core';
 import useAuth from './useAuth';
 import { basicChainId, depositToken, lockContract } from '@/configs/common';
@@ -10,6 +11,7 @@ import {
   recoilLiquidateReward,
   recoilSequencerId,
   recoilSequencerTotalInfo,
+  recoilWhitelisted,
 } from '@/models';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
@@ -20,6 +22,7 @@ const useUpdate = () => {
   const { chainId } = useAuth(true);
 
   const [sequencerId, setSequencerId] = useRecoilState(recoilSequencerId);
+  const [whiteListed, setWhiteListed] = useRecoilState(recoilWhitelisted);
   const [liquidateReward, setLiquidateReward] = useRecoilState(recoilLiquidateReward);
   const [balance, setBalance] = useRecoilState(recoilBalance);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
@@ -111,6 +114,11 @@ const useUpdate = () => {
           functionName: 'allowance',
           args: [address, lockContract.address],
         },
+        {
+          ...lockContract,
+          functionName: 'whiteListAddresses',
+          args: [address],
+        },
       ];
     }
 
@@ -121,8 +129,10 @@ const useUpdate = () => {
     const result: any = {};
 
     res.forEach((i: any, index) => {
-      result[p[index].functionName] = (i?.result || 0)?.toString();
+      result[p[index].functionName] = (i?.result)?.toString();
     });
+
+    console.log('res', res, result);
 
     if (result?.totalRewardsLiquidated) {
       const rewardReadable = BigNumber(result?.totalRewardsLiquidated).div(1e18).toString();
@@ -136,6 +146,10 @@ const useUpdate = () => {
 
     if (result?.getSequencerId) {
       setSequencerId(result?.getSequencerId);
+    }
+
+    if (result?.whiteListAddresses) {
+      setWhiteListed(result?.whiteListAddresses === 'true');
     }
 
     if (result?.balanceOf) {
@@ -163,7 +177,7 @@ const useUpdate = () => {
     pollingInterval: 5000,
   });
 
-  return { ...props, liquidateReward, metisBalance: balance, sequencerTotalInfo, sequencerId, blockReward };
+  return { ...props, liquidateReward, metisBalance: balance, sequencerTotalInfo, whiteListed, sequencerId, blockReward };
 };
 
 export default useUpdate;

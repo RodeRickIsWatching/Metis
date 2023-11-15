@@ -15,6 +15,7 @@ import { useRequest } from 'ahooks';
 import fetchOverview from '@/graphql/overview';
 import fetchUserTx from '@/graphql/tx';
 import ClaimModal from '@/pages/SequencerDetail/components/ClaimModal';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled(Modal)`
   .inside {
@@ -152,7 +153,7 @@ const MyAccount = ({
   claimable?: boolean;
 }) => {
   const { address, chainId, disconnect } = useAuth(true);
-  const { sequencerId } = useUpdate();
+  const { sequencerId, whiteListed } = useUpdate();
   const { balance } = useBalance();
 
   const { run, data } = useRequest(fetchUserTx, { manual: true });
@@ -193,7 +194,7 @@ const MyAccount = ({
     [sequencerInfo?.sequencerLock],
   );
   const totalRewards = React.useMemo(
-    () => BigNumber(unclaimedAmount).plus(claimedAmount).toString(),
+    () => BigNumber(unclaimedAmount || '0').plus(claimedAmount || '0').toString(),
     [claimedAmount, unclaimedAmount],
   );
 
@@ -208,6 +209,22 @@ const MyAccount = ({
       onClose?.();
     }, 1000);
     window.location.reload();
+  };
+
+  const navigate = useNavigate();
+  const handleJumpStatus = () => {
+    if (sequencerId) {
+      navigate(`/sequencers/${address}`);
+      onClose?.();
+      return;
+    }
+    if (whiteListed) {
+      navigate('/becomeSequencer');
+      onClose?.();
+      return;
+    }
+    jumpLink('https://forms.gle/uxYAieUuudBDWrzF6', '_blank');
+    return;
   };
 
   return (
@@ -379,6 +396,12 @@ const MyAccount = ({
               </Button>
             </div>
           </div>
+
+          <Button type="metis" onClick={handleJumpStatus} className="w-full">
+            <div className=" h-52 flex flex-row items-center justify-center">
+              {sequencerId ? 'Check my Sequencer' : whiteListed ? 'Become a Sequencer' : 'Join the Waitlist'}
+            </div>
+          </Button>
 
           {/* <div className="flex flex-col lgap-24 items-center">
             <div className="cards">

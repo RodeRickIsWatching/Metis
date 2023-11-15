@@ -38,3 +38,9 @@ export const recoilSequencerTotalInfo = atom<any>({
   key: 'sequencerTotalInfo',
   default: null,
 });
+
+
+export const recoilWhitelisted = atom<boolean>({
+  key: 'whitelisted',
+  default: false,
+});

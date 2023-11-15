@@ -29,7 +29,7 @@ function BasicLayout() {
     return () => {
       sequencerInfoCancel();
     };
-  }, [sequencerId, chainId]);
+  }, [sequencerId, chainId, address]);
 
   return (
     <React.Fragment>
