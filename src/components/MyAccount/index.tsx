@@ -16,6 +16,7 @@ import fetchOverview from '@/graphql/overview';
 import fetchUserTx from '@/graphql/tx';
 import ClaimModal from '@/pages/SequencerDetail/components/ClaimModal';
 import { useNavigate } from 'react-router-dom';
+import { explorer } from '@/configs/common';
 
 const Container = styled(Modal)`
   .inside {
@@ -290,7 +291,8 @@ const MyAccount = ({
                 <div
                   className="copy flex flex-row items-center gap-6 pointer"
                   onClick={() => {
-                    jumpLink(`https://goerli.etherscan.io/address/${address}`, '_blank');
+                    if (!chainId) return;
+                    jumpLink(`${explorer[chainId]}/address/${address}`, '_blank');
                   }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">

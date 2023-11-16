@@ -22,7 +22,7 @@ import BigNumber from 'bignumber.js';
 import useAuth from '@/hooks/useAuth';
 import useAllowance from '@/hooks/useAllowance';
 import useLock from '@/hooks/useLock';
-import { isDev } from '@/configs/common';
+import { explorer, isDev } from '@/configs/common';
 import fetchBlock from '@/graphql/blocks';
 import useBalance from '@/hooks/useBalance';
 
@@ -807,7 +807,8 @@ export function Component() {
                         <td
                           className="align-center underlined pointer"
                           onClick={() => {
-                            jumpLink(`https://goerli.etherscan.io/tx/${i?.id}`, '_blank');
+                            if (!chainId) return;
+                            jumpLink(`${explorer[chainId]}/tx/${i?.id}`, '_blank');
                           }}
                         >
                           {filterHideText(i?.id, 8)}

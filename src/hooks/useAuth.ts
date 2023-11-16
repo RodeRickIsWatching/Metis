@@ -1,5 +1,7 @@
+import { defaultChain, defaultChainId } from '@/configs/common';
 import { injectedConnector} from '@/configs/wallet';
 import { useMount } from 'ahooks';
+import { useMemo } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi';
 
 const autoLogin = true;
@@ -39,8 +41,8 @@ const useAuth = (needStatus?: boolean | undefined) => {
 
   if (needStatus) {
     return {
-      chain,
-      chainId: chain?.id,
+      chain: chain || defaultChain,
+      chainId: chain?.id || defaultChainId,
       connector,
       address,
       status,

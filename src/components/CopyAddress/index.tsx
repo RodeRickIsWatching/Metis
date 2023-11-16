@@ -35,6 +35,7 @@ const CopyAddress = ({
   const { address } = useAuth(true);
 
   const copy = () => {
+    if (!(addr || address)) return;
     clipboard(addr || address as any);
     message.success('copied!');
   };
@@ -51,7 +52,7 @@ const CopyAddress = ({
         className={`copy-content ${className}`}
       >
 
-        {hide ? filterHideText(addr || (address as string), 6, 4) : addr}
+        {(addr || address) ? hide ? filterHideText(addr || (address as string), 6, 4) : addr : '-'}
       </span>
 
       {copyTrigger || <img src={getImageUrl('@/assets/images/_global/ic_copy.svg')} />}

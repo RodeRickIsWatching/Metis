@@ -90,3 +90,12 @@ export const baseGraphUrl = {
   [goerli.id.toString()]: goerliGraphUrl,
   [holesky.id.toString()]: holeskyGraphUrl,
 };
+
+export const explorer = {
+  [mainnet.id.toString()]: 'https://etherscan.io/',
+  [goerli.id.toString()]: 'https://goerli.etherscan.io/',
+  [holesky.id.toString()]: 'https://holesky.beaconcha.in/',
+}
+
+export const defaultChainId = isProd ? holesky.id.toString() : goerli.id.toString()
+export const defaultChain = isProd ? holesky : goerli
