@@ -7,9 +7,10 @@ import useChainWatcher from './useChainWatcher';
 
 const useLock = () => {
   const { connector, address } = useAuth(true);
-  const { chain } = useChainWatcher();
+  const { chain, unsupported } = useChainWatcher();
 
   const lockFor = async ({ address, amount, pubKey }: { address: string; amount: string; pubKey: string }) => {
+    if (unsupported) throw new Error('Unsupported Chain')
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
@@ -52,6 +53,7 @@ const useLock = () => {
     amount: string;
     lockRewards: boolean;
   }) => {
+    if (unsupported) throw new Error('Unsupported Chain')
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
@@ -86,6 +88,7 @@ const useLock = () => {
   };
 
   const withdrawRewards = async ({ sequencerId, withdrawToL2 }: { sequencerId: string; withdrawToL2: boolean }) => {
+    if (unsupported) throw new Error('Unsupported Chain')
     try {
       console.log('sequencerId', sequencerId);
       const signer = await connector?.getWalletClient();
@@ -122,6 +125,7 @@ const useLock = () => {
   };
 
   const unlock = async ({ sequencerId, withdrawRewardToL2 }: { sequencerId: string; withdrawRewardToL2: boolean }) => {
+    if (unsupported) throw new Error('Unsupported Chain')
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
@@ -162,6 +166,7 @@ const useLock = () => {
     sequencerId: string;
     withdrawRewardToL2: boolean;
   }) => {
+    if (unsupported) throw new Error('Unsupported Chain')
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
