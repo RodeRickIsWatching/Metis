@@ -52,7 +52,7 @@ const fetchBatchBlockTx = async (address: string) => {
 
   const timestamp = blockData?.blocks?.[0]?.timestamp;
 
-  return timestamp;
+  return {timestamp, producingBlocks: txData?.userEpochParams};
 };
 
 export default fetchBatchBlockTx;

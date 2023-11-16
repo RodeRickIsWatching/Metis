@@ -44,3 +44,9 @@ export const recoilWhitelisted = atom<boolean>({
   key: 'whitelisted',
   default: false,
 });
+
+
+export const recoilLatestBlock = atom<any>({
+  key: 'latestBlock',
+  default: null,
+});

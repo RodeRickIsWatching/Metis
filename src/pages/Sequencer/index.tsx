@@ -364,7 +364,6 @@ export function Component() {
   }, [data]);
 
   const { sequencerTotalInfo } = useUpdate();
-  console.log('sequencerTotalInfo', sequencerTotalInfo);
 
   return (
     <Container className="pages-landing flex flex-col ">

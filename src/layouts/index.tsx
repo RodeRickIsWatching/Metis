@@ -8,11 +8,20 @@ import useUpdate from '@/hooks/useUpdate';
 import useAuth from '@/hooks/useAuth';
 import useSequencerInfo from '@/hooks/useSequencerInfo';
 import SubHeader from './SubHeader';
+import useBlock from '@/hooks/useBlock';
 
 function BasicLayout() {
   const { address, chainId } = useAuth(true);
+  const {run, cancel} = useBlock()
   const { sequencerId, run: updateRun, cancel: updateCancel } = useUpdate();
   const { run: sequencerInfoRun, cancel: sequencerInfoCancel } = useSequencerInfo();
+
+  React.useEffect(()=>{
+    run()
+    return ()=>{
+      cancel()
+    }
+  }, [])
 
   React.useEffect(() => {
     updateCancel();

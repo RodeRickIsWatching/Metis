@@ -16,7 +16,7 @@ import fetchOverview from '@/graphql/overview';
 import fetchUserTx from '@/graphql/tx';
 import ClaimModal from '@/pages/SequencerDetail/components/ClaimModal';
 import { useNavigate } from 'react-router-dom';
-import { explorer } from '@/configs/common';
+import { defaultChainId, explorer, explorerName, l2explorer } from '@/configs/common';
 
 const Container = styled(Modal)`
   .inside {
@@ -312,14 +312,15 @@ const MyAccount = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <span className="fz-12 fw-400 color-8E8E8E poppins">Etherscan</span>
+                  <span className="fz-12 fw-400 color-8E8E8E poppins">{explorerName[chainId || defaultChainId]}</span>
                 </div>
 
                 {/* Andromeda-explore */}
                 <div
                   className="copy flex flex-row items-center gap-6 pointer"
                   onClick={() => {
-                    jumpLink(`https://explorer.metis.io/address/${address}`, '_blank');
+                    if(!chainId) return;
+                    jumpLink(`${l2explorer[chainId]}/address/${address}`, '_blank');
                   }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">

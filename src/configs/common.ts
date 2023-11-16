@@ -92,9 +92,21 @@ export const baseGraphUrl = {
 };
 
 export const explorer = {
-  [mainnet.id.toString()]: 'https://etherscan.io/',
-  [goerli.id.toString()]: 'https://goerli.etherscan.io/',
-  [holesky.id.toString()]: 'https://holesky.beaconcha.in/',
+  [mainnet.id.toString()]: 'https://etherscan.io',
+  [goerli.id.toString()]: 'https://goerli.etherscan.io',
+  [holesky.id.toString()]: 'https://holesky.beaconcha.in',
+}
+
+export const l2explorer = {
+  [mainnet.id.toString()]: 'https://explorer.metis.io',
+  [goerli.id.toString()]: 'https://explorer.metis.io',
+  [holesky.id.toString()]: 'https://holesky.explorer.metisdevops.link',
+}
+
+export const explorerName = {
+  [mainnet.id.toString()]: 'Etherscan',
+  [goerli.id.toString()]: 'Goerli',
+  [holesky.id.toString()]: 'Holesky',
 }
 
 export const defaultChainId = isProd ? holesky.id.toString() : goerli.id.toString()

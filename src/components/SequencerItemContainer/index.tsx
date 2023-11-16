@@ -9,6 +9,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import Loading from '../_global/Loading';
 import NumberText from '../NumberText';
 import BigNumber from 'bignumber.js';
+import useBlock from '@/hooks/useBlock';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
@@ -19,19 +20,45 @@ const SequencerStatusContainer = styled.div`
 `;
 
 const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, uptime, since, earned }: any) => {
-  const { run, loading, data } = useRequest(fetchBatchBlockTx, { manual: true });
+  const { run, loading, data, cancel } = useRequest(fetchBatchBlockTx, { manual: true, pollingInterval: 20000 });
+  const { block } = useBlock();
 
   useEffect(() => {
     if (ele?.user) {
-      run(ele?.user);
+      cancel();
+      console.log('run');
+      run(ele?.user?.toLowerCase());
+      return () => {
+        cancel();
+      };
     }
   }, [ele?.user]);
 
   const fromNow = useMemo(() => {
-    if (!data) return '-';
-    const _duration = data - +dayjs().unix();
+    if (!data?.timestamp) return '-';
+    const _duration = data?.timestamp - +dayjs().unix();
     return dayjs.duration(_duration, 's').humanize(true);
-  }, [data]);
+  }, [data?.timestamp]);
+
+
+  // 出块情况
+  // block - 当前区块高度和时间
+  // data?.producingBlocks - 最近5轮被轮到出块的高度配置
+  // 若当前高度 在开区间配置内 则判断出块时间距今时间>60s 则有返回warning
+  const producingStatus = useMemo(() => {
+    if (!block?.timestamp) return { label: 'Unknown', color: 'B3B3B3' };
+    const targetConfig = data?.producingBlocks.find(i => {
+      return BigNumber(i.endBlock).gt(block?.number) && BigNumber(i.startBlock).lt(block?.number);
+    });
+
+    if (targetConfig) {
+      const duration = BigNumber(dayjs().unix()).minus(block?.timestamp);
+      if (duration.gte(60)) {
+        return { label: 'Lag', color: 'E9B261' };
+      }
+    }
+    return { label: 'Healthy', color: '00EA5E' };
+  }, [block?.number, block?.timestamp, data?.producingBlocks]);
 
   const status = useMemo(() => {
     if (ele?.ifInUnlockProgress) {
@@ -40,12 +67,15 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
     if (!ele?.ifInUnlockProgress && !ele?.ifActive) {
       return { label: 'Exited', color: 'B3B3B3' };
     }
-    return { label: 'Healthy', color: '00EA5E' };
-  }, [ele?.ifActive, ele?.ifInUnlockProgress]);
+    return producingStatus;
+  }, [ele?.ifActive, ele?.ifInUnlockProgress, producingStatus]);
 
-  const totlaEarned = useMemo(()=>{
-    return BigNumber(ele?.rewardReadable).plus(BigNumber(ele?.claimAmount).div(1e18)).toString()
-  }, [ele?.claimAmount, ele?.rewardReadable])
+  const totlaEarned = useMemo(() => {
+    return BigNumber(ele?.rewardReadable).plus(BigNumber(ele?.claimAmount).div(1e18)).toString();
+  }, [ele?.claimAmount, ele?.rewardReadable]);
+
+  console.log(block, data?.producingBlocks);
+
 
   return (
     <SequencerStatusContainer
