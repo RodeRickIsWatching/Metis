@@ -270,17 +270,17 @@ export function Component() {
       url: website,
       // media,
     };
-    try {
-      const res = await createUser(params);
-      console.log('res', res)
-    } catch (e) {
-      console.log('e', e);
-    }
+    // try {
+    //   const res = await createUser(params);
+    //   console.log('res', res)
+    // } catch (e) {
+    //   console.log('e', e);
+    // }
 
-    console.log(params);
+    // console.log(params);
 
 
-    // handleIndex('3')
+    handleIndex('3')
   };
 
   const validStep2 = React.useMemo(() => name && website && account && (pubKey), [
