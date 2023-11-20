@@ -53,27 +53,73 @@ export const createUser = ({
   url: string;
   media?: string;
 }) => {
-  return _axios.post('/createvals', {
-    data: {
-      name,
-      avatar,
-      desc,
-      address,
-      pubKey,
-      url,
-      media,
-    },
+  if (!address) return;
+  return _axios.post('/createval', {
+    name,
+    avatar,
+    desc,
+    address,
+    pubKey,
+    url,
+    media,
   });
 };
 
-export const getAllUser = () => {
-  return _axios.get('/getvals');
+
+
+export const updateUser = ({
+  id,
+  name,
+  avatar,
+  desc,
+  address,
+  pubKey,
+  url,
+  media,
+}: {
+  id: string;
+  name: string;
+  avatar: string;
+  desc?: string;
+  address: string;
+  pubKey: string;
+  url: string;
+  media?: string;
+}) => {
+  if (!address || !id) return;
+  return _axios.patch(`/updateval/${id}`, {
+    name,
+    avatar,
+    desc,
+    address,
+    pubKey,
+    url,
+    media,
+  });
+};
+
+
+export const getAllUser = async () => {
+  try {
+    const res: any = await _axios.get('/getvals');
+
+    if (!res?.length) return null;
+    const resolvedResult = res
+      ?.filter((i: { address: any; }) => i.address)
+      .reduce((prev: any, next: { address: string; }) => {
+        return { ...prev, [next?.address?.toLowerCase()]: next };
+      }, {});
+
+    return resolvedResult;
+  } catch (e) {
+    throw new Error('Server Error');
+  }
 };
 
 export const getUser = ({ address }: { address: string }) => {
-  return _axios.get('/vals', {
+  return _axios.get('/getval', {
     params: {
-      address,
+      id: address,
     },
   });
 };

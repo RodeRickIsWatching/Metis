@@ -25,6 +25,7 @@ import useLock from '@/hooks/useLock';
 import { explorer, isDev } from '@/configs/common';
 import fetchBlock from '@/graphql/blocks';
 import useBalance from '@/hooks/useBalance';
+import { getUser } from '@/services';
 
 const testMode = true;
 
@@ -277,10 +278,16 @@ const blocksPageSize = 10;
 export function Component() {
   const { id } = useParams();
   const { address, chainId } = useAuth(true);
-
   const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
 
-  const { run, cancel, data: sequencerInfoList, getSequencerId } = useSequencerInfo();
+  const { allSequencerInfo, run, cancel, data: sequencerInfoList, getSequencerId } = useSequencerInfo();
+
+
+  const currentSequencerInfo = React.useMemo(() => {
+    if (!allSequencerInfo || !id) return null;
+    return allSequencerInfo?.[id?.toLowerCase()];
+  }, [allSequencerInfo, id]);
+
 
   const sequencerInfo = sequencerInfoList?.[0];
 
@@ -488,14 +495,27 @@ export function Component() {
       <div className="position-relative z-1 content flex flex-col items-center ">
         <div className="pt-55 pb-20 gap-70 flex flex-col w-full">
           <div className="flex flex-row gap-32 items-center">
-            <div className="avatar mb-24 s-150" />
+            {
+              currentSequencerInfo?.avatar ? (
+                <div className="flex flex-row items-center justify-center mb-24" >
+                  <img className="s-150 radiusp-50" src={currentSequencerInfo?.avatar} />
+                </div>
+              ) : (<div className="avatar mb-24 s-150" />)
+            }
+
             <div className="flex flex-col gap-12 color-fff">
               <div className="flex flex-col gap-4">
-                <div className="fz-36 fw-500 ">-</div>
-                <div className="fz-16 fw-400 inter maxw-470" />
+                <div className="fz-36 fw-500 ">{currentSequencerInfo?.name || '-'}</div>
+                <div className="fz-16 fw-400 inter maxw-470" >{currentSequencerInfo?.desc || '-'}</div>
               </div>
               <div>
-                <span className="fz-18 fw-400 " />
+                <span
+                  className="fz-18 fw-400 pointer underlined"
+                  onClick={() => {
+                  if (!currentSequencerInfo?.url) return;
+                  jumpLink(currentSequencerInfo?.url, '_blank');
+                }}
+                >{currentSequencerInfo?.url}</span>
               </div>
             </div>
           </div>
@@ -503,11 +523,11 @@ export function Component() {
           <div className="status-overview flex flex-row justify-center gap-10 color-fff">
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Owner</div>
-              <CopyAddress className={'flex-1 fz-16 fw-400 inter color-fff'} />
+              <CopyAddress addr={id} className={'flex-1 fz-16 fw-400 inter color-fff'} />
             </div>
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Signer</div>
-              <CopyAddress className={'flex-1 fz-16 fw-400 inter color-fff'} />
+              <CopyAddress addr={id} className={'flex-1 fz-16 fw-400 inter color-fff'} />
             </div>
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Blocks Signed</div>
@@ -720,7 +740,7 @@ export function Component() {
                       <div className="color-848484 fz-20 fw-500" />
                     </div>
                     <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
-                      <Button type="metis" className='h-26' disabled={!relockAmount} loading={approveLoading} onClick={handleRelock}>
+                      <Button type="metis" className="h-26" disabled={!relockAmount} loading={approveLoading} onClick={handleRelock}>
                         {needApprove ? <span>Approve</span> : <span>Confirm</span>}
                       </Button>
                     </div>

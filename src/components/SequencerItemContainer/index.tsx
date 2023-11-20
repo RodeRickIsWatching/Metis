@@ -74,9 +74,6 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
     return BigNumber(ele?.rewardReadable).plus(BigNumber(ele?.claimAmount).div(1e18)).toString();
   }, [ele?.claimAmount, ele?.rewardReadable]);
 
-  console.log(block, data?.producingBlocks);
-
-
   return (
     <SequencerStatusContainer
       onClick={onClick}
@@ -107,8 +104,11 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
       </div>
 
       <div className="flex flex-col gap-5">
-        <div className={'avatar s-90 radiusp-50'}>{avatar ? <img src={avatar} /> : null}</div>
-        <div className="align-center fz-20 fw-700 poppins">{title}</div>
+
+        {ele?.infos?.avatar ? <div className="flex flex-row items-center justify-center"><img className="s-90 radiusp-50" src={ele?.infos?.avatar} /></div> : <div className={'avatar s-90 radiusp-50'} />}
+
+        <div className="align-center fz-20 fw-700 poppins">{ele?.infos?.name || '-'}</div>
+        {/* {ele?.infos?.desc ? <div className="align-center fz-20 fw-700 poppins">{ele?.infos?.desc || '-'}</div> : null} */}
       </div>
       <div className="flex flex-col w-full gap-4">
         <div className="flex flex-col gap-4">

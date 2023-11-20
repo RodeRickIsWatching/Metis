@@ -337,7 +337,7 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
   const { address, chainId } = useAuth(true);
   const { run, data } = useRequest(fetchOverview, { manual: true });
   const { sequencerTotalInfo, liquidateReward } = useUpdate();
-  const { runOnce } = useSequencerInfo();
+  const { runOnce, allSequencerInfo } = useSequencerInfo();
   const [checkLoading, { setTrue: checkLoadingTrue, setFalse: checkLoadingFalse }] = useBoolean(false);
   const [ifWhiteListed, setIfWhiteListed] = useState<boolean>(false);
   const [isSequencer, setSequencer] = useState<boolean>(false);
@@ -452,8 +452,15 @@ const filteredFetchBatchSequencerInfoData = useMemo(
       if (filterBy === 'healthy') {
         return !i.ifInUnlockProgress && i.ifActive;
       }
+    })?.map(i=>{
+      return {
+        ...i,
+        infos: {
+          ...allSequencerInfo?.[i?.user?.toLowerCase()],
+        }
+      }
     }),
-  [fetchBatchSequencerInfoData, filterBy],
+  [fetchBatchSequencerInfoData, allSequencerInfo, filterBy],
 );
 
 const totalReward = useMemo(() => {
@@ -468,6 +475,9 @@ useEffect(() => {
   if (!sequencerCards?.length) return;
   fetchBatchSequencerInfoRun();
 }, [sequencerCards, chainId]);
+
+
+
 
 return (
   <>

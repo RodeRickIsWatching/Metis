@@ -50,3 +50,9 @@ export const recoilLatestBlock = atom<any>({
   key: 'latestBlock',
   default: null,
 });
+
+
+export const recoilAllSequencerInfo = atom<any>({
+  key: 'allSequencerInfo',
+  default: null,
+});

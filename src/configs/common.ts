@@ -79,7 +79,7 @@ export const defaultPubKeyList = [
 ];
 
 
-export const serviceUrl = 'https://holesky-blockstore.rpc.metisdevops.link';
+export const serviceUrl = 'https://holesky-sequencer.metisdevops.link/v1';
 export const mainnetGraphUrl = '';
 export const holeskyGraphUrl = 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking';
 export const goerliGraphUrl = 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking';

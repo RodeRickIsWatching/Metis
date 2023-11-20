@@ -14,10 +14,11 @@ function BasicLayout() {
   const { address, chainId } = useAuth(true);
   const {run, cancel} = useBlock()
   const { sequencerId, run: updateRun, cancel: updateCancel } = useUpdate();
-  const { run: sequencerInfoRun, cancel: sequencerInfoCancel } = useSequencerInfo();
+  const { run: sequencerInfoRun, cancel: sequencerInfoCancel, getAllUserRun } = useSequencerInfo();
 
   React.useEffect(()=>{
     run()
+    getAllUserRun()
     return ()=>{
       cancel()
     }

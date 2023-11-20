@@ -3,12 +3,23 @@ import { lockContract, basicChainId } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import { multicall, readContract } from '@wagmi/core';
 import { useRecoilState } from 'recoil';
-import { recoilSequencerInfo } from '@/models';
+import { recoilAllSequencerInfo, recoilSequencerInfo } from '@/models';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { getAllUser } from '@/services';
+import React from 'react';
 
 const useSequencerInfo = () => {
   const [sequencerInfo, setSequencerInfo] = useRecoilState(recoilSequencerInfo);
+  const [allSequencerInfo, setAllSequencerInfo] = useRecoilState(recoilAllSequencerInfo);
+
+  const { data: getAllUserData, run: getAllUserRun } = useRequest(getAllUser, { manual: true });
+
+  React.useEffect(() => {
+    if (getAllUserData) {
+      setAllSequencerInfo(getAllUserData);
+    }
+  }, [getAllUserData]);
 
   const getSequencerId = async (address?: string) => {
     if (!address) return;
@@ -32,7 +43,9 @@ const useSequencerInfo = () => {
       if (Array.isArray(i?.result)) {
         let flattedData: any = {};
 
-        const abiOutput = multicallFuntions[index].abi?.find((k) => multicallFuntions[index].functionName === k.name)?.outputs;
+        const abiOutput = multicallFuntions[index].abi?.find(
+          (k) => multicallFuntions[index].functionName === k.name,
+        )?.outputs;
         abiOutput.forEach((j: { name: string | number }, jndex: string | number) => {
           flattedData[j?.name] = i?.result?.[jndex]?.toString();
         });
@@ -49,7 +62,6 @@ const useSequencerInfo = () => {
     // const reward = BigNumber(result?.sequencers?.reward || '0').minus(1)?.toString();
     const reward = result?.sequencerReward.toString();
     const rewardReadable = ethers.utils.formatEther(reward || '0').toString();
-
 
     const ifActive = BigNumber(status).eq(1) && BigNumber(result?.sequencers?.deactivationBatch?.toString()).isZero();
     const ifInUnlockProgress = !BigNumber(unlockClaimTime).isZero();
@@ -85,9 +97,9 @@ const useSequencerInfo = () => {
     } = props;
 
     if (!sequencerId && !sequencerIds?.length) {
-      setSequencerInfo(null)
-      return
-    };
+      setSequencerInfo(null);
+      return;
+    }
     const s = sequencerIds || [sequencerId];
     const multiP: any[] = s.reduce((prev: any, next: any) => {
       const n = [
@@ -117,7 +129,6 @@ const useSequencerInfo = () => {
       contracts: multiP,
     });
 
-
     const listedData = s.map((i, index) => {
       return res?.slice(index * 3, index * 3 + 3);
     });
@@ -133,13 +144,12 @@ const useSequencerInfo = () => {
     return finalRes;
   };
 
-
   const props = useRequest(intervalUpdate, {
     manual: true,
     pollingInterval: 5000,
   });
 
-  return { getSequencerId, runOnce: intervalUpdate, sequencerInfo, ...props };
+  return { getAllUserRun, allSequencerInfo, getSequencerId, runOnce: intervalUpdate, sequencerInfo, ...props };
 };
 
 export default useSequencerInfo;
