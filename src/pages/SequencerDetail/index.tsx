@@ -26,8 +26,16 @@ import { explorer, isDev } from '@/configs/common';
 import fetchBlock from '@/graphql/blocks';
 import useBalance from '@/hooks/useBalance';
 import { getUser } from '@/services';
+import useBlock from '@/hooks/useBlock';
+import useMetisPrice from '@/hooks/useMetisPrice';
 
 const testMode = true;
+
+const getSignedStatus = ({ start, end, current }: {start: string | number; end: string | number; current: string | number}) => {
+  if (BigNumber(current).gte(end)) return 'Success';
+  if (BigNumber(current).lt(end) && BigNumber(current).gte(start)) return 'In Progress';
+  return 'Pending';
+};
 
 const Container = styled.section`
   .half-w {
@@ -307,11 +315,11 @@ export function Component() {
 
   const curUserActiveSequencerId = React.useMemo(
     () =>
-      (fetchUserTxData?.origin?.lockedParams?.length
-        ? Array.from(
-          new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
-        )?.[0]
-        : undefined),
+    (fetchUserTxData?.origin?.lockedParams?.length
+      ? Array.from(
+        new Set(fetchUserTxData?.origin?.lockedParams?.map((i: { sequencerId: any }) => i.sequencerId)),
+      )?.[0]
+      : undefined),
     [fetchUserTxData?.origin?.lockedParams],
   );
 
@@ -489,6 +497,43 @@ export function Component() {
     return BigNumber(totalRewards).div(days).div(lockedup).multipliedBy(365).multipliedBy(100).toFixed(2, BigNumber.ROUND_CEIL);
   }, [joinedDuration, lockedup, totalRewards]);
 
+
+  const { block } = useBlock();
+  const currentBlockNumber = block?.number;
+
+  // 总的出块数量
+  const totalBlocks = React.useMemo(() => {
+    return blocksCol?.reduce((prev: any, next: any) => {
+      const curBlockRang = BigNumber(next?.endBlock).minus(next?.startBlock).plus(1);
+      return BigNumber(prev).plus(curBlockRang).toString();
+    }, 0);
+  }, [blocksCol]);
+
+  // 已经出块数量
+  const currentSigned = React.useMemo(() => {
+    const hasProduced = blocksCol?.filter(i => {
+      if (BigNumber(i?.endBlock).lte(currentBlockNumber)) return true;
+    })?.reduce((prev: any, next: any) => {
+      const curBlockRang = BigNumber(next?.endBlock).minus(next?.startBlock).plus(1);
+      return BigNumber(prev).plus(curBlockRang).toString();
+    }, 0);
+
+    const inprogress = blocksCol?.filter(i => {
+      if (BigNumber(i.startBlock).lt(currentBlockNumber) && BigNumber(i.endBlock).gt(currentBlockNumber)) return true;
+    })?.reduce((prev: any, next: any) => {
+      const curBlockRang = BigNumber(currentBlockNumber).minus(next?.startBlock).plus(1);
+      return BigNumber(prev).plus(curBlockRang).toString();
+    }, 0);
+
+    return BigNumber(inprogress).plus(hasProduced).toString();
+  }, [blocksCol, currentBlockNumber]);
+
+  const signedPercent = React.useMemo(() => BigNumber(currentSigned).div(totalBlocks).multipliedBy(100).toFixed(0, BigNumber.ROUND_DOWN), [currentSigned, totalBlocks]);
+
+  const { metisPrice } = useMetisPrice();
+
+  const unclaimedUsdValue = React.useMemo(() => BigNumber(metisPrice || '0').multipliedBy(unclaimed).toString(), [metisPrice, unclaimed]);
+
   return (
     <Container className="pages-landing flex flex-col ">
       <div className="banner h-410" />
@@ -512,9 +557,9 @@ export function Component() {
                 <span
                   className="fz-18 fw-400 pointer underlined"
                   onClick={() => {
-                  if (!currentSequencerInfo?.url) return;
-                  jumpLink(currentSequencerInfo?.url, '_blank');
-                }}
+                    if (!currentSequencerInfo?.url) return;
+                    jumpLink(currentSequencerInfo?.url, '_blank');
+                  }}
                 >{currentSequencerInfo?.url}</span>
               </div>
             </div>
@@ -532,7 +577,7 @@ export function Component() {
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Blocks Signed</div>
               <div className="flex flex-col gap-4">
-                <div className="fz-12 fw-700 color-fff inter align-right">100%</div>
+                <div className="fz-12 fw-700 color-fff inter align-right">{signedPercent || '-'}%</div>
                 <div
                   className="progress w-full h-2 radius-50"
                   style={{
@@ -693,9 +738,9 @@ export function Component() {
                         Claim
                       </Button>
                     </div>
-                    {/* <span className="color-848484 fz-14 fw-400 inter">
-                      1,400 USD
-                    </span> */}
+                    <span className="color-848484 fz-14 fw-400 inter">
+                      {unclaimedUsdValue} USD
+                    </span>
                   </div>
                 </div>
               </div>
@@ -727,10 +772,10 @@ export function Component() {
                   {/* apr */}
                   <div className="flex-2 flex flex-col gap-12">
                     <div className="flex flex-row items-center gap-6">
-                      <div className="color-848484 fz-20 fw-500">Expected APR</div>
+                      <div className="color-848484 fz-20 fw-500">Expected Rewards</div>
                     </div>
                     <div className="fz-26 color-000 fw-500 flex flex-row items-center gap-8">
-                      <span>-</span>
+                      <span>{BigNumber(relockAmount || '0').multipliedBy(0.2).toString()}</span>
                       <img src={getImageUrl('@/assets/images/token/metis.svg')} />
                     </div>
                   </div>
@@ -775,8 +820,10 @@ export function Component() {
                         {i?.startBlock} - {i?.endBlock}
                       </td>
                       <td>
-                        <div style={{ width: 'fit-content' }} className="pl-10 pr-10 radius-5 bg-color-00DACC33">
-                          <span className={true ? 'success-color' : 'danger-color'}>{true ? 'Success' : 'Failed'}</span>
+                        <div style={{ width: 'fit-content' }} className={`pl-10 pr-10 radius-5 ${(getSignedStatus({ start: i?.startBlock, end: i?.endBlock, current: currentBlockNumber }) === 'Success') ? 'bg-color-00DACC33' : 'bg-color-E9B26133'}`}>
+                          <span className={(getSignedStatus({ start: i?.startBlock, end: i?.endBlock, current: currentBlockNumber }) === 'Success') ? 'success-color' : 'pending-color'}>
+                            {getSignedStatus({ start: i?.startBlock, end: i?.endBlock, current: currentBlockNumber })}
+                          </span>
                         </div>
                       </td>
                       <td>
@@ -834,7 +881,7 @@ export function Component() {
                           {filterHideText(i?.id, 8)}
                         </td>
                         <td>{filterHideText(i?.user, 6, 4)}</td>
-                        <td>{i?.type}</td>
+                        <td><span className="capitalized">{i?.type}</span></td>
                         <td>
                           {i?.deltaAmountReadable || i?.amountReadable} {i?.symbol}
                         </td>

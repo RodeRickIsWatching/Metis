@@ -56,3 +56,9 @@ export const recoilAllSequencerInfo = atom<any>({
   key: 'allSequencerInfo',
   default: null,
 });
+
+
+export const recoilMetisPrice = atom<string | number | undefined>({
+  key: 'metisPrice',
+  default: undefined,
+});

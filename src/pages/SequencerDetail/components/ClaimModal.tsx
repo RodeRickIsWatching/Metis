@@ -100,6 +100,7 @@ const ClaimModal = ({
         withdrawToL2: false,
       });
       setFalse();
+      onClose?.()
       // message.success('Success');
     } catch (e) {
       setFalse();
@@ -120,7 +121,7 @@ const ClaimModal = ({
         <div className="flex flex-col p-24 gap-12 items-center  radius-8">
           <span className="f-14">Unclaimed</span>
           <span className="f-20-bold">
-            {sequencerInfo?.rewardReadable} metis
+            {sequencerInfo?.rewardReadable} METIS
           </span>
         </div>
 

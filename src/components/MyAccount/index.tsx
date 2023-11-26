@@ -254,36 +254,40 @@ const MyAccount = ({
                 {/* copy */}
                 <CopyAddress
                   hide={false}
-                  addr="Copy Address"
+                  // addr="Copy Address"
                   className={'fz-12 fw-400 color-8E8E8E poppins'}
                   reverse
                   copyTrigger={
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <g clipPath="url(#clip0_674_1240)">
-                        <path
-                          d="M11.0171 5.60962H6.22186C5.63334 5.60962 5.15625 6.08671 5.15625 6.67523V11.4705C5.15625 12.059 5.63334 12.5361 6.22186 12.5361H11.0171C11.6056 12.5361 12.0827 12.059 12.0827 11.4705V6.67523C12.0827 6.08671 11.6056 5.60962 11.0171 5.60962Z"
-                          stroke="#8E8E8E"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3.02517 8.8066H2.49237C2.20975 8.8066 1.93871 8.69433 1.73887 8.49449C1.53903 8.29465 1.42676 8.0236 1.42676 7.74099V2.94574C1.42676 2.66312 1.53903 2.39208 1.73887 2.19224C1.93871 1.9924 2.20975 1.88013 2.49237 1.88013H7.28762C7.57024 1.88013 7.84128 1.9924 8.04112 2.19224C8.24096 2.39208 8.35323 2.66312 8.35323 2.94574V3.47854"
-                          stroke="#8E8E8E"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_674_1240">
-                          <rect
-                            width="12.7873"
-                            height="12.7873"
-                            fill="white"
-                            transform="translate(0.361328 0.814453)"
+                    <div className="flex flex-row gap-6 items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <g clipPath="url(#clip0_674_1240)">
+                          <path
+                            d="M11.0171 5.60962H6.22186C5.63334 5.60962 5.15625 6.08671 5.15625 6.67523V11.4705C5.15625 12.059 5.63334 12.5361 6.22186 12.5361H11.0171C11.6056 12.5361 12.0827 12.059 12.0827 11.4705V6.67523C12.0827 6.08671 11.6056 5.60962 11.0171 5.60962Z"
+                            stroke="#8E8E8E"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
-                        </clipPath>
-                      </defs>
-                    </svg>
+                          <path
+                            d="M3.02517 8.8066H2.49237C2.20975 8.8066 1.93871 8.69433 1.73887 8.49449C1.53903 8.29465 1.42676 8.0236 1.42676 7.74099V2.94574C1.42676 2.66312 1.53903 2.39208 1.73887 2.19224C1.93871 1.9924 2.20975 1.88013 2.49237 1.88013H7.28762C7.57024 1.88013 7.84128 1.9924 8.04112 2.19224C8.24096 2.39208 8.35323 2.66312 8.35323 2.94574V3.47854"
+                            stroke="#8E8E8E"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_674_1240">
+                            <rect
+                              width="12.7873"
+                              height="12.7873"
+                              fill="white"
+                              transform="translate(0.361328 0.814453)"
+                            />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                      <span className="fz-12 fw-400 color-8E8E8E poppins">Copy Address</span>
+                    </div>
+
                   }
                 />
 
@@ -319,7 +323,7 @@ const MyAccount = ({
                 <div
                   className="copy flex flex-row items-center gap-6 pointer"
                   onClick={() => {
-                    if(!chainId) return;
+                    if (!chainId) return;
                     jumpLink(`${l2explorer[chainId]}/address/${address}`, '_blank');
                   }}
                 >

@@ -150,7 +150,7 @@ const Footer = () => {
   return (
     <Container className="bg-color-000 flex flex-row justify-between">
       <div className="l flex flex-col gap-45">
-        <img src={getImageUrl('@/assets/images/_global/metis_logo_light.svg')} />
+        <img className="pointer" onClick={() => { jumpLink('https://www.metis.io/', '_blank'); }} src={getImageUrl('@/assets/images/_global/metis_logo_light.svg')} />
 
         <div className="links flex flex-row items-start gap-120 justify-between">
           <div className="flex flex-col gap-12">

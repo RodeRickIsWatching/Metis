@@ -146,14 +146,13 @@ const UnlockModal = ({
             <div className="f-16-bold">Unlock</div>
             <div className="flex flex-col gap-12 items-center">
               <span className="f-12 align-center">
-                Please note, if the funds you lock up fall below 20,000 tokens,
-                you will forfeit your qualification as a Sequencer.
+                Please note, if you unlock your funds you will no longer be a Sequencer.
               </span>
               <span
                 className="f-12"
                 style={{ color: 'rgba(255, 104, 104, 1)' }}
               >
-                *The withdrawal period requires 21 days.
+                *You will get no rewards during the unlock period. Unlock period is 21 days.
               </span>
             </div>
           </div>
@@ -177,7 +176,7 @@ const UnlockModal = ({
         <div className="c flex flex-col gap-24">
           <div className="flex flex-col p-24 gap-12 items-center bg-dark radius-8">
             <span className="f-14">Your Metis locked</span>
-            <span className="f-14-bold">{lockedup} metis</span>
+            <span className="f-14-bold">{lockedup} METIS</span>
           </div>
           <div className="flex flex-row items-center gap-20">
             {/* <Input

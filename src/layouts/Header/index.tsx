@@ -53,7 +53,7 @@ const Header = () => {
   return (
     <Container className="flex flex-row items-center justify-between">
       <span>
-        <img src={getImageUrl('@/assets/images/_global/metis_logo_dark.svg')} />
+        <img className="pointer" onClick={() => { jumpLink('https://www.metis.io/', '_blank'); }} src={getImageUrl('@/assets/images/_global/metis_logo_dark.svg')} />
       </span>
 
       <div className="flex flex-row gap-20 items-center">

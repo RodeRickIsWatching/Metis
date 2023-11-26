@@ -44,7 +44,6 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'Poppins';
 }
 
 html {
@@ -52,6 +51,9 @@ html {
   body{
     margin: 0;
     padding: 0;
+    *{
+      font-family: 'Poppins-Regular';
+    }
   }
 }
 
@@ -190,6 +192,10 @@ a {
   padding: 8px 0;
 }
 
+.capitalized{
+  text-transform: capitalize;
+}
+
 .underlined {
   text-decoration: underline;
 }
@@ -219,6 +225,10 @@ a {
 
 .st238 {
   fill: none;
+}
+
+.pending-color {
+  color: rgba(234, 179, 98, 1)
 }
 
 .success-color {

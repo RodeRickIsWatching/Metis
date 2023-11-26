@@ -120,7 +120,7 @@ const WithdrawModal = ({
         >
           <span className="f-14-bold">{lockedup} metis</span>
           {+sequencerInfo?.unlockClaimTime ? (
-            <span className="">Unlock Until: {unlockTo}</span>
+            <span className="align-center">Locked METIS will be available after: <br/>{unlockTo}</span>
           ) : null}
         </div>
         <div className="flex flex-row items-center gap-20">
@@ -131,7 +131,7 @@ const WithdrawModal = ({
             className="flex-1"
             onClick={handleWithdraw}
           >
-            <div className='flex items-center justify-center'>
+            <div className="flex items-center justify-center">
               {withdrawLoading ? <Loading color="#fff" /> : 'Confirm'}
             </div>
           </Button>
