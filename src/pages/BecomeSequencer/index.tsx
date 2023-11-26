@@ -389,7 +389,7 @@ export function Component() {
                 className="fz-18 fw-700 color-fff underlined"
                 href="mailto:sequencer@metis.io"
                 target="_blank"
-              >E-mail</a>
+              >sequencer@metis.io</a>
               {/* <a
                 className="fz-18 fw-700 color-fff underlined"
                 href=""
