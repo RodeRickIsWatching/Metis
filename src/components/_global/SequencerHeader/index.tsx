@@ -345,9 +345,9 @@ const SequencerHeader = ({ filterBy = 'all' }: { filterBy: string }) => {
 
   useEffect(() => {
     if (chainId) {
-      run(chainId)
+      run(chainId);
   }
-  }, [chainId])
+  }, [chainId]);
 
 const jumpSequencer = (id: string) => {
   navigate(`/sequencers/${id}`);
@@ -412,7 +412,7 @@ const sequencerCards = React.useMemo(() => {
 }, [data]);
 
 const fetchBatchSequencerInfo = async () => {
-  if (!sequencerCards?.length) return undefined
+  if (!sequencerCards?.length) return undefined;
   const ids = Array.from(new Set(sequencerCards?.map((i) => i?.sequencerId)));
   const batchInfo = await runOnce({
     sequencerIds: ids,
@@ -430,7 +430,7 @@ const {
   run: fetchBatchSequencerInfoRun,
   data: fetchBatchSequencerInfoData,
   loading: fetchBatchSequencerInfoLoading,
-  error: fetchBatchSequencerInfoError
+  error: fetchBatchSequencerInfoError,
 } = useRequest(fetchBatchSequencerInfo, { manual: true });
 
 // const status = useMemo(() => {
@@ -452,13 +452,13 @@ const filteredFetchBatchSequencerInfoData = useMemo(
       if (filterBy === 'healthy') {
         return !i.ifInUnlockProgress && i.ifActive;
       }
-    })?.map(i=>{
+    })?.map(i => {
       return {
         ...i,
         infos: {
           ...allSequencerInfo?.[i?.user?.toLowerCase()],
-        }
-      }
+        },
+      };
     }),
   [fetchBatchSequencerInfoData, allSequencerInfo, filterBy],
 );
@@ -477,8 +477,6 @@ useEffect(() => {
 }, [sequencerCards, chainId]);
 
 
-
-
 return (
   <>
     <Container>
@@ -492,14 +490,20 @@ return (
                 <span className="fz-72 fw-700 raleway color-fff">Sequencer Mining</span>
               </div>
               <div className="lh-120 maxw-500 fz-20 fw-500 raleway color-fff">
-                Secure the Metis network and earn staking rewards. An exclusive opportunity for qualified operators.
+                Secure the Metis network and earn mining rewards. An exclusive opportunity for qualified operators.
               </div>
             </div>
             <div className="flex flex-row items-center gap-12">
               <Button loading={checkLoading} onClick={checkWhiteList} type="dark" className="radius-50 h-53 w-250">
                 <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Become a Sequencer</div>
               </Button>
-              <Button onClick={() => { }} type="light" className="radius-50">
+              <Button
+                onClick={() => {
+                jumpLink('https://github.com/Rodney1998/mvm-testnet-sequencer-node', '_blank');
+               }}
+                type="light"
+                className="radius-50"
+              >
                 <div className="pt-15 pb-15 pl-30 pr-30 fz-18 fw-500 raleway">Read Docs</div>
               </Button>
             </div>

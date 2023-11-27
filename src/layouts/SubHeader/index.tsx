@@ -50,7 +50,7 @@ const rightNav = [
   // },
   {
     label: 'Support',
-    link: '',
+    link: 'mailto:sequencer@metis.io',
   },
 ];
 

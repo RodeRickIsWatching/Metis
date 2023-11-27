@@ -31,7 +31,20 @@ import useMetisPrice from '@/hooks/useMetisPrice';
 
 const testMode = true;
 
-const getSignedStatus = ({ start, end, current }: {start: string | number; end: string | number; current: string | number}) => {
+const switchTxType = (type: string) => {
+  switch (type) {
+    case 'locked':
+      return 'Lockup';
+    case 'claimRewards':
+      return 'Claim';
+    case 'relocked':
+      return 'Add';
+    case 'unlockInit':
+      return 'Unlock';
+  }
+};
+
+const getSignedStatus = ({ start, end, current }: { start: string | number; end: string | number; current: string | number }) => {
   if (BigNumber(current).gte(end)) return 'Success';
   if (BigNumber(current).lt(end) && BigNumber(current).gte(start)) return 'In Progress';
   return 'Pending';
@@ -881,7 +894,7 @@ export function Component() {
                           {filterHideText(i?.id, 8)}
                         </td>
                         <td>{filterHideText(i?.user, 6, 4)}</td>
-                        <td><span className="capitalized">{i?.type}</span></td>
+                        <td><span className="capitalized">{switchTxType(i?.type)}</span></td>
                         <td>
                           {i?.deltaAmountReadable || i?.amountReadable} {i?.symbol}
                         </td>
