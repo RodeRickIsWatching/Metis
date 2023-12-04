@@ -166,7 +166,7 @@ const useUpdate = () => {
     setSequencerTotalInfo({
       currentSequencerSetSize: result?.currentSequencerSetSize,
       currentSequencerSetTotalLock: result?.currentSequencerSetTotalLock,
-      currentSequencerSetTotalLockReadable: ethers.utils.formatEther(result?.currentSequencerSetTotalLock).toString(),
+      currentSequencerSetTotalLockReadable: result?.currentSequencerSetTotalLock ? ethers.utils.formatEther(result?.currentSequencerSetTotalLock).toString() : undefined,
     });
 
     return result;
