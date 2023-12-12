@@ -326,6 +326,15 @@ export function Component() {
     setAvatar(f);
   };
 
+  const handlePubKey = (v: string) => {
+    if (v?.startsWith('0x04')) {
+      setPubKey(v?.replace('0x04', '0x'));
+      return;
+    }
+
+    setPubKey(v);
+  };
+
   const step = React.useMemo(() => {
     switch (activeIndex) {
       case '1':
@@ -525,7 +534,7 @@ export function Component() {
                     <div className="fz-14 fw-400 color-fff inter">Public Key</div>
                     <Input
                       value={pubKey}
-                      onChange={setPubKey}
+                      onChange={handlePubKey}
                       solidLight
                       className="flex-3  fz-22 fw-400 color-000"
                       suffix={isDev ? <Button onClick={handleSignAndRecover}>Sign Test</Button> : null}
