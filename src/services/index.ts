@@ -44,6 +44,7 @@ export const createUser = ({
   pubKey,
   url,
   media,
+  walletAddress,
 }: {
   name: string;
   avatar: string;
@@ -52,6 +53,7 @@ export const createUser = ({
   pubKey: string;
   url: string;
   media?: string;
+  walletAddress?: string;
 }) => {
   if (!address) return;
   return _axios.post('/createval', {
@@ -62,6 +64,7 @@ export const createUser = ({
     pubKey,
     url,
     media,
+    walletAddress
   });
 };
 
@@ -76,6 +79,7 @@ export const updateUser = ({
   pubKey,
   url,
   media,
+  walletAddress,
 }: {
   id: string;
   name: string;
@@ -85,6 +89,7 @@ export const updateUser = ({
   pubKey: string;
   url: string;
   media?: string;
+  walletAddress?: string;
 }) => {
   if (!address || !id) return;
   return _axios.patch(`/updateval/${id}`, {
@@ -95,6 +100,7 @@ export const updateUser = ({
     pubKey,
     url,
     media,
+    walletAddress,
   });
 };
 

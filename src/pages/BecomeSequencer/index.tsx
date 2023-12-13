@@ -279,6 +279,7 @@ export function Component() {
       address: account,
       pubKey,
       url: website,
+      walletAddress: address,
       // media,
     };
     if (!params?.address || !params?.name) return;
@@ -514,7 +515,7 @@ export function Component() {
                     className="flex-1 flex flex-col gap-6"
                     style={{ minWidth: 'calc(50% - 56px)' }}
                   >
-                    <div className="fz-14 fw-400 color-fff inter">Address</div>
+                    <div className="fz-14 fw-400 color-fff inter">Sequencer's Address</div>
                     <Input
                       value={account}
                       onChange={setAccount}
