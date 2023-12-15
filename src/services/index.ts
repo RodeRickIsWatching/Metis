@@ -64,11 +64,10 @@ export const createUser = ({
     pubKey,
     url,
     media,
-    walletAddress
+    walletAddress,
+    seqAddr: address,
   });
 };
-
-
 
 export const updateUser = ({
   id,
@@ -101,9 +100,9 @@ export const updateUser = ({
     url,
     media,
     walletAddress,
+    seqAddr: address,
   });
 };
-
 
 export const getAllUser = async () => {
   try {
@@ -111,8 +110,8 @@ export const getAllUser = async () => {
 
     if (!res?.length) return null;
     const resolvedResult = res
-      ?.filter((i: { address: any; }) => i.address)
-      .reduce((prev: any, next: { address: string; }) => {
+      ?.filter((i: { address: any }) => i.address)
+      .reduce((prev: any, next: { address: string }) => {
         return { ...prev, [next?.address?.toLowerCase()]: next };
       }, {});
 
