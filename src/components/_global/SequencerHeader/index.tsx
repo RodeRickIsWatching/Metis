@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { Button, Modal, message } from '@/components';
 import SequencerItemContainer from '@/components/SequencerItemContainer';
-import { defaultExpectedApr, lockContract } from '@/configs/common';
+import { contracts, defaultExpectedApr } from '@/configs/common';
 import fetchOverview from '@/graphql/overview';
 import useAuth from '@/hooks/useAuth';
 import useUpdate from '@/hooks/useUpdate';
@@ -367,12 +367,12 @@ const checkWhiteList = async () => {
 
     const multiP: any = [
       {
-        ...lockContract,
+        ...contracts.lock?.[chainId],
         functionName: 'whiteListAddresses',
         args: [address],
       },
       {
-        ...lockContract,
+        ...contracts.lock?.[chainId],
         functionName: 'getSequencerId',
         args: [address],
       },
@@ -476,6 +476,8 @@ useEffect(() => {
   fetchBatchSequencerInfoRun();
 }, [sequencerCards, chainId]);
 
+
+console.log('filteredFetchBatchSequencerInfoData', fetchBatchSequencerInfoData,filteredFetchBatchSequencerInfoData)
 
 return (
   <>

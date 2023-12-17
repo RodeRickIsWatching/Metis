@@ -4,7 +4,7 @@ import { WagmiConfig, configureChains, createConfig, mainnet } from 'wagmi';
 import { createPublicClient, defineChain, http, webSocket } from 'viem';
 
 import { isProd } from './common';
-import { goerli, holesky } from 'viem/chains';
+import { goerli, holesky, sepolia } from 'viem/chains';
 
 const _holesky = defineChain({
   id: 17000,
@@ -28,7 +28,7 @@ const _holesky = defineChain({
   testnet: true,
 });
 
-export const chainId = isProd ? [_holesky, mainnet] : [goerli, mainnet];
+export const chainId = isProd ? [sepolia, _holesky, mainnet] : [goerli, mainnet];
 
 export const injectedConnector = new InjectedConnector({
   chains: [...chainId],
@@ -72,7 +72,14 @@ export const holeskyTxPublicClient = createPublicClient({
   transport: http(),
 });
 
+export const sepoliaTxPublicClient = createPublicClient({
+  chain: sepolia,
+  // transport,
+  transport: http(),
+});
+
 export const txPublicClients = {
+  [sepolia.id.toString()]: sepoliaTxPublicClient,
   [goerli.id.toString()]: goerliTxPublicClient,
   [mainnet.id.toString()]: mainnetTxPublicClient,
   [holesky.id.toString()]: holeskyTxPublicClient,

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { multicall } from '@wagmi/core';
 import useAuth from './useAuth';
-import { basicChainId, depositToken, lockContract } from '@/configs/common';
+import { contracts } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import { useRecoilState } from 'recoil';
 import {
@@ -44,49 +44,51 @@ const useUpdate = () => {
       sequencerId?: string;
     } = props;
 
+    if(!chainId) return;
+
     let p: any[] = [
       {
-        ...lockContract,
+        ...contracts.lock?.[chainId?.toString()],
         functionName: 'totalRewardsLiquidated',
         args: [],
       },
       {
-        ...lockContract,
+        ...contracts.lock?.[chainId?.toString()],
         functionName: 'BLOCK_REWARD',
         args: [],
       },
       {
-        ...lockContract,
-        chainId: basicChainId,
+        ...contracts.lock?.[chainId?.toString()],
+        chainId: chainId,
         functionName: 'currentSequencerSetSize',
         args: [],
       },
       {
-        ...lockContract,
-        chainId: basicChainId,
+        ...contracts.lock?.[chainId?.toString()],
+        chainId: chainId,
         functionName: 'currentSequencerSetTotalLock',
         args: [],
       },
     ];
 
-    if (sequencerId) {
+    if (sequencerId && chainId) {
       p = [
         ...p,
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencerReward',
           args: [sequencerId],
         },
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencerLock',
           args: [sequencerId],
         },
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencers',
           args: [sequencerId],
         },
@@ -97,25 +99,25 @@ const useUpdate = () => {
       p = [
         ...p,
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'getSequencerId',
           args: [address],
         },
         {
-          ...depositToken,
-          chainId: basicChainId,
+          ...contracts.deposit?.[chainId?.toString()],
+          chainId,
           functionName: 'balanceOf',
           args: [address],
         },
         {
-          ...depositToken,
-          chainId: basicChainId,
+          ...contracts.deposit?.[chainId?.toString()],
+          chainId,
           functionName: 'allowance',
-          args: [address, lockContract.address],
+          args: [address, contracts.lock?.[chainId?.toString()].address],
         },
         {
-          ...lockContract,
+          ...contracts.lock?.[chainId?.toString()],
           functionName: 'whiteListAddresses',
           args: [address],
         },
@@ -175,6 +177,7 @@ const useUpdate = () => {
   const props = useRequest(intervalUpdate, {
     manual: true,
     pollingInterval: 5000,
+    refreshDeps: [chainId]
   });
 
   return { ...props, liquidateReward, metisBalance: balance, sequencerTotalInfo, whiteListed, sequencerId, blockReward };

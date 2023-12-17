@@ -65,7 +65,7 @@ export const createUser = ({
     url,
     media,
     walletAddress,
-    seqAddr: address,
+    seq_addr: address,
   });
 };
 
@@ -100,7 +100,7 @@ export const updateUser = ({
     url,
     media,
     walletAddress,
-    seqAddr: address,
+    seq_addr: address,
   });
 };
 

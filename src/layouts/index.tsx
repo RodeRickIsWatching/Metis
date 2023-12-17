@@ -10,22 +10,43 @@ import useSequencerInfo from '@/hooks/useSequencerInfo';
 import SubHeader from './SubHeader';
 import useBlock from '@/hooks/useBlock';
 import useMetisPrice from '@/hooks/useMetisPrice';
+import { useEffect } from 'react';
+import { updateLocalChainId, defaultChainId } from '@/configs/common';
+import { useNetwork } from 'wagmi';
 
 function BasicLayout() {
   const { address, chainId } = useAuth(true);
-  const {run, cancel} = useBlock()
+  const { run, cancel } = useBlock();
+  const { chain } = useNetwork();
   const { sequencerId, run: updateRun, cancel: updateCancel } = useUpdate();
   const { run: sequencerInfoRun, cancel: sequencerInfoCancel, getAllUserRun } = useSequencerInfo();
-  const {run: getMetisPrice} = useMetisPrice()
+  const { run: getMetisPrice } = useMetisPrice();
 
-  React.useEffect(()=>{
-    run()
-    getAllUserRun()
-    getMetisPrice()
-    return ()=>{
-      cancel()
+  useEffect(() => {
+    if (chain) {
+      updateLocalChainId((chain?.unsupported ? defaultChainId : (chain?.id || defaultChainId))?.toString())
     }
+  }, [chain]);
+
+  React.useEffect(() => {
+    if (chainId) {
+      cancel();
+      run(chainId);
+    }
+    getAllUserRun();
+
+    return () => {
+      cancel();
+    };
+  }, [chainId]);
+
+  useEffect(() => {
+    getMetisPrice();
   }, [])
+
+
+
+
 
   React.useEffect(() => {
     updateCancel();

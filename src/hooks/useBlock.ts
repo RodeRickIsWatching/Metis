@@ -3,6 +3,7 @@ import { recoilLatestBlock } from '@/models';
 import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
+import useAuth from './useAuth';
 
 interface Block {
   timestamp: number;
@@ -10,8 +11,9 @@ interface Block {
 }
 
 const useBlock = () => {
+  const { chainId } = useAuth(true)
   const [latestBlock, setLatestBlock] = useRecoilState(recoilLatestBlock);
-  const props = useRequest(fetchLatestBlockTimestamp, { manual: true, pollingInterval: 10000 });
+  const props = useRequest(fetchLatestBlockTimestamp, { manual: true, pollingInterval: 10000, refreshDeps: [chainId]});
 
   const handleBlock = (data: Block) => {
     setLatestBlock(data);

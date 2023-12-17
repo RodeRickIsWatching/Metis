@@ -1,6 +1,6 @@
 // 获取最近出的区块和时间
 // todo 优化
-import { blockGraphUrl } from '@/configs/common';
+import { graphUrl } from '@/configs/common';
 import { gql, GraphQLClient } from 'graphql-request';
 
 const blocks = gql`
@@ -12,11 +12,10 @@ const blocks = gql`
   }
 `;
 
-const perpetualClient = new GraphQLClient(blockGraphUrl, {
-  headers: {},
-});
-
-const fetchLatestBlockTimestamp = async () => {
+const fetchLatestBlockTimestamp = async (chainId: string|number) => {
+  const perpetualClient = new GraphQLClient(graphUrl.block[chainId.toString()], {
+    headers: {},
+  });
   // 查询block服务查询时间
   const blockData: any = await perpetualClient.request(blocks);
 

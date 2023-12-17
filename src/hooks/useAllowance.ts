@@ -1,4 +1,4 @@
-import { MAX_ALLOWANCE, depositToken, lockContract } from '@/configs/common';
+import { MAX_ALLOWANCE, contracts } from '@/configs/common';
 import { recoilAllowance } from '@/models';
 import { useRecoilState } from 'recoil';
 import useAuth from './useAuth';
@@ -11,12 +11,13 @@ const useAllowance = () => {
   const { connector, address } = useAuth(true);
   const [allowance, setAllowance] = useRecoilState(recoilAllowance);
   const approve = async () => {
+    if (!chain?.id) return 'Invalid Chain ID';
     try {
       const signer = await connector?.getWalletClient();
       const txData = calTxData({
-        abi: depositToken.abi,
+        abi: contracts.deposit?.[chain?.id?.toString()].abi,
         functionName: 'approve',
-        args: [lockContract?.address, MAX_ALLOWANCE],
+        args: [contracts.lock?.[chain?.id?.toString()]?.address, MAX_ALLOWANCE],
       });
 
       if (!signer) {
@@ -25,10 +26,10 @@ const useAllowance = () => {
 
       const hash = await sendTx({
         walletClient: signer,
-        to: depositToken.address,
+        to: contracts.deposit?.[chain?.id?.toString()].address,
         value: '0x0',
         data: txData,
-        chain: chain
+        chain: chain,
       });
       if (!chain?.id) {
         throw new Error('Invalid Clent');

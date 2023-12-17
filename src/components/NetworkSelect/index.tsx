@@ -3,7 +3,7 @@ import { Select } from '..';
 import useChainWatcher from '@/hooks/useChainWatcher';
 import { useEffect, useMemo, useState } from 'react';
 import { mainnet, useNetwork } from 'wagmi';
-import { goerli, holesky } from 'viem/chains';
+import { goerli, holesky, sepolia } from 'viem/chains';
 import { isProd } from '@/configs/common';
 
 
@@ -19,6 +19,7 @@ const Container = styled.div`
 `;
 
 const options = isProd ? [
+  { ...sepolia, label: sepolia.name, value: sepolia.id, name: sepolia.name },
   { ...holesky, label: holesky.name, value: holesky.id, name: holesky.name },
   { ...mainnet, label: mainnet.name, value: mainnet.id, name: mainnet.name },
 ] : [

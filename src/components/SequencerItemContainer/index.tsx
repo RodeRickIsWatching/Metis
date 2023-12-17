@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import fetchBatchBlockTx from '@/graphql/batchBlockAndTimestamp';
 import { getImageUrl } from '@/utils/tools';
 import { useRequest } from 'ahooks';
@@ -10,6 +11,7 @@ import Loading from '../_global/Loading';
 import NumberText from '../NumberText';
 import BigNumber from 'bignumber.js';
 import useBlock from '@/hooks/useBlock';
+import useAuth from '@/hooks/useAuth';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
@@ -20,19 +22,20 @@ const SequencerStatusContainer = styled.div`
 `;
 
 const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, uptime, since, earned }: any) => {
-  const { run, loading, data, cancel } = useRequest(fetchBatchBlockTx, { manual: true, pollingInterval: 20000 });
+  const { chainId, realChainId } = useAuth(true);
+  const { run, loading, data, cancel } = useRequest(fetchBatchBlockTx, { manual: true, pollingInterval: 20000, refreshDeps: [chainId] });
   const { block } = useBlock();
 
   useEffect(() => {
-    if (ele?.user) {
+    if (ele?.user && realChainId) {
       cancel();
       console.log('run');
-      run(ele?.user?.toLowerCase());
+      run(ele?.user?.toLowerCase(), realChainId);
       return () => {
         cancel();
       };
     }
-  }, [ele?.user]);
+  }, [ele?.user, realChainId]);
 
   const fromNow = useMemo(() => {
     if (!data?.timestamp) return '-';

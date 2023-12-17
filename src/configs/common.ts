@@ -2,7 +2,7 @@
 import { getImageUrl } from '@/utils/tools';
 import LOCK_ABI from '@/configs/abi/lock.json';
 import { erc20ABI, mainnet } from 'wagmi';
-import { goerli, holesky } from 'viem/chains';
+import { goerli, holesky, sepolia } from 'viem/chains';
 
 export const defaultExpectedApr = 0.2; // 20%
 
@@ -35,11 +35,37 @@ export const medias = [
   },
 ];
 
-export const { VITE_APP_LOCK_CONTRACT, VITE_APP_METIS_TOKEN } = import.meta.env;
-export const lockContract = { address: VITE_APP_LOCK_CONTRACT, abi: LOCK_ABI };
-export const depositToken = { address: VITE_APP_METIS_TOKEN, abi: erc20ABI };
+export const {
+  // goerli
+  VITE_APP_LOCK_CONTRACT,
+  VITE_APP_METIS_TOKEN,
+  // holeskt
+  VITE_APP_HOLESKY_METIS_TOKEN,
+  VITE_APP_HOLESKY_LOCK_CONTRACT,
+  // sepolia
+  VITE_APP_SEPOLIA_METIS_TOKEN,
+  VITE_APP_SEPOLIA_LOCK_CONTRACT,
+} = import.meta.env;
+// export const lockContract = { address: VITE_APP_LOCK_CONTRACT, abi: LOCK_ABI };
+// export const depositToken = { address: VITE_APP_METIS_TOKEN, abi: erc20ABI };
 
-export const basicChainId = isProd ? holesky.id : goerli.id;
+export const contracts = {
+  lock: {
+    [mainnet.id.toString()]: { address: VITE_APP_LOCK_CONTRACT, abi: LOCK_ABI },
+    [goerli.id.toString()]: { address: VITE_APP_LOCK_CONTRACT, abi: LOCK_ABI },
+    [holesky.id.toString()]: { address: VITE_APP_HOLESKY_LOCK_CONTRACT, abi: LOCK_ABI },
+    [sepolia.id.toString()]: { address: VITE_APP_SEPOLIA_LOCK_CONTRACT, abi: LOCK_ABI },
+  },
+  deposit: {
+    [mainnet.id.toString()]: { address: VITE_APP_METIS_TOKEN, abi: erc20ABI },
+    [goerli.id.toString()]: { address: VITE_APP_METIS_TOKEN, abi: erc20ABI },
+    [holesky.id.toString()]: { address: VITE_APP_HOLESKY_METIS_TOKEN, abi: erc20ABI },
+    [sepolia.id.toString()]: { address: VITE_APP_SEPOLIA_METIS_TOKEN, abi: erc20ABI },
+  },
+};
+
+// 废弃
+// export const basicChainId = isProd ? sepolia.id : goerli.id;
 
 export const defaultPubKeyList = [
   {
@@ -78,36 +104,62 @@ export const defaultPubKeyList = [
   },
 ];
 
-
 export const serviceUrl = 'https://holesky-sequencer.metisdevops.link/v1';
-export const mainnetGraphUrl = '';
-export const holeskyGraphUrl = 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking';
-export const goerliGraphUrl = 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking';
-export const blockGraphUrl = isProd ? 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/holesky/block' : 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block';
+
+export const graphUrl = {
+  staking: {
+    [mainnet.id.toString()]: '',
+    [goerli.id.toString()]: 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking',
+    [holesky.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking',
+    [sepolia.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/sepolia/staking',
+  },
+  block: {
+    [mainnet.id.toString()]: '',
+    [goerli.id.toString()]: 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block',
+    [holesky.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/holesky/block',
+    [sepolia.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/sepolia/block',
+  },
+};
+
+// export const blockGraphUrl = isProd
+//   ? 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/holesky/block'
+//   : 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block';
 
 export const baseGraphUrl = {
-  [mainnet.id.toString()]: mainnetGraphUrl,
-  [goerli.id.toString()]: goerliGraphUrl,
-  [holesky.id.toString()]: holeskyGraphUrl,
+  [mainnet.id.toString()]: graphUrl.staking[mainnet.id.toString()],
+  [goerli.id.toString()]: graphUrl.staking[goerli.id.toString()],
+  [holesky.id.toString()]: graphUrl.staking[holesky.id.toString()],
+  [sepolia.id.toString()]: graphUrl.staking[sepolia.id.toString()],
 };
 
 export const explorer = {
   [mainnet.id.toString()]: 'https://etherscan.io',
   [goerli.id.toString()]: 'https://goerli.etherscan.io',
   [holesky.id.toString()]: 'https://holesky.beaconcha.in',
-}
+  [sepolia.id.toString()]: 'https://sepolia.etherscan.io',
+};
 
 export const l2explorer = {
   [mainnet.id.toString()]: 'https://explorer.metis.io',
   [goerli.id.toString()]: 'https://explorer.metis.io',
   [holesky.id.toString()]: 'https://holesky.explorer.metisdevops.link',
-}
+  [sepolia.id.toString()]: 'https://sepolia.explorer.metisdevops.link',
+};
 
 export const explorerName = {
   [mainnet.id.toString()]: 'Etherscan',
   [goerli.id.toString()]: 'Goerli',
   [holesky.id.toString()]: 'Holesky',
-}
+  [sepolia.id.toString()]: 'Sepolia',
+};
 
-export const defaultChainId = isProd ? holesky.id.toString() : goerli.id.toString()
-export const defaultChain = isProd ? holesky : goerli
+export const defaultChainId = isProd ? sepolia.id.toString() : goerli.id.toString();
+export const defaultChain = isProd ? sepolia : goerli;
+
+export let localChainId = defaultChainId;
+
+export const updateLocalChainId = (chainId: string) => {
+  localChainId = chainId;
+};
+
+export const getLocalChainId = () => localChainId;

@@ -1,13 +1,13 @@
-import { defaultChain, defaultChainId } from '@/configs/common';
-import { injectedConnector} from '@/configs/wallet';
+import { defaultChain, defaultChainId, localChainId, updateLocalChainId } from '@/configs/common';
+import { injectedConnector } from '@/configs/wallet';
 import { useMount } from 'ahooks';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi';
 
 const autoLogin = true;
 
 const useAuth = (needStatus?: boolean | undefined) => {
-  const { chain } = useNetwork()
+  const { chain } = useNetwork();
   const { address, status, isConnected, isConnecting, isDisconnected, connector, isReconnecting } = useAccount();
 
   const { connect, pendingConnector } = useConnect();
@@ -43,6 +43,7 @@ const useAuth = (needStatus?: boolean | undefined) => {
     return {
       chain: chain?.unsupported ? defaultChain : (chain || defaultChain),
       chainId: chain?.unsupported ? defaultChainId : (chain?.id || defaultChainId),
+      realChainId: chain?.id,
       connector,
       address,
       status,

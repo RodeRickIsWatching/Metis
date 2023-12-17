@@ -1,6 +1,6 @@
 // 获取最近出的区块和时间
 // todo 优化
-import { blockGraphUrl } from '@/configs/common';
+import { getLocalChainId, graphUrl } from '@/configs/common';
 import { gql, GraphQLClient } from 'graphql-request';
 
 // "add1": "0xfe08ee83b1f01d6d7c6eff3c8c84fa6fe02fca17",
@@ -29,12 +29,14 @@ const blocks = gql`
   }
 `;
 
-const perpetualClient = new GraphQLClient(blockGraphUrl, {
-  headers: {},
-});
 
-const fetchBatchBlockTx = async (address: string) => {
+const fetchBatchBlockTx = async (address: string, chainId: string | number) => {
   if (!address) return null;
+
+  const perpetualClient = new GraphQLClient(graphUrl.block[chainId?.toString()], {
+    headers: {},
+  });
+
   const _address = address.toString().toLowerCase();
   const txData: any = await perpetualClient.request(userTxs, {
     address: _address,

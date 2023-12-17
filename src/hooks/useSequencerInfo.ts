@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { lockContract, basicChainId } from '@/configs/common';
+import { contracts } from '@/configs/common';
 import { useRequest } from 'ahooks';
 import { multicall, readContract } from '@wagmi/core';
 import { useRecoilState } from 'recoil';
@@ -8,8 +8,10 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { getAllUser } from '@/services';
 import React from 'react';
+import useAuth from './useAuth';
 
 const useSequencerInfo = () => {
+  const { chainId } = useAuth(true);
   const [sequencerInfo, setSequencerInfo] = useRecoilState(recoilSequencerInfo);
   const [allSequencerInfo, setAllSequencerInfo] = useRecoilState(recoilAllSequencerInfo);
 
@@ -22,11 +24,11 @@ const useSequencerInfo = () => {
   }, [getAllUserData]);
 
   const getSequencerId = async (address?: string) => {
-    if (!address) return;
+    if (!address || !chainId) return;
     try {
       const data = await readContract({
-        address: lockContract.address,
-        abi: lockContract.abi,
+        address: contracts.lock?.[chainId?.toString()].address,
+        abi: contracts.lock?.[chainId?.toString()].abi,
         functionName: 'getSequencerId',
         args: [address],
       });
@@ -96,7 +98,7 @@ const useSequencerInfo = () => {
       self?: boolean;
     } = props;
 
-    if (!sequencerId && !sequencerIds?.length) {
+    if ((!sequencerId && !sequencerIds?.length) || !chainId) {
       setSequencerInfo(null);
       return;
     }
@@ -104,20 +106,20 @@ const useSequencerInfo = () => {
     const multiP: any[] = s.reduce((prev: any, next: any) => {
       const n = [
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencerReward',
           args: [next],
         },
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencerLock',
           args: [next],
         },
         {
-          ...lockContract,
-          chainId: basicChainId,
+          ...contracts.lock?.[chainId?.toString()],
+          chainId,
           functionName: 'sequencers',
           args: [next],
         },
@@ -147,6 +149,7 @@ const useSequencerInfo = () => {
   const props = useRequest(intervalUpdate, {
     manual: true,
     pollingInterval: 5000,
+    refreshDeps: [chainId]
   });
 
   return { getAllUserRun, allSequencerInfo, getSequencerId, runOnce: intervalUpdate, sequencerInfo, ...props };

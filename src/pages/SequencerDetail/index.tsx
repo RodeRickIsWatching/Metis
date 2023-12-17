@@ -298,7 +298,7 @@ const txPageSize = 10;
 const blocksPageSize = 10;
 export function Component() {
   const { id } = useParams();
-  const { address, chainId } = useAuth(true);
+  const { address, chainId, realChainId } = useAuth(true);
   const [relockAmount, setRelockAmount] = React.useState<string | undefined>();
 
   const { allSequencerInfo, run, cancel, data: sequencerInfoList, getSequencerId } = useSequencerInfo();
@@ -359,7 +359,7 @@ export function Component() {
   React.useEffect(() => {
     if (id) {
       fetchUserTxRun(id, chainId);
-      fetchBlockTxRun(id);
+      fetchBlockTxRun(id, chainId);
     }
   }, [id, chainId]);
 

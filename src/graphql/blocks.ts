@@ -1,4 +1,4 @@
-import { blockGraphUrl } from '@/configs/common';
+import { getLocalChainId, graphUrl } from '@/configs/common';
 import { gql, GraphQLClient } from 'graphql-request';
 
 const userTxs = gql`
@@ -14,12 +14,12 @@ const userTxs = gql`
   }
 `;
 
-const perpetualClient = new GraphQLClient(blockGraphUrl, {
-  headers: {},
-});
+const fetchBlock = async (address: string, chainId: string | number, current?: any, pageSize?: any) => {
+  if (!address || !chainId) return null;
 
-const fetchBlock = async (address: string, current?: any, pageSize?: any) => {
-  if (!address) return null;
+  const perpetualClient = new GraphQLClient(graphUrl.block[chainId?.toString()], {
+    headers: {},
+  });
   const _address = address.toString().toLowerCase();
   const _current = current || 0;
   const _pageSize = pageSize || 1000;
