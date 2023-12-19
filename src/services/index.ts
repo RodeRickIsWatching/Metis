@@ -60,7 +60,7 @@ export const createUser = ({
     name,
     avatar,
     desc,
-    address,
+    address: walletAddress,
     pubKey,
     url,
     media,
