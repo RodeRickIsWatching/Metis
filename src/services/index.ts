@@ -95,7 +95,7 @@ export const updateUser = ({
     name,
     avatar,
     desc,
-    address,
+    address: walletAddress,
     pubKey,
     url,
     media,
