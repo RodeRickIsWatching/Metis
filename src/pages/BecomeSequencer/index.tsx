@@ -202,7 +202,7 @@ export function Component() {
 
       // console.log('pubKey', pubKey)
       const p = {
-        address: address as Address,
+        address: account as Address,
         amount: ethers.utils.parseEther(stakeAmount || '0').toString(),
         pubKey: (pubKey) as string,
       };
