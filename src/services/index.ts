@@ -110,14 +110,20 @@ export const getAllUser = async () => {
 
     if (!res?.length) return null;
     const resolvedResult = res
-      ?.filter((i: { address: any }) => i.address)
-      .reduce((prev: any, next: { address: string }) => {
-        return { ...prev, [next?.address?.toLowerCase()]: next };
-      }, {});
+      ?.filter((i: { seq_addr: any; address: any }) => i.seq_addr)
+      .reduce(
+        (
+          prev: any,
+          next: {
+            seq_addr: any;
+            address: string;
+          },
+        ) => {
+          return { ...prev, [next?.seq_addr?.toLowerCase()]: next };
+        },
+        {},
+      );
 
-    // [13,14,15,16,17,18,19,20,21,22,23,24,35,26,27,28,29,30,31,32,33,34,36].forEach(async (i)=>{
-    //   await _axios.delete(`/delval/${i}`);
-    // })
     return resolvedResult;
   } catch (e) {
     throw new Error('Server Error');
