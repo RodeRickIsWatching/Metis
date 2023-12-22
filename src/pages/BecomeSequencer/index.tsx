@@ -282,10 +282,9 @@ export function Component() {
       walletAddress: address,
       // media,
     };
-    if (!params?.address || !params?.name) return;
+    if (!params?.walletAddress || !params?.name) return;
 
-    const ifAlreadyUploaded = allSequencerInfo?.[params?.address?.toLowerCase()];
-
+    const ifAlreadyUploaded = allSequencerInfo?.[params?.walletAddress?.toLowerCase()];
 
     setUploadingLoading(true);
     try {
@@ -295,8 +294,6 @@ export function Component() {
       } else {
         res = await createUser(params as any);
       }
-
-      console.log('res', res);
 
       setUploadingLoading(false);
       handleIndex('3');
@@ -322,7 +319,6 @@ export function Component() {
 
   const handleCompleteUpload = (files: any[]) => {
     const f = (files.map((x: { fileUrl: any }) => x.fileUrl).join('\n'));
-    console.log('fff', f);
     if (!f) return;
     setAvatar(f);
   };
