@@ -27,15 +27,15 @@ const SequencerItemContainer = ({ ele, onClick, avatar, title, totalLockUp, upti
   const { block } = useBlock();
 
   useEffect(() => {
-    if (ele?.user && realChainId) {
+    if (ele?.user && chainId) {
       cancel();
       console.log('run');
-      run(ele?.user?.toLowerCase(), realChainId);
+      run(ele?.user?.toLowerCase(), chainId);
       return () => {
         cancel();
       };
     }
-  }, [ele?.user, realChainId]);
+  }, [ele?.user, chainId]);
 
   const fromNow = useMemo(() => {
     if (!data?.timestamp) return '-';
