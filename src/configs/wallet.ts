@@ -28,7 +28,7 @@ const _holesky = defineChain({
   testnet: true,
 });
 
-export const chainId = isProd ? [sepolia, _holesky, mainnet] : [goerli, mainnet];
+export const chainId = isProd ? [sepolia, mainnet] : [goerli, mainnet];
 
 export const injectedConnector = new InjectedConnector({
   chains: [...chainId],
@@ -82,7 +82,7 @@ export const txPublicClients = {
   [sepolia.id.toString()]: sepoliaTxPublicClient,
   [goerli.id.toString()]: goerliTxPublicClient,
   [mainnet.id.toString()]: mainnetTxPublicClient,
-  [holesky.id.toString()]: holeskyTxPublicClient,
+  // [holesky.id.toString()]: holeskyTxPublicClient,
 };
 
 export { config, WagmiConfig as WagmiProvider, publicClient };

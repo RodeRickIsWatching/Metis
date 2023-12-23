@@ -104,25 +104,25 @@ export const defaultPubKeyList = [
   },
 ];
 
-export const serviceUrl = 'https://holesky-sequencer.metisdevops.link/v1';
+export const serviceUrl = 'https://sequencer.metisdevops.link/v1';
 
 export const graphUrl = {
   staking: {
     [mainnet.id.toString()]: '',
     [goerli.id.toString()]: 'http://staking.preview.metisdevops.link/l1/subgraphs/name/metis/staking',
-    [holesky.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking',
-    [sepolia.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l1/subgraphs/name/sepolia/staking',
+    [holesky.id.toString()]: 'https://sequencer.metisdevops.link/l1/subgraphs/name/holesky/staking',
+    [sepolia.id.toString()]: 'https://sequencer.metisdevops.link/l1/subgraphs/name/sepolia/staking',
   },
   block: {
     [mainnet.id.toString()]: '',
     [goerli.id.toString()]: 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block',
-    [holesky.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/holesky/block',
-    [sepolia.id.toString()]: 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/sepolia/block',
+    [holesky.id.toString()]: 'https://sequencer.metisdevops.link/l2/subgraphs/name/holesky/block',
+    [sepolia.id.toString()]: 'https://sequencer.metisdevops.link/l2/subgraphs/name/sepolia/block',
   },
 };
 
 // export const blockGraphUrl = isProd
-//   ? 'https://holesky-sequencer.metisdevops.link/l2/subgraphs/name/holesky/block'
+//   ? 'https://sequencer.metisdevops.link/l2/subgraphs/name/holesky/block'
 //   : 'http://staking.preview.metisdevops.link/metis/subgraphs/name/metis/block';
 
 export const baseGraphUrl = {

@@ -20,7 +20,7 @@ const Container = styled.div`
 
 const options = isProd ? [
   { ...sepolia, label: sepolia.name, value: sepolia.id, name: sepolia.name },
-  { ...holesky, label: holesky.name, value: holesky.id, name: holesky.name },
+  // { ...holesky, label: holesky.name, value: holesky.id, name: holesky.name },
   { ...mainnet, label: mainnet.name, value: mainnet.id, name: mainnet.name },
 ] : [
   { ...goerli, label: goerli.name, value: goerli.id, name: goerli.name },
