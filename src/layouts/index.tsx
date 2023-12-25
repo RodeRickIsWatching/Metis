@@ -55,8 +55,9 @@ function BasicLayout() {
     getMetisPrice();
   }, []);
 
+
   React.useEffect(() => {
-    if (!seqAddress) return;
+    // if (!seqAddress) return;
     updateCancel();
     updateRun({ address: seqAddress });
     return () => {
