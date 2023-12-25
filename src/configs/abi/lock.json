@@ -32,6 +32,12 @@
   },
   {
     "anonymous": false,
+    "inputs": [{ "indexed": false, "internalType": "uint256", "name": "_newMaxLock", "type": "uint256" }],
+    "name": "UpdateMaxAmounts",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [{ "indexed": false, "internalType": "uint256", "name": "_newMinLock", "type": "uint256" }],
     "name": "UpdateMinAmounts",
     "type": "event"
@@ -263,6 +269,13 @@
   },
   {
     "inputs": [],
+    "name": "maxLock",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "minLock",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -423,20 +436,14 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "sequencerId", "type": "uint256" },
-      { "internalType": "bool", "name": "withdrawRewardToL2", "type": "bool" }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "sequencerId", "type": "uint256" }],
     "name": "unlock",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "sequencerId", "type": "uint256" },
-      { "internalType": "bool", "name": "withdrawToL2", "type": "bool" }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "sequencerId", "type": "uint256" }],
     "name": "unlockClaim",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -452,6 +459,13 @@
   {
     "inputs": [{ "internalType": "address", "name": "_lockingInfo", "type": "address" }],
     "name": "updateLockingInfo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_maxLock", "type": "uint256" }],
+    "name": "updateMaxAmounts",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -516,10 +530,14 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "sequencerId", "type": "uint256" },
-      { "internalType": "bool", "name": "withdrawToL2", "type": "bool" }
-    ],
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "whiteListBoundSequencer",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "sequencerId", "type": "uint256" }],
     "name": "withdrawRewards",
     "outputs": [],
     "stateMutability": "nonpayable",

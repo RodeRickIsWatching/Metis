@@ -95,7 +95,7 @@ const useLock = () => {
       const txData = calTxData({
         abi: contracts.lock?.[chain?.id?.toString()]?.abi,
         functionName: 'withdrawRewards',
-        args: [sequencerId, withdrawToL2],
+        args: [sequencerId],
       });
 
       if (!signer) {
@@ -131,7 +131,7 @@ const useLock = () => {
       const txData = calTxData({
         abi: contracts.lock?.[chain?.id?.toString()]?.abi,
         functionName: 'unlock',
-        args: [sequencerId, withdrawRewardToL2],
+        args: [sequencerId],
       });
 
       if (!signer) {
@@ -172,7 +172,7 @@ const useLock = () => {
       const txData = calTxData({
         abi: contracts.lock?.[chain?.id?.toString()]?.abi,
         functionName: 'unlockClaim',
-        args: [sequencerId, withdrawRewardToL2],
+        args: [sequencerId],
       });
 
       if (!signer) {
