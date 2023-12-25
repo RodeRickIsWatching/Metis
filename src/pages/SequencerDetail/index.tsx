@@ -309,7 +309,7 @@ export function Component() {
     return allSequencerInfo?.[id?.toLowerCase()];
   }, [allSequencerInfo, id]);
 
-  const whitelistedAddress = React.useMemo(() => currentSequencerInfo?.address, [currentSequencerInfo?.address])
+  const whitelistedAddress = React.useMemo(() => currentSequencerInfo?.address || '-', [currentSequencerInfo?.address])
 
   const sequencerInfo = sequencerInfoList?.[0];
 
@@ -337,12 +337,12 @@ export function Component() {
     [fetchUserTxData?.origin?.lockedParams],
   );
 
-  const ifSelf = React.useMemo(() => whitelistedAddress?.toLowerCase() === address?.toLowerCase(), [address, whitelistedAddress]);
+  const ifSelf = React.useMemo(() => (address && whitelistedAddress && whitelistedAddress?.toLowerCase() === address?.toLowerCase()), [address, whitelistedAddress]);
 
   const handleInitCheck = async () => {
     let activeSequencerId = curUserActiveSequencerId;
     if (!activeSequencerId) {
-      activeSequencerId = await getSequencerId(id);
+      activeSequencerId = await getSequencerId(whitelistedAddress);
     }
 
     if (!activeSequencerId) return;
@@ -355,7 +355,7 @@ export function Component() {
 
   React.useEffect(() => {
     handleInitCheck();
-  }, [curUserActiveSequencerId, ifSelf, id]);
+  }, [curUserActiveSequencerId, ifSelf, whitelistedAddress]);
 
   React.useEffect(() => {
     if (id) {
@@ -582,7 +582,7 @@ export function Component() {
           <div className="status-overview flex flex-row justify-center gap-10 color-fff">
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Owner</div>
-              <CopyAddress addr={id} className={'flex-1 fz-16 fw-400 inter color-fff'} />
+              <CopyAddress addr={whitelistedAddress} className={'flex-1 fz-16 fw-400 inter color-fff'} />
             </div>
             <div className="overview-item flex-1 pt-12 pb-12 pl-30 pr-30 flex flex-col justify-center gap-10">
               <div className="fz-26 fw-500 color-fff">Signer</div>

@@ -19,12 +19,23 @@ function BasicLayout() {
   const { run, cancel } = useBlock();
   const { chain } = useNetwork();
   const { sequencerId, run: updateRun, cancel: updateCancel } = useUpdate();
-  const { run: sequencerInfoRun, cancel: sequencerInfoCancel, getAllUserRun } = useSequencerInfo();
+  const { allSequencerInfo, run: sequencerInfoRun, cancel: sequencerInfoCancel, getAllUserRun } = useSequencerInfo();
   const { run: getMetisPrice } = useMetisPrice();
+
+  const seqAddress = React.useMemo(
+    () =>
+      (allSequencerInfo
+        ? Object?.values?.(allSequencerInfo)?.find(
+            (i: any) => address && i?.address && i?.address?.toLowerCase() === address?.toLowerCase(),
+            // @ts-ignore
+          )?.seq_addr
+        : undefined),
+    [address, allSequencerInfo],
+  );
 
   useEffect(() => {
     if (chain) {
-      updateLocalChainId((chain?.unsupported ? defaultChainId : (chain?.id || defaultChainId))?.toString())
+      updateLocalChainId((chain?.unsupported ? defaultChainId : chain?.id || defaultChainId)?.toString());
     }
   }, [chain]);
 
@@ -42,19 +53,16 @@ function BasicLayout() {
 
   useEffect(() => {
     getMetisPrice();
-  }, [])
-
-
-
-
+  }, []);
 
   React.useEffect(() => {
+    if (!seqAddress) return;
     updateCancel();
-    updateRun({ address });
+    updateRun({ address: seqAddress });
     return () => {
       updateCancel();
     };
-  }, [address, chainId]);
+  }, [seqAddress, chainId]);
 
   React.useEffect(() => {
     // if (!sequencerId) return;
