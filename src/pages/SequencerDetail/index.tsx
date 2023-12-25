@@ -309,6 +309,7 @@ export function Component() {
     return allSequencerInfo?.[id?.toLowerCase()];
   }, [allSequencerInfo, id]);
 
+  const whitelistedAddress = React.useMemo(() => currentSequencerInfo?.address, [currentSequencerInfo?.address])
 
   const sequencerInfo = sequencerInfoList?.[0];
 
@@ -336,7 +337,7 @@ export function Component() {
     [fetchUserTxData?.origin?.lockedParams],
   );
 
-  const ifSelf = React.useMemo(() => id?.toLowerCase() === address?.toLowerCase(), [address, id]);
+  const ifSelf = React.useMemo(() => whitelistedAddress?.toLowerCase() === address?.toLowerCase(), [address, whitelistedAddress]);
 
   const handleInitCheck = async () => {
     let activeSequencerId = curUserActiveSequencerId;
