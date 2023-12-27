@@ -59,11 +59,11 @@ function BasicLayout() {
   React.useEffect(() => {
     // if (!seqAddress) return;
     updateCancel();
-    updateRun({ address: seqAddress });
+    updateRun({ address, seqAddress });
     return () => {
       updateCancel();
     };
-  }, [seqAddress, chainId]);
+  }, [seqAddress, address, chainId]);
 
   React.useEffect(() => {
     // if (!sequencerId) return;

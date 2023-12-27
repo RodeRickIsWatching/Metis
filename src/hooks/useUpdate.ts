@@ -33,18 +33,21 @@ const useUpdate = () => {
   const intervalUpdate = async (
     props: any = {
       address: undefined,
+      seqAddress: undefined,
       sequencerId: undefined,
     },
   ) => {
     const {
       address,
       sequencerId,
+      seqAddress,
     }: {
+      seqAddress?: string;
       address?: string;
       sequencerId?: string;
     } = props;
 
-    if(!chainId) return;
+    if (!chainId) return;
 
     let p: any[] = [
       {
@@ -96,15 +99,22 @@ const useUpdate = () => {
     }
 
     // seq_addr
-    if (address) {
+    if (seqAddress) {
       p = [
         ...p,
         {
           ...contracts.lock?.[chainId?.toString()],
           chainId,
           functionName: 'getSequencerId',
-          args: [address],
+          args: [seqAddress],
         },
+      ];
+    }
+
+    // addr
+    if (address) {
+      p = [
+        ...p,
         {
           ...contracts.deposit?.[chainId?.toString()],
           chainId,
@@ -132,7 +142,7 @@ const useUpdate = () => {
     const result: any = {};
 
     res.forEach((i: any, index) => {
-      result[p[index].functionName] = (i?.result)?.toString();
+      result[p[index].functionName] = i?.result?.toString();
     });
 
     if (result?.totalRewardsLiquidated) {
@@ -148,7 +158,7 @@ const useUpdate = () => {
     if (result?.getSequencerId) {
       setSequencerId(result?.getSequencerId);
     } else {
-      setSequencerId('')
+      setSequencerId('');
     }
 
     if (result?.whiteListAddresses) {
@@ -169,7 +179,9 @@ const useUpdate = () => {
     setSequencerTotalInfo({
       currentSequencerSetSize: result?.currentSequencerSetSize,
       currentSequencerSetTotalLock: result?.currentSequencerSetTotalLock,
-      currentSequencerSetTotalLockReadable: result?.currentSequencerSetTotalLock ? ethers.utils.formatEther(result?.currentSequencerSetTotalLock).toString() : undefined,
+      currentSequencerSetTotalLockReadable: result?.currentSequencerSetTotalLock
+        ? ethers.utils.formatEther(result?.currentSequencerSetTotalLock).toString()
+        : undefined,
     });
 
     return result;
@@ -178,10 +190,18 @@ const useUpdate = () => {
   const props = useRequest(intervalUpdate, {
     manual: true,
     pollingInterval: 5000,
-    refreshDeps: [chainId]
+    refreshDeps: [chainId],
   });
 
-  return { ...props, liquidateReward, metisBalance: balance, sequencerTotalInfo, whiteListed, sequencerId, blockReward };
+  return {
+    ...props,
+    liquidateReward,
+    metisBalance: balance,
+    sequencerTotalInfo,
+    whiteListed,
+    sequencerId,
+    blockReward,
+  };
 };
 
 export default useUpdate;
